@@ -1,0 +1,37 @@
+{
+	"data":[
+	{
+		"DT_RowId":"1",
+		"ipAddress":"129.214.37.146",
+		"status":"active",
+		"port":"8080",
+		"adate":"2020-01-07",
+		"user":"interdum.nunc@iaculis.ca",
+		"applicationUserRoles": [
+			{
+				"applicationRole": {
+					"name": "Importacoes",
+					"applicationUserRoles": [],
+					"id": "099e2b95-2c5c-4bdf-b1fb-f9db5bf4a5de",
+					"normalizedName": "IMPORTACOES",
+					"concurrencyStamp": "19841ada-1d8e-4df8-8f96-fdfb56333ad3"
+				},
+				"userId": "1e526008-75f7-4a01-9942-d178f2b38888",
+				"roleId": "099e2b95-2c5c-4bdf-b1fb-f9db5bf4a5de"
+			},
+			{
+				"applicationRole": {
+					"name": "Detentos",
+					"applicationUserRoles": [],
+					"id": "3b97306c-1e35-4808-a44e-60b2d50ef325",
+					"normalizedName": "DETENTOS",
+					"concurrencyStamp": "86f2b136-558f-4826-84f1-c4d5c1b6f6bc"
+				},
+				"userId": "1e526008-75f7-4a01-9942-d178f2b38888",
+				"roleId": "3b97306c-1e35-4808-a44e-60b2d50ef325"
+			}
+		],			
+		"balance":"-149.99"
+	}
+	]
+}

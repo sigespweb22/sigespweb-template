@@ -1,0 +1,809 @@
+@{ 
+	ViewData["Title"] = "Regras";
+	ViewData["PageName"] = "servidor-estado-reforco-regra_list";
+	ViewData["Category0"] = @Settings.App;
+	ViewData["Category1"] = "Meu Reforço";
+	ViewData["Heading"] = "<i class='subheader-icon fal fa-calendar-star'></i> Meu reforço Regras<sup class='badge badge-primary fw-500'>NOVO</sup>";
+	ViewData["PageDescription"] = "Listagem das regras de funcionamento do App Meu Reforço";
+}
+@section HeadBlock {
+	<link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/formplugins/select2/select2.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/notifications/toastr/toastr.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/components/vagas-por-dia-list.css">
+}
+<div class="row">
+	<div class="col-xl-12">
+		<div id="panel-1" class="panel">
+			<div class="panel-hdr">
+				<h2>
+					Regras <span class="fw-300"><i>Meu Reforço</i></span> 
+				</h2>
+				<div class="panel-toolbar">
+					<ul class="nav nav-pills border-bottom-0" role="tablist">
+						<li class="nav-item">
+							<a class="nav-link active" data-toggle="tab" href="#pill_default-1" role="tab">Janelas</a>
+						</li>
+						@* <li class="nav-item">
+							<a class="nav-link" data-toggle="tab" href="#pill_default-2" role="tab">Plantões</a>
+						</li> *@
+					</ul>
+				</div>
+			</div>
+			<div class="panel-container show">
+				<div class="panel-content">
+					<div class="tab-content pt-4">
+						<div class="tab-pane fade show active" id="pill_default-1" role="tabpanel" aria-labelledby="pill_default-1">
+							<div class="row">
+								<div class="col-xl-12">
+									<table id="dt-basic-example" style="width:100%"
+										class="table table-bordered 
+											table-hover table-striped w-100
+											display nowrap">
+									</table>
+								</div>
+							</div>					
+						</div>
+						<div class="tab-pane fade" id="pill_default-2" role="tabpanel" aria-labelledby="pill_default-2">
+							<div class="row">
+								<div class="col-xl-12">
+									<form id="form-meu-reforco-regras" method="post">
+										<div class="form-group">
+											<div class="row mb-2">
+												<div class="col-lg-4">
+													<div class="form-group">
+														<input type="text" id="id" 
+															name="id"
+															class="form-control mb-2" hidden>
+													</div>
+												</div>
+												<div class="col-lg-4">
+													<div class="form-group">
+														<label class="form-label" for="entreJanelas">
+															Intervalo janelas (dias): <span class="text-danger">*</span>
+														</label>
+														<input type="number" id="entreJanelas" 
+															name="entreJanelas"
+															class="form-control mb-2 input-janelas" 
+															placeholder="Informe o intervalo entre janelas" 
+															value="" required>
+														<div class="help-block mb-3">Intervalo entre as janelas deve ser em dias. Exemplo: <strong>2</strong></div>
+													</div>
+												</div>
+												<div class="col-lg-4">
+													<div class="form-group">
+														<label class="form-label" for="nome">
+															1ª janela dia: <span class="text-danger">*</span>
+														</label>
+														<input type="number" id="dataPrimeiraJanela" 
+															name="dataPrimeiraJanela"
+															class="form-control mb-2 input-janelas" 
+															placeholder="Informe a data da primeira janela" 
+															value="" required>
+														<div class="help-block mb-3">Apenas 2 números que representem o dia do mês para abertura da janela. Exemplo: <strong>10</strong></div>
+													</div>
+												</div>
+												<div class="col-lg-4">
+													<div class="form-group">
+														<label class="form-label" for="nome">
+															2ª janela dia: <span class="text-danger">*</span>
+														</label>
+														<input type="number" id="dataSegundaJanela" 
+															name="dataSegundaJanela"
+															class="form-control mb-2 input-janelas" 
+															placeholder="Informe a data da segunda janela" 
+															value="" required disabled>
+														<div class="help-block mb-3">Apenas 2 números que representem o dia do mês para abertura da janela. Exemplo: <strong>10</strong></div>
+													</div>
+												</div>
+												<div class="col-lg-4">
+													<div class="form-group">
+														<label class="form-label" for="nome">
+															3ª janela dia: <span class="text-danger">*</span>
+														</label>
+														<input type="number" id="dataTerceiraJanela"
+															name="dataTerceiraJanela"
+															class="form-control mb-2 input-janelas" 
+															placeholder="Informe a data da terceira janela" 
+															value="" required disabled>
+														<div class="help-block mb-3">Apenas 2 números que representem o dia do mês para abertura da janela. Exemplo: <strong>10</strong></div>
+													</div>
+												</div>
+												<div class="col-lg-12">
+													<hr class="mt-4 mb-g">
+													<div class="row text-right mb-3">
+														<div class="col-lg-12">
+															<button type="button" 
+																id="btn-save-rules"
+																class="btn btn-outline-success waves-effect waves-themed">
+																<span class="fal fa-save mr-1"></span>Salvar
+															</button>
+														</div>
+													</div>
+													<hr class="mt-4 mb-g">
+												</div>
+											</div>
+										</div>
+									</form>
+								</div>
+							</div>	
+						</div>	
+					</div>							
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section ScriptsBlock {
+	<script src="~/js/dependency/moment/moment.js"></script>
+	<script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+	<script src="~/js/formplugins/select2/select2.bundle.js"></script>
+	<script src="~/js/notifications/toastr/toastr.js"></script>
+	<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+	<script src="~/js/extensions/json-extensions.js"></script>
+	<script src="~/js/extensions/automapper-extensions.js"></script>
+	<script src="~/js/extensions/dom-control-extensions.js"></script>
+
+	<script>
+		// *** api urls
+		var apisSERR = 'api/servidores-estado-reforcos-regras/';
+		var apiEnuns  = 'api/enums/';
+
+		// *** variables select2 data
+		var monthsOfYearEnum = [];
+		var plantoesEnum = [];
+		var diasTotalVagas = [];
+
+		// *** private methods
+		const getMonthsOfYearsEnum = (isEdit, row) => {
+			bobcatJS
+				.EnumStoreService
+				.listYearMonths()
+					.then((response) => {
+						if (response.status === 200)
+						{
+							response.data.forEach((item) => {
+								$("#mesRegra").append("<option value='"+item+"' selected>"+item+"</option>");
+							});
+
+							buildSelect2("#mesRegra", "Informe o mês da regra", true);
+							if (isEdit) $("#mesRegra").append("<option value='"+row.mesRegra+"' selected>"+row.mesRegra+"</option>");
+						}
+					}).catch((e) => { 
+						if (e.status === 400) return toastr['error'](e.responseText)
+						if (e.status === 500) return toastr['error'](e.responseText.title)
+
+						return toastr['error'](e)
+					})
+		}
+
+		const removeDiaSelect2 = (value) => {
+			$("#vagasPorDia option[value="+value+"]").remove();
+		}
+
+		const addDiaSelect2 = (item) => {
+			$("#vagasPorDia").append("<option value='"+item+"' selected>"+item+"</option>");
+		}
+
+		const removeAllDiasObject = (array) => {
+			try {
+				while(array.length) {
+					array.pop();
+				}
+
+				const days = [31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 09, 08, 07, 06, 05, 04, 03, 02, 01]
+				select2UpdateState("vagasPorDia", days.reverse(), "Informe o dia");
+			}
+			catch (e) {
+				toastr['error'](e);
+			}
+		}
+
+		const removeOneDia = (val1) => {
+			var elemIdToDelete = getParentNode(val1, 2);
+
+			//remove element in array object
+			var objectToDelete = diasTotalVagas.find(x => x.dia == elemIdToDelete.id.replace(/\D/g, ''));
+
+			//remove element in dom
+			$(elemIdToDelete).remove();
+
+			try {
+				diasTotalVagas.splice(diasTotalVagas.indexOf(objectToDelete), 1);
+			}
+			catch (e) {
+				toastr['error'](e);
+			}
+		}
+
+		const checkAlreadyVagaAdicionada = (dia, turno) => {
+			return diasTotalVagas.some(x => x.dia == dia && x.turno == turno)
+		}
+
+		const addTotalDias = (val1, val2, val3) => {
+			var _dia = val1.value
+			var _totalVagas = val2.value
+			var _turnoVagas = val3.value
+
+			if (bobcatJS.GeneralExtensions.isNullOrEmptyOrUndefined(_dia) ||
+			    bobcatJS.GeneralExtensions.isNullOrEmptyOrUndefined(_totalVagas) ||
+				bobcatJS.GeneralExtensions.isNullOrEmptyOrUndefined(_turnoVagas))
+			{
+				return toastr['error']("O DIA o TOTAL de VAGAS e o TURNO são requeridos.")
+			}
+
+			if (checkAlreadyVagaAdicionada(_dia, _turnoVagas)) return toastr['error']('Já existe limite de vaga adicionado para este dia e turno. <br> Caso queira alterá-lo, localize-o na lista, exclua-o, então informe novamente um novo limite de vagas para o turno.')
+
+			//set id dynamically
+			var _index;
+			if (diasTotalVagas.length == 0)
+			{
+				_index = 1;
+			}
+			else
+			{
+				_index = diasTotalVagas.map(x => x.index).pop() + 1;
+			}
+
+			//create object
+			var diaTotalVagas = {
+				index: _index,
+				dia: _dia,
+				totalVagas: _totalVagas,
+				turno: _turnoVagas
+			};
+
+			diasTotalVagas.push(diaTotalVagas);
+
+			var badgColorDia = 'info'
+			var badgColorTotalVagas = 'primary'
+			var badgColorTurno = diaTotalVagas.turno == "NOTURNO" ? 'dark' : 'warning'
+			var iconTurno = diaTotalVagas.turno == "NOTURNO" ? "moon-stars" : "sun"
+
+			var badgColorTotalDia = 'warning'
+			var newDiaTotal = '<div class="form-group row" id="new_diaTotal_'+diaTotalVagas.dia+'">'+
+									'<label class="form-label col-sm-3 col-form-label" for="diaTotal_1"></label>'+
+									'<div class="col-lg-9">'+
+										'<sup id="new_dia_content_'+diaTotalVagas.index+'" class="badge badge-dia badge-'+badgColorDia+' fw-500" title='+diaTotalVagas.dia+'>'+"Dia "+diaTotalVagas.dia+'</sup>'+
+										'<span class="vertical-stroke-sm vertical-stroke-sm-posl-1"></span>'+
+										'<sup id="new_diaTotal_content_'+diaTotalVagas.index+'" class="badge badge-diaTotal badge-'+badgColorTotalVagas+' fw-500" title='+"Limite de "+diaTotalVagas.totalVagas+'>'+diaTotalVagas.totalVagas+ " vagas" +'</sup>'+
+										'<span class="vertical-stroke-sm vertical-stroke-sm-posl-2"></span>'+
+										'<sup id="new_diaTotal_content_'+diaTotalVagas.index+'" class="badge badge-diaTurno badge-'+badgColorTurno+' fw-500" title='+"Limite de "+diaTotalVagas.turno+'>'+diaTotalVagas.turno+'<i class="fal fa-'+iconTurno+ ' position-absolute pos-right opacity-50 pos-bottom mb-1 mr-1" style="font-size:1.2rem"></i></sup>'+
+										'<a onclick="removeOneDia(this)" class="text-white btn btn-remove-dia-total btn-sm btn-danger btn-icon ml-1" title="Excluir Dia">'+
+											'<i class="fal fa-times"></i>'+
+										'</a>'+
+									'</div>'+
+							  '</div>';
+
+			$("#row_vagas-por-dia").after(newDiaTotal);
+
+			$("#vagasPorDiaTotal").val('');
+			$("#vagasPorDiaTotal").focus();
+		};
+
+		const getPlantoesEnum = (isEdit, row) => {
+			$.ajax({
+				url: apiEnuns + "plantoes",
+				type: 'GET',
+				contentType: "application/json;charset=utf-8",
+				success: function(success) {
+					success.forEach((item) => {
+						$("#nomePrimeiroPlantao").append("<option value='"+item+"' selected>"+item+"</option>");
+					});
+
+					buildSelect2("#nomePrimeiroPlantao", "Informe primeiro plantão mês", false, false)
+					if (isEdit) $("#nomePrimeiroPlantao").append("<option value='"+row.nomePrimeiroPlantao+"' selected>"+row.nomePrimeiroPlantao+"</option>");
+				},
+				error: function (error, jqXHR, textStatus, errorThrown) {
+					if (error.status == 400)
+					{
+						Swal.fire({
+							title: "Problemas ao obter os meses do ano!",
+							text: error.responseText,
+							icon: "error",
+							timer: 10000,
+							timerProgressBar: true,
+							showCancelButton: false,
+							showConfirmButton: false,
+							buttons: false
+						});
+					} else if (error.status == 500) {
+						Swal.fire({
+							title: "Problemas ao obter os meses do ano!",
+							text: error.responseText.title,
+							icon: "error",
+							timer: 10000,
+							timerProgressBar: true,
+							showCancelButton: false,
+							showConfirmButton: false,
+							buttons: false
+						});
+					} else {
+						const returnObj = Object.entries(error.responseJSON.errors);
+						returnObj.forEach(function(err) {
+							err[1].forEach(function (int) {
+								toastr["error"](err[0], int);
+							})
+						});
+					}
+				}
+			});
+		}
+
+		const buildSelect2 = (id, placeholder, setFocus, fromEdit) => {
+			$(id).select2().val(null);
+			$(id).each(function () {
+				var select = $(this);
+				select.select2({
+					width: '100%',
+					allowClear: true,
+					language: {
+						noResults: function () {
+							return "Nenhum registro encontrado";
+						}
+					}
+				});
+			});
+			$(id).select2({
+				placeholder: placeholder
+			});
+
+			if (setFocus) return $(id).select2('focus');
+		}
+
+		const buildLabelInfo1 = (targetE, title, text, color, isBefore) => {
+			var label = '<div class="form-group row" id="row_labelInfo">' +
+							'<div class="col-lg-12 alert alert-'+color+' pt-3 pb-0 mb-0 text-center">'+
+								'<p><strong>'+ title + "<br/>" + text +'</strong></p>'+
+		     				'</div>';
+						'</div>';
+
+			if (isBefore)
+			{
+				$(targetE).before(label);
+			} else {
+				$(targetE).after(label);
+			}
+		}
+
+		const select2UpdateState = (select2Id, data, placeholder) => {
+			if (bobcatJS.GeneralExtensions.isNullOrEmptyOrUndefined(data)) return buildSelect2(`#${select2Id}`, "Nenhum registro encontrado", false, false)	
+
+			data.forEach((item) => {
+				$(`#${select2Id}`).append("<option value='"+item+"' selected>"+item+"</option>");
+			});
+
+			buildSelect2(`#${select2Id}`, placeholder, false, false)
+		}
+
+		const createSelects2ForTotalVagasPorDia = function () {
+			removeAllDiasObject(diasTotalVagas)
+
+			// ** create dinamically select2
+			var dSelect2 = '<div class="form-group row" id="row_vagas-por-dia">'+
+								'<label class="form-label col-sm-3 col-form-label text-right"'+
+										'for="vagasPorDia">'+
+										'Vagas por dia:'+
+								'</label>'+
+								'<div class="col-lg-3">'+
+									'<select name="vagasPorDia" class="select2 form-control select2-vagas-por-dia"'+
+										'id="vagasPorDia">'+
+									'</select>'+
+								'</div>'+
+								'<span class="vertical-stroke-md"></span>'+
+								'<div class="col-lg-2"">'+
+									'<input type="number" name="vagasPorDiaTotal" class="form-control"'+
+										'placeholder="Total vagas" id="vagasPorDiaTotal" />'+
+								'</div>'+
+								'<span class="vertical-stroke-md"></span>'+
+								'<div class="col-lg-3">'+
+									'<select name="vagasPorDiaTurno" class="select2 form-control select2-vagas-por-dia-turno"'+
+										'id="vagasPorDiaTurno">'+
+									'</select>'+
+								'</div>'+
+								'<div class="d-flex demo">'+
+									'<a data-id="btn-add-total-dia" '+
+										'onClick="addTotalDias(vagasPorDia, vagasPorDiaTotal, vagasPorDiaTurno)"'+
+										'class="text-white btn btn-sm btn-success btn-icon btn-inline-block mr-1 '+
+										'btn-success btn-icon btn-inline-block mr-1" '+
+										'title="Adicionar total vagas por dia" style="position: relative; top: 6px">'+
+										'<i class=\"@(Settings.Theme.IconPrefix) fa-check\"></i>'+
+									'</a>'+
+								'</div>'+
+							'</div>'
+
+			$("#row_nomePrimeiroPlantao").after(dSelect2);
+			$(".select2-vagas-por-dia").select2();
+			$(".select2-vagas-por-dia-turno").select2();
+
+			const days = [31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 09, 08, 07, 06, 05, 04, 03, 02, 01]
+			select2UpdateState("vagasPorDia", days.reverse(), "Informe o dia");
+
+			const turnos = ["DIURNO", "NOTURNO"]
+			select2UpdateState("vagasPorDiaTurno", turnos, "Informe o turno");
+		}
+
+		const setVagasPorDia = (row) => {
+			// ** check param to null, empty, undefined
+			if (bobcatJS.GeneralExtensions.isNullOrEmptyOrUndefined(row)) return toastr['error']("Registro de regra requerido.")
+			if (bobcatJS.GeneralExtensions.isNullOrEmptyOrUndefined(row.vagasPorDia)) return toastr['error']("Registro das vagas por dia requerido.")
+
+			row.vagasPorDia.forEach((item) => {
+				var dia = { value: null }
+				var totalVagas = { value: null }
+				var turno = { value: null }
+
+				dia.value = item.dia
+				totalVagas.value = item.totalVagas
+				turno.value = item.turno
+
+				addTotalDias(dia, totalVagas, turno)
+			})
+		};
+
+		$(document).ready(function () {
+			// *** atalho CTRL + Z
+			$(document).keydown(function(e) {
+				if (e.ctrlKey && e.which === 90) $(".btn-add").click();
+			});
+			
+			// ** handler add
+			$(document).on("click", ".btn-add", function () {
+				setTimeout(function() {
+					getMonthsOfYearsEnum(false);
+					getPlantoesEnum(false, null);
+					
+					buildLabelInfo1("#row_id", "O ano referência da regra será obtido a partir do ano da", "DATA PRIMEIRA JANELA.", "info", true);
+					
+				}, 500);
+
+				createSelects2ForTotalVagasPorDia();
+			});
+
+			// ** handler edit
+			$(document).on("click", ".btn-edit", function (event) {
+				var tableToQuery = $("#dt-basic-example").DataTable();
+         		var selectedRow = $("#dt-basic-example tr.selected");
+          		var row = tableToQuery.row(selectedRow).data();
+				
+				setTimeout(function() {
+					getMonthsOfYearsEnum(true, row);
+					getPlantoesEnum(true, row);
+
+					buildLabelInfo1("#row_id", "O ano referência da regra será obtido a partir do ano da", "DATA PRIMEIRA JANELA.", "info", true);
+				}, 500);
+
+				createSelects2ForTotalVagasPorDia();
+				setVagasPorDia(row);
+			});
+			
+			/// *** column definitions
+			var columnSet = [
+				{
+					title: "Id",
+					id: "id",
+					data: "id",
+					placeholderMsg: "Automático",
+					type: "readonly",
+					visible: false,
+					searchable: false,
+					orderable: false,
+					name: "Id"
+				},
+				{
+					title: "Mês regra",
+					id: "mesRegra",
+					data: "mesRegra",
+					type: "select",
+					multiple : false,
+					visible: true,
+					select2 : {
+						width: "100%",
+						allowClear: true,
+						minimumInputLength: 3,
+						language: {
+							inputTooShort: function() {
+								return 'Digite 3 ou mais caracteres para iniciar a busca.';
+							},
+							noResults: function() {
+								return 'Nenhum registro encontrado.'
+							}
+						}
+					},
+					searchable: false,
+					orderable: false,
+					name: "MesRegra"
+				},
+				{
+					title: "Data primeiro plantão",
+					id: "dataPrimeiroPlantao",	
+					data: "dataPrimeiroPlantao",
+					type: "date",
+					required: false,
+					searchable: false,
+					orderable: false,
+					visible: true,
+					render: function (data) {
+						return moment(data).format('DD/MM/YYYY');
+					},
+					name: "DataPrimeiroPlantao"
+				},
+				{
+					title: "Nome primeiro plantão",
+					id: "nomePrimeiroPlantao",
+					data: "nomePrimeiroPlantao",
+					type: "select",
+					multiple : false,
+					visible: true,
+					select2 : {
+						width: "100%",
+						allowClear: true,
+						minimumInputLength: 3,
+						language: {
+							inputTooShort: function() {
+								return 'Digite 3 ou mais caracteres para iniciar a busca.';
+							},
+							noResults: function() {
+								return 'Nenhum registro encontrado.'
+							}
+						}
+					},
+					searchable: true,
+					orderable: false,
+					name: "NomePrimeiroPlantao"
+				},
+				{
+					title: "Data primeira janela",
+					id: "dataPrimeiraJanela",	
+					data: "dataPrimeiraJanela",
+					type: "date",
+					required: false,
+					searchable: false,
+					orderable: false,
+					visible: true,
+					render: function (data) {
+						return moment(data).format('DD/MM/YYYY');
+					},
+					name: "DataPrimeiraJanela"
+				},
+				{
+					title: "Data segunda janela",
+					id: "dataSegundaJanela",	
+					data: "dataSegundaJanela",
+					type: "date",
+					required: false,
+					searchable: false,
+					orderable: false,
+					visible: true,
+					render: function (data) {
+						return moment(data).format('DD/MM/YYYY');
+					},
+					name: "DataSegundaJanela"
+				},
+				{
+					title: "Data terceira janela",
+					id: "dataTerceiraJanela",	
+					data: "dataTerceiraJanela",
+					type: "date",
+					required: false,
+					searchable: false,
+					orderable: false,
+					visible: true,
+					render: function (data) {
+						return moment(data).format('DD/MM/YYYY');
+					},
+					name: "DataTerceiraJanela"
+				}
+			];
+
+			/* start data table */
+			var myTable = $('#dt-basic-example')
+				.dataTable({
+				/* check datatable buttons page for more info on how this DOM structure works */
+				dom: "<'row mb-3'<'col-sm-12 col-md-3 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-9 d-flex align-items-center justify-content-end'B>>" +
+					 "<'row'<'col-sm-12'tr>>" +
+					 "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+				responsive: true,
+				ajax: {
+					url : apisSERR + 'list',
+					type: 'POST',
+					dataSrc: function (json) {
+						json.data.map((item) => {
+							diasTotalVagas.push(item)
+						})
+						
+						return transformObjArrayFieldBoolBackToFront(json.data);
+					}
+				},
+				bFilter: false,
+				@* aaSorting: [ [2,'asc'], [6,'asc'] ], *@
+				scrollY:        400,
+				scrollX:        true,
+				scrollCollapse: true,
+				serverSide: true,
+				processing: true,
+				altEditor: true,
+				pagingType: "full_numbers",
+				language: {
+					decimal: ",",
+					thousands: ".",
+					searchPlaceholder: "Busque pelo NOME PRIMEIRO PLANTÃO",
+					sProcessing: '<span id=\"loading-image\" "class="fa fa-spinner fa-spin fa-2x spinner-border spinner-border-sm text-primary mr-2""><img class="manImg" src="img/loading_alt_3.gif" width="50" height="50"></img></span>',
+					sZeroRecords: "Nenhum registro encontrado.",
+					oPaginate: {
+						"sFirst": "Primeiro",
+						"sPrevious": "Anterior",
+						"sNext": "Próximo",
+						"sLast": "Último"
+					},
+					sInfo: "Mostrando _START_ de _END_ de um total de _TOTAL_",
+					sInfoEmpty: "Nenhuma registro encontrado.",
+					sInfoFiltered: " (filtrado a partir de um total de _MAX_ registros)",
+					sInfoPostFix: "",
+					select: {
+						rows: "%d linhas selecionadas"
+					}
+				},
+				columns: columnSet,
+				select: 'single',
+				buttons: [
+					{	
+						extend: 'selected',
+						text: '<i class="@(Settings.Theme.IconPrefix) fa-times mr-1"></i> Delete',
+						name: 'delete',
+						className: 'btn-danger btn-sm mr-1'
+					},
+					{
+						extend: 'selected',
+						text: '<i class="@(Settings.Theme.IconPrefix) fa-edit mr-1"></i> Editar',
+						name: 'edit',
+						className: 'btn-warning btn-sm mr-1 btn-actions btn-edit'						
+					},
+					{
+						text: '<i class="@(Settings.Theme.IconPrefix) fa-plus mr-1"></i> Novo',
+						name: 'add',
+						className: 'btn-primary btn-sm mr-1 btn-actions btn-add'
+					}					
+				],
+				columnDefs: [
+					
+				],
+				onAddRow: function(dt, rowdata, success, error) {
+					rowdata.vagasPorDia = diasTotalVagas;
+
+					$.ajax({ 
+						url: apisSERR + "create", 
+						type: 'POST',
+						contentType: "application/json;charset=utf-8",
+						data: JSON.stringify(transformObjFieldBoolFrontToBack(rowdata), null, 4),
+						success: function (data) {
+							$(".modal").modal('hide');
+							$('#dt-basic-example').dataTable().api().ajax.reload();
+
+							Swal.fire({
+								text: "Registro criado com sucesso!",
+								icon: "success",
+								timer: 2000,
+								showCancelButton: false,
+								showConfirmButton: true,
+								confirmButtonColor: "#179c8e",
+								timerProgressBar: true,
+								buttons: false
+							});
+						},
+						error: function (error, jqXHR, textStatus, errorThrown) {						
+							$('#dt-basic-example').dataTable().api().ajax.reload();
+
+							if (error.responseJSON == null)
+							{	
+								toastr["error"](error.responseText);
+							}
+							else {
+								const returnObj = Object.entries(error.responseJSON.errors);
+
+								returnObj.forEach(function(err) {
+									err[1].forEach(function (int) {
+										toastr["error"](err[0], int);
+									})
+								});
+							}
+						}
+					});
+				},
+				onEditRow: function(dt, rowdata, success, error) {
+					rowdata.vagasPorDia = diasTotalVagas;
+
+					$.ajax({ 
+						url: apisSERR + "edit",
+						type: 'PUT',
+						contentType: "application/json;charset=utf-8",
+						data: JSON.stringify(transformObjFieldBoolFrontToBack(rowdata), null, 4),
+						success: function (data) {
+							$(".modal").modal('hide');
+							$('#dt-basic-example').dataTable().api().ajax.reload();
+
+							Swal.fire({
+								text: "Registro atualizado com sucesso!",
+								icon: "success",
+								timer: 2000,
+								showCancelButton: false,
+								showConfirmButton: true,
+								confirmButtonColor: "#179c8e",
+								timerProgressBar: true,
+								buttons: false
+							});
+						},
+						error: function (error, jqXHR, textStatus, errorThrown) {
+							$('#dt-basic-example').dataTable().api().ajax.reload();
+
+							if (error.responseJSON == null)
+							{	
+								toastr["error"](error.responseText);
+							}
+							else {
+								const returnObj = Object.entries(error.responseJSON.errors);
+
+								returnObj.forEach(function(err) {
+									err[1].forEach(function (int) {
+										toastr["error"](err[0], int);
+									})
+								});
+							}
+						}
+					});
+				},
+				onDeleteRow: function(dt, rowdata, success, error) {
+					rowdata.vagasPorDia = diasTotalVagas;
+					
+					$.ajax({ 
+						url: apisSERR + "delete",
+						type: 'DELETE', 
+						contentType: "application/json;charset=utf-8",
+						data: JSON.stringify(transformObjFieldBoolFrontToBack(rowdata), null, 4),
+						success: function (data) {
+							debugger
+							$(".modal").modal('hide');
+							$('#dt-basic-example').dataTable().api().ajax.reload();
+
+							Swal.fire({
+								text: "Registro deletado com sucesso!",
+								icon: "success",
+								timer: 2000,
+								showCancelButton: false,
+								showConfirmButton: true,
+								confirmButtonColor: "#179c8e",
+								timerProgressBar: true,
+								buttons: false
+							});
+						},
+						error: function (error, jqXHR, textStatus, errorThrown) {
+							debugger
+							$('#dt-basic-example').dataTable().api().ajax.reload();
+
+							if (error.responseJSON == null)
+							{	
+								toastr["error"](error.responseText);
+							}
+							else {
+								const returnObj = Object.entries(error.responseJSON.errors);
+
+								returnObj.forEach(function(err) {
+									err[1].forEach(function (int) {
+										toastr["error"](err[0], int);
+									})
+								});
+							}
+						}
+					});
+				},		
+			});
+
+			$('#dt-basic-example_filter input').bind('keyup', function(e) {
+				$('#dt-basic-example_filter input').val($('#dt-basic-example_filter input').val().toUpperCase());
+			});
+		});
+	</script>
+}

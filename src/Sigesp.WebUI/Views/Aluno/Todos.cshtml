@@ -1,0 +1,1052 @@
+@model Sigesp.Application.ViewModels.Cards.AlunoCardViewModel
+
+@{
+	ViewData["Title"] = "Alunos";
+	ViewData["PageName"] = "aluno_todos";
+	ViewData["Category0"] = @Settings.App;
+	ViewData["Category1"] = "Educação";
+	ViewData["Heading"] = "<i class='subheader-icon fal fa-users-class'></i> Alunos<span class='fw-300'></span> <sup class='badge badge-primary fw-500'>NOVO</sup>";
+	ViewData["PageDescription"] = "Listagem de todos os alunos";
+}
+@section HeadBlock {
+	<link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/formplugins/select2/select2.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/theme-demo.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/notifications/toastr/toastr.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/notifications/sweetalert2/sweetalert2.bundle.css">
+}
+
+<div class="row">
+	<div class="col-xl-12">
+		<div id="panel-1" class="panel">
+			<div class="panel-hdr">	
+				<h2>
+					Gerenciamento dos <span class="fw-300"><i>Alunos</i></span> 
+				</h2>
+				<div class="panel-toolbar">
+					<ul class="nav nav-pills border-bottom-0" role="tablist">
+						<li class="nav-item">
+							<a class="nav-link active" data-toggle="tab" href="#pill_default-1" role="tab">Principal</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" data-toggle="tab" href="#pill_default-2" role="tab">Vídeos</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div class="panel-container show">
+				<div class="panel-content">									
+					<div class="tab-content pt-4">
+						<div class="tab-pane fade show active" id="pill_default-1" role="tabpanel" aria-labelledby="pill_default-1">
+							<div class="row">
+								<div class="col-xl-12">
+									<table id="dt-basic-example" style="width:100%"
+										class="table table-bordered 
+											table-hover table-striped w-100
+											display nowrap">
+									</table>									
+								</div>
+							</div>
+						</div>
+						<div class="tab-pane fade" id="pill_default-2" role="tabpanel" aria-labelledby="pill_default-2">
+							<div class="row">
+								<div class="col-xl-12">
+									<div class="panel-tag">
+										<strong>Como ativar ou desativar um aluno:</strong> <a href="https://youtu.be/4pJt_7iHWpo" target="_blank">Clique aqui</a> e assista ao vídeo tutorial para aprender a ativar ou desativar um aluno.</a>
+									</div>
+								</div>
+							</div>	
+						</div>						
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section ScriptsBlock {
+<script src="~/js/dependency/moment/moment.js"></script>
+<script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+<script src="~/js/formplugins/select2/select2.bundle.js"></script>
+<script src="~/js/datagrid/datatables/datatables.export.js"></script>
+<script src="~/js/notifications/toastr/toastr.js"></script>
+<script src="~/js/extensions/automapper-extensions.js"></script>
+<script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+<script src="~/js/notifications/sweetalert2/sweetalert2.bundle.js"></script>
+
+<script>
+	toastr.options = {
+		"closeButton": false,
+		"debug": false,
+		"newestOnTop": true,
+		"progressBar": true,
+		"positionClass": "toast-top-right",
+		"preventDuplicates": true,
+		"onclick": null,
+		"showDuration": 300,
+		"hideDuration": 100,
+		"timeOut": 5000,
+		"extendedTimeOut": 1000,
+		"showEasing": "swing",
+		"hideEasing": "linear",
+		"showMethod": "fadeIn",
+		"hideMethod": "fadeOut"
+	};
+
+	const apiAlunos = "/api/alunos";
+	const apiAlunosNovo = "/api/alunos/novo";
+	const apiAlunosEdicao = "/api/alunos/edicao";
+	const apiAlunosDelete = "/api/alunos/delete";
+	const apiAlunosLista = "/api/alunos/lista";
+
+	var boolOptions = ["NÃO", "SIM"];
+	var escolaridades = [];
+	var atividadesEducacionais = [];
+	var detentos = [];
+	var controls = {
+		leftArrow: '<i class="@(Settings.Theme.IconPrefix) fa-angle-left" style="font-size: 1.25rem"></i>',
+		rightArrow: '<i class="@(Settings.Theme.IconPrefix) fa-angle-right" style="font-size: 1.25rem"></i>'
+	}
+
+	@foreach (var escolaridade in @Model.Escolaridades)
+	{
+		@:escolaridades.push('@escolaridade');
+	}
+
+	@foreach (var atividadeEducacional in @Model.AtividadesEducacionais)
+	{
+		@:atividadesEducacionais.push('@atividadeEducacional');
+	}
+
+	@foreach (var detento in @Model.Detentos)
+	{
+		@:detentos.push('@detento');
+	}
+
+	var oldExportAction = function (self, e, dt, button, config) {
+		if (button[0].className.indexOf('buttons-excel') >= 0) {
+			if ($.fn.dataTable.ext.buttons.excelHtml5.available(dt, config)) {
+				$.fn.dataTable.ext.buttons.excelHtml5.action.call(self, e, dt, button, config);
+			}
+			else {
+				$.fn.dataTable.ext.buttons.excelFlash.action.call(self, e, dt, button, config);
+			}
+		} else if (button[0].className.indexOf('buttons-print') >= 0) {
+			$.fn.dataTable.ext.buttons.print.action(e, dt, button, config);
+		}
+	};
+
+	var newExportAction = function (e, dt, button, config) {
+		var self = this;
+		var oldStart = dt.settings()[0]._iDisplayStart;
+
+		dt.one('preXhr', function (e, s, data) {
+			// Just this once, load all data from the server...
+			data.start = 0;
+			data.length = 2147483647;
+
+			dt.one('preDraw', function (e, settings) {
+				// Call the original action function 
+				oldExportAction(self, e, dt, button, config);
+
+				dt.one('preXhr', function (e, s, data) {
+					// DataTables thinks the first item displayed is index 0, but we're not drawing that.
+					// Set the property to what it was before exporting.
+					settings._iDisplayStart = oldStart;
+					data.start = oldStart;
+				});
+
+				// Reload the grid with the original page. Otherwise, API functions like table.cell(this) don't work properly.
+				setTimeout(dt.ajax.reload, 0);
+
+				// Prevent rendering of the full data to the DOM
+				return false;
+			});
+		});
+
+		// Requery the server with the new one-time export settings
+		dt.ajax.reload();
+	};
+
+	var eventFired = function (param) {
+        console.log(param);
+    };
+
+	var activateOrDeactivate = function (id, isDeleted) {
+		
+		if (id == null || id == "") toastr["error"]("Problemas ao obter o id do registro para ativação/desativação. Tente mais tarde, caso persista o problema informe a equipe técnica do sistema.");
+		
+		var action = isDeleted == "SIM" ? "DESATIVAR": "ATIVAR";
+		Swal.fire({
+			title: "Confirmação de ação",
+			text: "Realmente deseja " + action + " o aluno?",
+			icon: "warning",
+			showCancelButton: true,
+			confirmButtonColor: "#ffc241",
+			confirmButtonText: "Sim, quero "+ action +" o aluno!",
+			cancelButtonText: "Desistir",   
+		}).then(function (result) {
+			if (result.value) {
+				$.ajax({
+					url: "/api/alunos/activate-or-deactivate",
+					type: 'PUT',
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(id, null, 4),
+					success: function(success) {
+						debugger;
+						var dataRet = action == "DESATIVAR" ? "Desativado" : "Ativado";
+						
+						Swal.fire({
+							title: dataRet + "!",
+							text: "Operação realizada com sucesso!",
+							icon: "success",
+							timer: 2000,
+							confirmButtonColor: "#1dc9b7"
+						});
+
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						if (error.status == 400) toastr["error"](error.responseText);
+						if (error.status == 404) toastr["error"](error.responseText);
+						if (error.status == 500) toastr["error"](error.responseText.title);
+					}
+				});
+			}
+		});
+	};
+
+	var changeDetentoRegime = function (id, obj) {
+		
+		if (id == null || id == "")
+		{
+			toastr["error"]("Problemas ao obter o id do registro para ativação/desativação. Tente mais tarde, caso persista o problema, informe o suporte do sistema.");
+		}
+		
+		Swal.fire({
+			title: "Confirmação de ação",
+			text: "Realmente deseja " + action + " o registro?",
+			icon: "warning",
+			showCancelButton: true,
+			confirmButtonColor: "#ffc241",
+			confirmButtonText: "Sim, quero "+ action +" o registro!",
+			cancelButtonText: "Desistir",   
+		}).then(function (result) {
+			if (result.value) {
+				$.ajax({
+					url: "/api/lista-amarela/enable-disable",
+					type: 'POST',
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(id, null, 4),
+					success: function(success) {
+						var dataRet = success.data ? "Ativado" : "Desativado";
+						
+						Swal.fire({
+							title: dataRet + "!",
+							text: "Operação realizada com sucesso!",
+							icon: "success",
+							confirmButtonColor: "#1dc9b7"
+						});
+
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						toastr["error"](error);
+					}
+				});
+			}
+		});
+	};
+
+	var cleanModal = function() {
+		$("#transferenciaLocal").val("");
+		$("#transferenciaTipo").select2().val('NENHUM');
+		$("#transferenciaDataRetornoPrevisto").val("");
+		$("#transferenciaDataSaida").val("");
+	};
+
+	var runDatePicker = function () {
+		// input group layout for modal demo
+		$('.datepicker-datas').datepicker({
+			orientation: "top left",
+			todayHighlight: true,
+			templates: controls,
+			format: 'dd/mm/yy'
+		});
+	};
+
+	var getDetentoForModalTransferencia = function (ipen) {
+
+		if (ipen == null || ipen == "")
+		{
+			toastr["error"]("Problemas ao obter o IPEN do registro para efetuar a transferência. Tente mais tarde, caso persista o problema, informe o suporte do sistema.");
+		};
+
+		$.ajax({ 
+			url: "/api/detentos/getByIpen-forModalTransferencia", 
+			type: 'POST',
+			contentType: "application/json;charset=utf-8",
+			data: JSON.stringify(ipen, null, 4),
+			success: function(success) {
+				$("#modal-header-transfer").text("Transferindo detento " + success.data.nome);
+
+				$("input[name=modal-detentoIpen]").val(success.data.ipen);
+				
+				$("input[name=modal-detentoNome]").val(success.data.nome);
+
+				$("input[name=modal-detentoRegime]").val(success.data.regime);
+			},
+			error: function (error, jqXHR, textStatus, errorThrown) {
+				const returnObj = Object.entries(error.responseJSON.errors);
+
+				returnObj.forEach(function(err) {
+					err[1].forEach(function (int) {
+						toastr["error"](err[0], int);
+					})
+				});
+			}
+		});	
+	};
+
+	$("#transferencia-save").click(function (event) {
+		@* var id = $("#listaAmarela-id").val(); *@
+		
+		var detentoViewModel = {
+			ipen: $("#modal-detentoIpen").val(),
+			nome: $("#modal-detentoNome").val(),
+			regime: $("#detentoRegimeNovo").val(),
+			transferenciaLocal: $("#transferenciaLocal").val(),
+			transferenciaTipo: $("#transferenciaTipo").val(),
+			transferenciaDataRetornoPrevisto: $("#transferenciaDataRetornoPrevisto").val(),
+			transferenciaDataSaida: $("#transferenciaDataSaida").val()
+		};
+		
+		$.ajax({ 
+			url: "/api/detentos/transfer",
+			type: 'POST',
+			contentType: "application/json;charset=utf-8",
+			data: JSON.stringify(detentoViewModel, null, 4),
+			success: function (success) {
+				$('#change-detento-modal').modal('toggle');
+
+				toastr["success"]("Detento transferido com sucesso!")
+			},
+			error: function (error, jqXHR, textStatus, errorThrown) {
+				const returnObj = Object.entries(error.responseJSON.errors);
+
+				returnObj.forEach(function(err) {
+					err[1].forEach(function (int) {
+						toastr["error"](err[0], int);
+					})
+				});
+			}
+		});
+	});
+
+	var toUpperCaseFormFields = function () {
+		$('#artigos').val($('#artigos').val().toUpperCase());
+		$('#comarca').val($('#comarca').val().toUpperCase());
+		$('#penaAno').val($('#penaAno').val().toUpperCase());
+		$('#penaMes').val($('#penaMes').val().toUpperCase());
+		$('#penaDia').val($('#penaDia').val().toUpperCase());
+		$('#diasMedidaDisciplinar').val($('#diasMedidaDisciplinar').val().toUpperCase());
+		$('#acaoPenal').val($('#acaoPenal').val().toUpperCase());
+		$('#previsaoBeneficioObservacao').val($('#previsaoBeneficioObservacao').val().toUpperCase());
+	};
+
+	var getDetentoByIpen = function (ipen) {
+		var ipen = $("#detentoIpen").val();
+
+		if (ipen.length < 6)
+		{
+			$("#detentoIpen").val(null);
+			$("#detentoNome").select2().val(null);
+			$("#detentoGaleria").val("Automático");
+			$("#detentoCela").val("Automático");
+			$("#detentoIpen").focus();
+
+			$("#detentoNome").select2({
+				placeholder: "Informe um reeducando"
+			});
+
+			toastr["error"]("Ipen inválido!");
+		}
+		else
+		{
+			$.ajax({ 
+				url: "/api/detentos/get-by-ipen", 
+				type: 'POST',
+				contentType: "application/json;charset=utf-8",
+				data: JSON.stringify(ipen, null, 4),
+				success: function(success) {
+					$('#exceptionMultiplesDetentos').remove();
+					
+					$('#detentoIpen').val(success.ipen);
+
+					$('#detentoNome').select2().val(success.nome);
+					$('#detentoNome').select2();
+
+					$('#detentoGaleria').val(success.galeria);
+					$('#detentoCela').val(success.cela);
+
+					$('#escolaridade').select2('focus');
+				},
+				error: function (error, jqXHR, textStatus, errorThrown) {
+					const returnObj = Object.entries(error.responseJSON.errors);
+
+					returnObj.forEach(function(err) {
+						err[1].forEach(function (int) {
+							toastr["error"](err[0], int);
+						})
+					});
+				}
+			});
+		}
+	};
+
+	var getDetentoByIpenForExceptionMultiplesDetentos = function (ipen) {
+		
+		if (ipen.length < 6)
+		{
+			$("#detentoIpen").val(null);
+			$("#detentoNome").select2().val(null);
+			$("#detentoGaleria").val("Automático");
+			$("#detentoCela").val("Automático");
+			$("#detentoIpen").focus();
+
+			$("#detentoNome").select2({
+				placeholder: "Informe um reeducando"
+			});
+
+			toastr["error"]("Ipen inválido!");
+		}
+		else
+		{
+			$.ajax({ 
+				url: "/api/detentos/get-by-ipen", 
+				type: 'POST',
+				contentType: "application/json;charset=utf-8",
+				data: JSON.stringify(ipen, null, 4),
+				success: function(success) {
+					$('#exceptionMultiplesDetentos').remove();
+					
+					$('#detentoIpen').val(success.ipen);
+
+					$('#detentoNome').select2().val(success.nome);
+					$('#detentoNome').select2();
+
+					$("#detentoGaleria").val(success.galeria);
+					$("#detentoCela").val(success.cela);				
+				},
+				error: function (error, jqXHR, textStatus, errorThrown) {
+					const returnObj = Object.entries(error.responseJSON.errors);
+
+					returnObj.forEach(function(err) {
+						err[1].forEach(function (int) {
+							toastr["error"](err[0], int);
+						})
+					});
+				}
+			});
+		}
+	};
+
+	var exceptionMultiplesDetentos = function (detentos) {
+		
+		var divPrincipal = 	'<div id="exceptionMultiplesDetentos">'+
+						'<hr class="mt-4 mb-g">'+
+						'<div class="form-group row">'+ 
+							'<div class="col-xl-3"></div>'+
+							'<div class="col-xl-9">'+
+								'<div class="alert alert-warning p-1 pt-3 mb-0" id="emd-before-table">'+
+									'<p><strong>Encontramos mais de um detento para o mesmo nome, portanto, escolha uma das opções abaixo.'+
+								'</div>' +
+								'<table class="table table-striped w-100">'+
+									'<thead>'+
+										'<tr>'+
+											'<th>Ipen</th>'+
+											'<th>Nome</th>'+                 
+											'<th>Ação</th>'+
+										'</tr>'+
+									'</thead>'+
+									'<tbody id="tbody-core">'+										
+									'</tbody>'+
+								'</table>'+
+							'</div>'+
+						'</div>'+
+						'<hr class="mt-4 mb-g">'
+					'</div>';
+
+		$("#row_detentoNome").after(divPrincipal);
+
+		detentos.forEach(function(detento) {
+			var detentosInTable = '<tr>'+
+								'<td>'+detento.ipen+'</td>'+
+								'<td>'+detento.nome+'</td></a>'+
+								'<td>'+
+									'<div class="d-flex demo">'+
+										'<a onclick=getDetentoByIpenForExceptionMultiplesDetentos("'+detento.ipen+'") class="text-white btn btn-sm btn-info btn-icon btn-inline-block mr-1" title="Escolher este detento"><i class="fal fa-level-up"></i></a>'+
+									'</div>'+
+								'</td>'+
+							  '</tr>';
+
+			$("#tbody-core").append(detentosInTable);
+		});
+	};
+
+	$(document).ready( function () {
+		//Tecla atalho CTRL + Z
+		$(document).keydown(function(e) {
+			if (e.ctrlKey && e.which === 90) $(".btn-add").click();
+			
+			$(document).on("change", "#detentoIpen", function () {
+				getDetentoByIpen();
+			});
+		});
+
+		$(document).on("click", ".btn-actions", function () {
+			$("#row_id").hide();
+			$("#row_isDeleted").hide();
+			$("#row_acoes").hide();
+
+			$("#atividadesEducacionais").attr("disabled", true);
+		});
+
+		//No evento de click do botão add, set focus no campo nome depois abre a select2
+		$(document).on("click", ".btn-add", function () {
+			setTimeout(function() {
+				$('#detentoIpen').focus();
+			}, 500);
+		});
+
+		$(document).on("click", ".btn-edit", function () {
+			setTimeout(function() {
+				$('#detentoIpen').attr('disabled', true);
+				$('#detentoNome').attr('disabled', true);
+
+				$('#escolaridade').select2('focus');
+			}, 500);
+
+			const id = $("#id").val();
+			$.ajax({ 
+				url: "/api/alunos/get-nome-by-id",
+				type: 'POST',
+				contentType: "application/json;charset=utf-8",
+				data: JSON.stringify(id, 4, null),
+				success: function(success) {
+					$("#detentoNome").append("<option value='"+success.data+"' selected>"+success.data+"</option>");
+					$("#detentoNome").select2().val(success);
+				},
+				error: function (error, jqXHR, textStatus, errorThrown) {
+					const returnObj = Object.entries(error.responseJSON.errors);
+
+					returnObj.forEach(function(err) {
+						err[1].forEach(function (int) {
+							toastr["error"](err[0], int);
+						})
+					});
+				}
+			});
+		});
+
+		$('#transferenciaTipo').select2({
+			dropdownParent: $('#change-detento-modal')
+		});
+
+		runDatePicker();
+
+		// Event Lot
+		var events = $("#app-eventlog");
+		// Column Definitions
+		var columnSet = [
+			{
+				title: "Id",
+				id: "id",
+				data: "id",
+				placeholderMsg: "Automático",
+				type: "readonly",
+				visible: false,
+				required: false
+			},
+			{
+				title: "Ipen",
+				id: "detentoIpen",
+				data: "detentoIpen",
+				type: "text",
+				placeholderMsg: "Informe o IPEN",
+				required: true,
+				searchable: true,
+				orderable: true,
+				visible: true,
+				name: "Detento.Ipen",
+				render: function(data, type, row, meta) {
+					return data;
+				}
+			},
+			{
+				title: "Nome",
+				id: "detentoNome",
+				data: "detentoNome",
+				type: "select",
+				multiple : false,
+				options: detentos,
+				visible: true,
+				select2 : {
+					placeholder: "Selecione um reeducando",
+					width: "100%",
+					allowClear: true,
+					minimumInputLength: 3,
+					language: {
+						inputTooShort: function() {
+							return 'Digite 3 ou mais caracteres para iniciar a busca';
+						}
+					}
+				},
+				editorOnChange : function(event, altEditor) {
+					var detentoNome = $(event.currentTarget).val();
+					
+					if (detentoNome != null)
+					{
+						$.ajax({
+							url: "api/detentos/get-all-by-nome",
+							type: 'POST',
+							contentType: "application/json;charset=utf-8",
+							data: JSON.stringify(detentoNome, null, 4),
+							success: function(success) {
+								if (success.length == 0)
+								{
+									toastr["error"]("Nenhum detento encontrado com o nome informado.");
+									
+								}
+								else if (success.length == 1)
+								{
+									$('#exceptionMultiplesDetentos').remove();
+
+									$("input[name=Ipen]").val(success[0].ipen);
+									$("#detentoGaleria").val(success[0].galeria);
+									$("#detentoCela").val(success[0].cela);
+								}
+								else
+								{
+									exceptionMultiplesDetentos(success);
+								}
+							},
+							error: function (error, jqXHR, textStatus, errorThrown) {
+								const returnObj = Object.entries(error.responseJSON.errors);
+
+								returnObj.forEach(function(err) {
+									err[1].forEach(function (int) {
+										toastr["error"](err[0], int);
+									})
+								});
+							}
+						});	
+					}
+					else
+					{
+						$("input[name=Ipen]").val('');
+						$("#detentoRegime").select2(null);
+						$("#detentoRegime").select2();
+					}
+				},
+				render : function (data, type, row, meta) {
+					return data;
+				},
+				searchable: true,
+				orderable: true,
+				required: true,
+				name: "Detento.Nome"
+			},
+			{
+				title: "Galeria",
+				id: "detentoGaleria",
+				data: "detentoGaleria",
+				placeholderMsg: "Automático",
+				type: "readonly",
+				visible: true,
+				required: false,
+				name: "Detento.Galeria"
+			},
+			{
+				title: "Cela",
+				id: "detentoCela",
+				data: "detentoCela",
+				placeholderMsg: "Automático",
+				type: "readonly",
+				visible: true,
+				required: false,
+				name: "Detento.Cela"
+			},
+			{
+				title: "Escolaridade",
+				id: "escolaridade",
+				data: "escolaridade",
+				type: "select",
+				multiple : false,
+				options: escolaridades,
+				visible: true,
+				select2 : {
+					placeholder: "Selecione a escolaridade",
+					width: "100%",
+					allowClear: true,
+					minimumInputLength: 3,
+					language: {
+						inputTooShort: function() {
+							return 'Digite 3 ou mais caracteres para iniciar a busca';
+						}
+					}
+				},
+				searchable: false,
+				orderable: true,
+				visible: true,
+				name: "Escolaridade"
+			},
+			{
+				title: "Ativo?",
+				id: "isDeleted",
+				data: "isDeleted",
+				type: "select",
+				options: boolOptions,
+				searchable: false,
+				orderable: false,
+				multiple : false,
+				visible: true,
+				select2 : { width: "100%"},
+				render: function (data) {
+					return data;
+				}
+			},
+			{
+				title: "Atividades educacionais",
+				id: "atividadesEducacionais",
+				data: "atividadesEducacionais",
+				type: "select",
+				multiple : true,
+				options: atividadesEducacionais,
+				visible: true,
+				select2 : {
+					width: "100%",
+					allowClear: false
+				},
+				searchable: false,
+				orderable: true,
+				visible: true,
+				name: "AtividadesEducacionais"
+			},
+			{
+				title: "Ceja Id",
+				id: "cejaId",	
+				data: "cejaId",
+				type: "text",
+				required: false,
+				searchable: false,
+				orderable: false,
+				placeholderMsg: "Informe o id do registro do CEJA",
+				visible: true,
+				name: "CejaId"
+			},
+			{
+				title: "Ceja matrícula",
+				id: "cejaMatricula",	
+				data: "cejaMatricula",
+				type: "text",
+				required: false,
+				searchable: false,
+				orderable: false,
+				placeholderMsg: "Informe a matrícula do CEJA",
+				visible: true,
+				name: "CejaMatricula"
+			},
+			{
+				title: "Ceja data matrícula",
+				id: "cejaDataMatricula",	
+				data: "cejaDataMatricula",
+				type: "date",
+				required: false,
+				searchable: false,
+				visible: true,
+				render: function (data) {
+					return moment(data).format('DD/MM/YYYY');
+				},
+				name: "CejaDataMatricula"
+			},
+			{
+				title: "Turma número",
+				id: "turmaNumero",	
+				data: "turmaNumero",
+				type: "text",
+				required: false,
+				searchable: false,
+				orderable: false,
+				placeholderMsg: "Informe o número da turma no CEJA",
+				visible: true,
+				name: "TurmaNumero"
+			},
+			{
+				title: "Turma sala",
+				id: "turmaSala",	
+				data: "turmaSala",
+				type: "text",
+				required: false,
+				searchable: false,
+				orderable: false,
+				placeholderMsg: "Informe o número da sala no CEJA",
+				visible: true,
+				name: "TurmaSala"
+			},
+			{
+				title: "Enturmado?",
+				id: "isEnturmado",
+				data: "isEnturmado",
+				type: "select",
+				options: boolOptions,
+				searchable: false,
+				orderable: false,
+				multiple : false,
+				visible: true,
+				select2 : { width: "100%"}
+			},
+			{
+				title: "Data pedido enturmação",
+				id: "dataPedidoEnturmacao",	
+				data: "dataPedidoEnturmacao",
+				type: "date",
+				required: false,
+				searchable: false,
+				visible: true,
+				render: function (data) {
+					return moment(data).format('DD/MM/YYYY');
+				},
+				name: "DataPedidoEnturmacao"
+			},
+			{
+				title: "Ações",
+				id: "acoes",
+				data: "acoes",
+				visible: true,
+				type: "readonly"
+			}
+		]
+		/* start data table */
+		var myTable = $('#dt-basic-example')
+			.dataTable({
+			/* check datatable buttons page for more info on how this DOM structure works */
+			dom: "<'row mb-3'<'col-sm-12 col-md-6 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-6 d-flex align-items-center justify-content-end'B>>" +
+				"<'row'<'col-sm-12'tr>>" +
+				"<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+			ajax: {
+				url : apiAlunosLista,
+				type: 'POST',
+				dataSrc: function (json) {
+					@* return transformObjArrayFieldBoolBackToFront(json.data.data); *@
+					return transformObjArrayFieldBoolBackToFront(json.data.data);
+				}
+        	},
+			aaSorting: [ [3,'asc'], [4,'asc'] ],
+			scrollY:        400,
+			scrollX:        true,
+			scrollCollapse: true,
+			serverSide: true,
+			processing: true,
+			altEditor: true,
+			pagingType: "full_numbers",
+			language: {
+            	decimal: ",",
+            	thousands: ".",
+        		searchPlaceholder: "Busque pelo IPEN ou NOME",
+				sProcessing: '<span id=\"loading-image\" "class="fa fa-spinner fa-spin fa-2x spinner-border spinner-border-sm text-primary mr-2""><img class="manImg" src="img/loading_alt_3.gif" width="50" height="50"></img></span>',
+				sZeroRecords: "Nenhum registro encontrado.",
+				oPaginate: {
+                    "sFirst": "Primeiro",
+                    "sPrevious": "Anterior",
+                    "sNext": "Próximo",
+                    "sLast": "Último"
+                },
+				sInfo: "Mostrando _START_ de _END_ de um total de _TOTAL_",
+                sInfoEmpty: "Nenhuma registro encontrado.",
+                sInfoFiltered: " (filtrado a partir de um total de _MAX_ registros)",
+                sInfoPostFix: "",
+				select: {
+					rows: "%d linhas selecionadas"
+				}
+        	},
+			columns: columnSet,
+			select: 'single',
+			fixedColumns: {
+				leftColumns: 3
+			},
+			buttons: [
+				{
+					extend: 'selected',
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-edit mr-1"></i> Editar',
+					name: 'edit',
+					className: 'btn-warning btn-sm mr-1 btn-actions btn-edit'
+				},
+				{
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-plus mr-1"></i> Novo',
+					name: 'add',
+					className: 'btn-primary btn-sm mr-1 btn-actions btn-add'
+				},
+				{
+					extend: 'excelHtml5',
+					text: 'Excel',
+					exportOptions: {
+						columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+                	},
+					className: 'btn-outline-success btn-sm',
+					action: newExportAction
+            	}						
+			],
+			columnDefs: [
+				{
+					targets: -1,
+					orderable: false,
+					render: function(data, type, full, meta) {
+						var colorButton = full.isDeleted == "NÃO" ? "success" : "danger";
+						var iconButton = full.isDeleted == "NÃO" ? "level-up" : "level-down";
+						var titleNew = full.isDeleted == "NÃO" ? "Ativar aluno" : "Desativar aluno";
+
+						return "\n\t\t\t\t\t\t<div class='d-flex demo'>\n\t\t\t\t\t\t\t<a onClick=activateOrDeactivate('"+full.id+"','"+full.isDeleted+"') class='text-white btn btn-sm btn-"+colorButton+" btn-icon btn-inline-block mr-1' title='"+titleNew+"'><i class=\"@(Settings.Theme.IconPrefix) fa-"+iconButton+"\"></i></a>\n\t\t\t\t\t\t\t</div>";
+					}
+				},
+				{
+					targets: 5,
+					render: function(data, type, full, meta) {
+						var badge = {
+							'NAO_INFORMADO': {'title': 'NÃO INFORMADO', 'class': 'badge-dark'},
+							'ENSINO_FUNDAMENTAL_I': {'title': 'ENSINO FUNDAMENTAL I', 'class': 'badge-success'},
+							'ENSINO_FUNDAMENTAL_II': {'title': 'ENSINO FUNDAMENTAL II', 'class': 'badge-primary'},
+							'ENSINO_MEDIO': {'title': 'ENSINO MÉDIO', 'class': 'badge-warning'},
+							'ENSINO_SUPERIOR': {'title': 'ENSINO SUPERIOR', 'class': 'badge-info'}
+						};
+						if (typeof badge[data] === 'undefined') {
+							return data;
+						}
+						return '<span class="badge ' + badge[data].class + ' badge-pill">' + badge[data].title + '</span>';
+					},
+				},
+				{
+					targets: 6,
+					render: function(data, type, full, meta) {
+						var badge = {
+							'SIM': {'title': 'SIM', 'class': 'badge-success'},
+							'NÃO': {'title': 'NÃO', 'class': 'badge-danger'}
+						};
+						if (typeof badge[data] === 'undefined') {
+							return data;
+						}
+						return '<span class="badge ' + badge[data].class + ' badge-pill">' + badge[data].title + '</span>';
+					},
+				},
+			],
+			onAddRow: function(dt, rowdata, success, error) {
+				$.ajax({ 
+					url: apiAlunosNovo, 
+					type: 'POST',
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(transformObjFieldBoolFrontToBack(rowdata), null, 4),
+					success: function (data) {
+						$(".modal").modal('hide');
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						Swal.fire({
+							text: "Registro criado com sucesso!",
+							icon: "success",
+							timer: 2000,
+							showCancelButton: false,
+							showConfirmButton: true,
+							confirmButtonColor: "#179c8e",
+							timerProgressBar: true,
+							buttons: false
+						});
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+						
+						const returnObj = Object.entries(error.responseJSON.errors);
+
+						returnObj.forEach(function(err) {
+							err[1].forEach(function (int) {
+								toastr["error"](err[0], int);
+							})
+						});
+					}
+				});
+			},
+			onEditRow: function(dt, rowdata, success, error) {
+				$.ajax({ 
+					url: apiAlunosEdicao, 
+					type: 'PUT',
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(transformObjFieldBoolFrontToBack(rowdata), null, 4),
+					success: function (data) {
+						$(".modal").modal('hide');
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						Swal.fire({
+							text: "Registro atualizado com sucesso!",
+							icon: "success",
+							timer: 2000,
+							showCancelButton: false,
+							showConfirmButton: true,
+							confirmButtonColor: "#179c8e",
+							timerProgressBar: true,
+							buttons: false
+						});
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						const returnObj = Object.entries(error.responseJSON.errors);
+
+						returnObj.forEach(function(err) {
+							err[1].forEach(function (int) {
+								toastr["error"](err[0], int);
+							})
+						});
+					}
+				});
+			},
+			onDeleteRow: function(dt, rowdata, success, error) {
+				$.ajax({ 
+					url: apiAlunosDelete, 
+					type: 'DELETE', 
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(transformObjFieldBoolFrontToBack(rowdata), null, 4),
+					success: function (data) {
+						$(".modal").modal('hide');
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						Swal.fire({
+							text: "Registro deletado com sucesso!",
+							icon: "success",
+							timer: 2000,
+							showCancelButton: false,
+							showConfirmButton: true,
+							confirmButtonColor: "#179c8e",
+							timerProgressBar: true,
+							buttons: false
+						});
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						const returnObj = Object.entries(error.responseJSON.errors);
+
+						returnObj.forEach(function(err) {
+							err[1].forEach(function (int) {
+								toastr["error"](err[0], int);
+							})
+						});
+					}
+				});
+			},		
+		});
+
+		$('#dt-basic-example_filter input').bind('keyup', function(e) {
+			$('#dt-basic-example_filter input').val($('#dt-basic-example_filter input').val().toUpperCase());
+		});
+	});
+</script>
+}

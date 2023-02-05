@@ -1,0 +1,210 @@
+@model Sigesp.Application.ViewModels.Dashboards.Educacao.DashboardEducacaoViewModel
+
+@{
+	ViewData["Title"] = "Meu Reforço";
+	ViewData["PageName"] = "dashboard_meu-reforco";
+	ViewData["Category0"] = @Settings.App;
+	ViewData["Category1"] = "Inteligência negócios";
+	ViewData["Category2"] = "Dashboard Principal";
+	ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i> Dashboard <span class='fw-300'>Meu Reforço</span>";
+}
+@section HeadBlock {
+	<link rel="stylesheet" media="screen, print" href="~/css/statistics/chartist/chartist.css">
+	<style>
+		.ct-series-a .ct-bar, .ct-series-a .ct-line, .ct-series-a .ct-point, .ct-series-a .ct-slice-donut {
+			stroke: #4679cc;
+        }
+        .ct-series-b .ct-bar, .ct-series-b .ct-line, .ct-series-b .ct-point, .ct-series-b .ct-slice-donut {
+			stroke: #ffc241;
+        }
+    </style>
+}
+
+<div class="row">
+	<div class="col-xl-12">
+		<div id="panel-9" class="panel">
+			<div class="panel-hdr">	
+				<h2>
+					Indicador Reforços Agendados<span class="fw-300"><i>Vagas disponíveis para o dia x Reforços já marcados no dia</i></span> 
+				</h2>
+				<div class="panel-toolbar">
+					<button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Abrir/Fechar"></button>
+				</div>
+			</div>
+			<div class="panel-container show">
+				<div class="panel-content">		
+					<div class="panel-tag">
+						Este indicador evidencia claramente a evolução dos reforços marcados em relação ao total de vagas disponibilizadas no dia.
+					</div>							
+					<div class="col-xl-12">
+						<h3>
+							Reforços mês <span class="fw-900"><i class="text-warning">NOVEMBRO</i></span> 
+						</h3>
+					</div>
+					<div id="overlapBarMobile" class="ct-chart" style="width:100%; height:300px;"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section ScriptsBlock {
+	<script src="~/js/statistics/chartist/chartist.js"></script>
+	
+	
+	<script>
+		var colors = [
+			color.success._500,
+			color.danger._500
+		]
+
+		@* var barChart = function() {
+			$.ajax({
+				url: "api/dashboard-laboral/info-colaboradores-por-convenio",
+				type: 'POST',
+				contentType: "application/json;charset=utf-8",
+				data: JSON.stringify("", null, 4),
+				success: function(success) {
+
+					var labels = [];
+					var data = [];
+
+					success.data.data.forEach(function(item){
+						data.push(item);
+						data.push(item);
+					});
+
+					success.data.label.forEach(function(item){
+						labels.push(item);
+						labels.push(item);
+					});
+
+					var barChartData = {
+						labels: labels,
+						datasets: [
+							{
+								label: "Total colaboradores ativos POR CONVÊNIO ativo",		
+								backgroundColor: color.primary._300,
+								borderColor: color.primary._500,
+								borderWidth: 1,
+								data: data
+							}
+						]
+					};
+
+					var config = {
+						type: 'bar',
+						data: barChartData,
+						options: {
+							responsive: true,
+							legend: {
+								position: 'top',
+							},
+							title: {
+								display: false,
+								text: 'Bar Chart'
+							},
+							scales: {
+								xAxes: [{
+									display: true,
+									scaleLabel: {
+										display: false,
+										labelString: '6 months forecast'
+									},
+									gridLines: {
+										display: true,
+										color: "#f2f2f2"
+									},
+									ticks: {
+										beginAtZero: true,
+										fontSize: 11
+									}
+								}],
+								yAxes: [{
+									display: true,
+									scaleLabel: {
+										display: false,
+										labelString: 'Profit margin (approx)'
+									},
+									gridLines: {
+										display: true,
+										color: "#f2f2f2"
+									},
+									ticks: {
+										beginAtZero: true,
+										fontSize: 11
+									}
+								}]
+							}
+						}
+					}
+
+					new Chart($("#barChart > canvas").get(0).getContext("2d"), config);
+				},
+				error: function (error, jqXHR, textStatus, errorThrown) {
+					error.responseJSON.errors.Messages.forEach(function(err) {
+						toastr["error"](err);
+					});
+				}
+			});
+		} *@
+
+		var overlapBarMobile = function () {
+			$.ajax({
+				url: "api/dashboard-meu-reforco/vagas-versus-marcacoes",
+				type: 'POST',
+				contentType: "application/json;charset=utf-8",
+				data: JSON.stringify("", null, 4),
+				success: function(success) {
+
+					var labels = [];
+					var data = [];
+					
+				},
+				error: function (error, jqXHR, textStatus, errorThrown) {
+					error.responseJSON.errors.Messages.forEach(function(err) {
+						toastr["error"](err);
+					});
+				}
+			});
+
+			var data = {
+				labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+				series: [
+					[2, 4, 1, 5, 4, 1, 1, 4, 2, 3],
+					[3, 2, 4, 1, 1, 4, 5, 1, 4, 2]
+				]
+			};
+
+			var options = {
+				seriesBarDistance: 10,
+				axisY: {
+					onlyInteger: true,
+					offset: 10
+				},
+				axisX: {
+					onlyInteger: true
+				}
+			};
+			
+			var responsiveOptions = [
+				['screen and (max-width: 640px)', {
+					seriesBarDistance: 10,
+					axisY: {
+						onlyInteger: true,
+						offset: 10
+					},
+					axisX: {
+						onlyInteger: true
+					}
+				}]
+			];
+
+			new Chartist.Bar('#overlapBarMobile', data, options, responsiveOptions);
+		}
+
+		$(document).ready(function() {
+			overlapBarMobile();
+		});
+	</script>
+}

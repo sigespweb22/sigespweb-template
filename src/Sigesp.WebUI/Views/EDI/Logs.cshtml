@@ -1,0 +1,274 @@
+@model Sigesp.Application.ViewModels.Cards.EdiLogCardViewModel
+@{
+	ViewData["Title"] = "Logs";
+    ViewData["Heading"] = "<i class='notprint subheader-icon fal fa-list-ul'></i> Logs arquivo "+ @ViewData["NomeArquivo"] +"<span class='notprint fw-300'></span> <sup class='notprint badge badge-primary fw-500'>NOVO</sup>";
+    ViewData["PageDescription"] = "Listagem dos logs de importação do EDI";
+	ViewData["PageName"] = "edi_logs";
+	ViewData["Category0"] = @Settings.App;
+	ViewData["Category1"] = "Sistema";
+    ViewData["Category2"] = "EDI";
+}
+@section HeadBlock {
+	<link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/formplugins/select2/select2.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/theme-demo.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/notifications/toastr/toastr.css">
+}
+
+<div class="row">
+	<div class="col-sm-6 col-xl-2">
+		<div class="p-3 bg-primary-300 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="display-4 d-block l-h-n m-0 fw-500">
+					@Model.Intervencoes
+					<small class="m-0 l-h-n">Total intervenções</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-search-plus position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>
+	<div class="col-sm-6 col-xl-2">
+		<div class="p-3 bg-warning-400 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="display-4 d-block l-h-n m-0 fw-500">
+				    @Model.Mudancas
+					<small class="m-0 l-h-n">Mudanças</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-user-edit position-absolute pos-right pos-bottom opacity-15  mb-n1 mr-n1" style="font-size: 6rem;"></i>
+		</div>
+	</div>
+	<div class="col-sm-6 col-xl-2">
+		<div class="p-3 bg-success-200 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="display-4 d-block l-h-n m-0 fw-500">
+					@Model.Ativacoes	
+					<small class="m-0 l-h-n">Ativações</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-power-off position-absolute pos-right pos-bottom opacity-15  mb-n1 mr-n1" style="font-size: 6rem;"></i>
+		</div>
+	</div>
+	<div class="col-sm-6 col-xl-2">
+		<div class="p-3 bg-success-200 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="display-4 d-block l-h-n m-0 fw-500">
+					@Model.Desativacoes	
+					<small class="m-0 l-h-n">Desativações</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-power-off position-absolute pos-right pos-bottom opacity-15  mb-n1 mr-n1" style="font-size: 6rem;"></i>
+		</div>
+	</div>
+	<div class="col-sm-6 col-xl-2">
+		<div class="p-3 bg-danger-200 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="display-4 d-block l-h-n m-0 fw-500">
+					@Model.Exclusoes	
+					<small class="m-0 l-h-n">Exclusões</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-user-times position-absolute pos-right pos-bottom opacity-15  mb-n1 mr-n1" style="font-size: 6rem;"></i>
+		</div>
+	</div><div class="col-sm-6 col-xl-2">
+		<div class="p-3 bg-success rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="display-4 d-block l-h-n m-0 fw-500">
+					@Model.Inclusoes	
+					<small class="m-0 l-h-n">Inclusões</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-user-plus position-absolute pos-right pos-bottom opacity-15  mb-n1 mr-n1" style="font-size: 6rem;"></i>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xl-12">
+		<div id="panel-1" class="panel">
+			<div class="panel-hdr">	
+				<h2>
+					Lista <span class="fw-300"><i> dos logs de importação</i></span> 
+				</h2>
+				<div class="panel-toolbar">
+					<button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Abrir/Fechar"></button>
+				</div>
+			</div>
+			<div class="panel-container show">
+				<div class="panel-content">
+					<div class="row text-right mb-3">
+						<div class="col-lg-12">
+							<button type="button" id="btn-voltar" 
+								class="btn btn-outline-primary waves-effect waves-themed">
+								<span class="fal fa-arrow-circle-left mr-1"></span>Voltar
+							</button>
+						</div>
+					</div>
+					<hr class="mt-4 mb-g">
+					<table id="dt-basic-example" class="table table-bordered table-hover table-striped w-100">
+						<thead>
+							<tr>
+								<th>Id</th>
+								<th>Edi Id</th>
+								<th>Nome entidade</th>
+								<th>Propriedade entidade</th>
+								<th>Propriedade valor antigo</th>
+								<th>Propriedade valor novo</th>
+								<th>Tipo</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section ScriptsBlock {
+<script src="~/js/dependency/moment/moment.js"></script>
+<script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+<script src="~/js/formplugins/select2/select2.bundle.js"></script>
+<script src="~/js/datagrid/datatables/datatables.export.js"></script>
+<script src="~/js/notifications/toastr/toastr.js"></script>
+<script src="~/js/extensions/automapper-extensions.js"></script>
+
+<script type="text/javascript">
+	const endpointEdiLogList = "api/edis/logs-list";
+	var boolOptions = ["SIM", "NÃO"];
+	toastr.options = {
+		"closeButton": false,
+		"debug": false,
+		"newestOnTop": true,
+		"progressBar": true,
+		"positionClass": "toast-top-right",
+		"preventDuplicates": true,
+		"onclick": null,
+		"showDuration": 500,
+		"hideDuration": 100,
+		"timeOut": 10000,
+		"extendedTimeOut": 1000,
+		"showEasing": "swing",
+		"hideEasing": "linear",
+		"showMethod": "fadeIn",
+		"hideMethod": "fadeOut"
+	};
+
+	var ediId = {
+		id: '@ViewData["Id"]'
+	};
+
+	$("#btn-voltar").click(function (event) {
+		window.location.href = '/edi/todos';
+	});
+
+	$(document).ready( function () {
+		// initialize datatable
+		$('#dt-basic-example').dataTable({
+			responsive: true,
+			sPaginationType: "full_numbers",
+			altEditor: true,
+			ajax: {
+				url : endpointEdiLogList,
+				type: 'POST',
+				data: ediId,
+				dataSrc: function (json) {
+					return transformObjArrayFieldBoolBackToFront(json.data.data);
+				}
+			},
+			columnDefs: [
+				{
+					targets: 0,
+					data: "id",
+                	visible: false,
+                	searchable: false,
+					name: "Id"
+				},
+				{
+					targets: 1,
+					data: "ediId",
+                	visible: false,
+                	searchable: false,
+					name: "EdiId"
+				},
+				{
+					targets: 2,
+					data: "entityName",
+                	visible: true,
+					orderable: true,
+                	searchable: false,
+					name: "EntityName"
+				},
+				{
+					targets: 3,
+					data: "entityProperty",
+                	visible: true,
+					orderable: true,
+                	searchable: true,
+					name: "EntityProperty"
+				},
+				{
+					targets: 4,
+					data: "entityPropertyOldValue",
+                	visible: true,
+					orderable: true,
+                	searchable: false,
+					name: "EntityPropertyOldValue"
+				},
+				{
+					targets: 5,
+					data: "entityPropertyNewValue",
+                	visible: true,
+					orderable: true,
+                	searchable: false,
+					name: "EntityPropertyNewValue"
+				},
+				{
+					targets: 6,
+					data: "tipo",
+                	visible: true,
+					orderable: true,
+                	searchable: false,
+					render: function(data, type, full, meta) {
+						var badge = {
+							'MUDANCA': {'title': 'MUDANÇA', 'class': 'badge-warning'},
+							'ATIVACAO': {'title': 'ATIVAÇÃO', 'class': 'badge-success'},
+							'DESATIVACAO': {'title': 'DESATIVAÇÃO', 'class': 'badge-danger'},
+							'EXCLUSAO': {'title': 'EXCLUSÃO', 'class': 'badge-danger'},
+							'INCLUSAO': {'title': 'INCLUSÃO', 'class': 'badge-success'},
+							'INCONSISTENCIA': {'title': 'INCONSISTÊNCIA', 'class': 'badge-danger'}
+						};
+						if (typeof badge[data] === 'undefined') {
+							return data;
+						}
+						return '<span class="badge ' + badge[data].class + ' badge-pill">' + badge[data].title + '</span>';
+					},
+					name: "Tipo"
+				}
+			],
+			serverSide: true,
+			processing: true,
+			pagingType: "full_numbers",
+			language: {
+				decimal: ",",
+				thousands: ".",
+				searchPlaceholder: "Busque pelo NOME da propriedade",
+				sProcessing: '<span id=\"loading-image\" "class="fa fa-spinner fa-spin fa-2x spinner-border spinner-border-sm text-primary mr-2""><img class="manImg" src="img/loading_alt_3.gif" width="50" height="50"></img></span>',
+				sZeroRecords: "Nenhum registro encontrado.",
+				oPaginate: {
+					"sFirst": "Primeiro",
+					"sPrevious": "Anterior",
+					"sNext": "Próximo",
+					"sLast": "Último"
+				},
+				sInfo: "Mostrando _START_ de _END_ de um total de _TOTAL_",
+				sInfoEmpty: "Nenhuma registro encontrado.",
+				sInfoFiltered: " (filtrado a partir de um total de _MAX_ registros)",
+				sInfoPostFix: "",
+				lengthMenu: "Mostrar   _MENU_    por página",
+			}
+		});
+	});
+</script>
+}

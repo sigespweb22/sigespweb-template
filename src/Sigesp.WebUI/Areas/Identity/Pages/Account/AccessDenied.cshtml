@@ -1,0 +1,28 @@
+﻿@page
+@model AccessDenied
+@{
+    ViewData["Title"] = "Acesso Negado!";
+}
+
+<div class="row mt-3">
+    <div class="col-xl-12 text-warning text-center">
+        <h1>
+            @ViewData["Title"]
+        </h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-12 text-center">
+        <h3 class="text-white mt-3">Você não tem permissão para acessar o recurso requerido, solicite ao usuário master o  acesso e tente novamente.</h3>
+    </div>
+    <div class="col-xl-12 text-center mt-3">
+        <span><a style="cursor: pointer; text-decoration: underline !important;" class="text-warning" onclick="goBack()">Clique aqui</a> <span class="text-white opacity-40">para voltar para página anterior.</span></span>
+    </div>
+</div>
+
+<script>
+    var goBack = function () {
+        window.history.back();
+    };
+</script>

@@ -1,0 +1,714 @@
+@model Sigesp.Application.ViewModels.Cards.ProfessorCardViewModel
+
+@{
+	ViewData["Title"] = "Professores";
+	ViewData["PageName"] = "professor_todos";
+	ViewData["Category0"] = @Settings.App;
+	ViewData["Category1"] = "Educação";
+	ViewData["Heading"] = "<i class='subheader-icon fal fa-user-graduate'></i> Professores<span class='fw-300'></span> <sup class='badge badge-primary fw-500'>NOVO</sup>";
+	ViewData["PageDescription"] = "Listagem de professores";
+}
+@section HeadBlock {
+	<link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/formplugins/select2/select2.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/theme-demo.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/notifications/toastr/toastr.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/notifications/sweetalert2/sweetalert2.bundle.css">
+}
+
+<div class="row">
+	<div class="col-sm-4 col-xl-4">
+		<div class="p-3 bg-info rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="display-4 d-block l-h-n m-0 fw-500">
+				    <span class="card-total"></span>
+					<small class="m-0 l-h-n">Total</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-users position-absolute pos-right pos-bottom opacity-15  mb-n1 mr-n1" style="font-size: 6rem;"></i>
+		</div>
+	</div>
+	<div class="col-sm-4 col-xl-4">
+		<div class="p-3 bg-success rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="display-4 d-block l-h-n m-0 fw-500">
+					<span class="card-ativos"></span>
+					<small class="m-0 l-h-n">Ativos</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-user-graduate position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>
+	<div class="col-sm-4 col-xl-4">
+		<div class="p-3 bg-danger rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="display-4 d-block l-h-n m-0 fw-500">
+				    <span class="card-inativos"></span>
+					<small class="m-0 l-h-n">Inativos</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-users-slash position-absolute pos-right pos-bottom opacity-15  mb-n1 mr-n1" style="font-size: 6rem;"></i>
+		</div>
+	</div>	
+</div>
+
+<div class="row">
+	<div class="col-xl-12">
+		<div id="panel-1" class="panel">
+			<div class="panel-hdr">	
+				<h2>
+					Gerenciamento de <span class="fw-300"><i>Professores</i></span> 
+				</h2>
+				<div class="panel-toolbar">
+					<button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Abrir/Fechar"></button>
+				</div>
+			</div>
+			<div class="panel-container show">
+				<div class="panel-content">									
+					<div class="tab-content pt-4">
+						<div class="tab-pane fade show active" id="tab_default-1" role="tabpanel">
+							<div class="row">
+								<div class="col-xl-12">
+									<table id="dt-basic-example" class="table table-bordered table-hover table-striped w-100"></table>
+								</div>
+							</div>	
+						</div>
+					</div>					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section ScriptsBlock {
+<script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+<script src="~/js/dependency/moment/moment.js"></script>
+<script src="~/js/formplugins/select2/select2.bundle.js"></script>
+<script src="~/js/datagrid/datatables/datatables.export.js"></script>
+<script src="~/js/notifications/toastr/toastr.js"></script>
+<script src="~/js/extensions/automapper-extensions.js"></script>
+<script src="~/js/notifications/sweetalert2/sweetalert2.bundle.js"></script>
+<script src="~/js/extensions/string-extensions.js"></script>
+<script src="~/js/extensions/jquery-masked-extensions.js"></script>
+<!-- Adicionar o React. -->
+<!-- Nota: ao fazer o deploy, substitua "development.js" por "production.min.js". -->
+@* <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script> *@
+
+<!-- Adicione nosso componente React. -->
+@* <script src="~/js/extensions/react-init.js"></script> *@
+
+<script type="text/javascript">
+	const endpointProfessores = "/api/professores";
+	const endpointProfessoresNovo = "/api/professores/novo";
+	const endpointProfessoresEdicao = "/api/professores/edicao";
+	const endpointProfessoresDelete = "/api/professores/delete";
+	const endpointProfessoresLista = "/api/professores/lista";
+
+	var boolOptions = ["SIM", "NÃO"];
+	var galerias = [];
+
+	@foreach (var galeria in @Model.Galerias)
+	{
+		@:galerias.push('@galeria');
+	}
+
+	toastr.options = {	
+		"closeButton": false,
+		"debug": false,
+		"newestOnTop": true,
+		"progressBar": true,
+		"positionClass": "toast-top-right",
+		"preventDuplicates": true,
+		"onclick": null,
+		"showDuration": 500,
+		"hideDuration": 100,
+		"timeOut": 10000,
+		"extendedTimeOut": 1000,
+		"showEasing": "swing",
+		"hideEasing": "linear",
+		"showMethod": "fadeIn",
+		"hideMethod": "fadeOut"
+	};
+
+	var oldExportAction = function (self, e, dt, button, config) {
+		if (button[0].className.indexOf('buttons-excel') >= 0) {
+			if ($.fn.dataTable.ext.buttons.excelHtml5.available(dt, config)) {
+				$.fn.dataTable.ext.buttons.excelHtml5.action.call(self, e, dt, button, config);
+			}
+			else {
+				$.fn.dataTable.ext.buttons.excelFlash.action.call(self, e, dt, button, config);
+			}
+		} else if (button[0].className.indexOf('buttons-print') >= 0) {
+			$.fn.dataTable.ext.buttons.print.action(e, dt, button, config);
+		}
+	};
+
+	var newExportAction = function (e, dt, button, config) {
+		var self = this;
+		var oldStart = dt.settings()[0]._iDisplayStart;
+
+		dt.one('preXhr', function (e, s, data) {
+			// Just this once, load all data from the server...
+			data.start = 0;
+			data.length = 2147483647;
+
+			dt.one('preDraw', function (e, settings) {
+				// Call the original action function 
+				oldExportAction(self, e, dt, button, config);
+
+				dt.one('preXhr', function (e, s, data) {
+					// DataTables thinks the first item displayed is index 0, but we're not drawing that.
+					// Set the property to what it was before exporting.
+					settings._iDisplayStart = oldStart;
+					data.start = oldStart;
+				});
+
+				// Reload the grid with the original page. Otherwise, API functions like table.cell(this) don't work properly.
+				setTimeout(dt.ajax.reload, 0);
+
+				// Prevent rendering of the full data to the DOM
+				return false;
+			});
+		});
+
+		// Requery the server with the new one-time export settings
+		dt.ajax.reload();
+	};
+
+	var populateSelect2Usuarios = function (usuarios) {
+		if (usuarios == null ||
+			usuarios.length == 0)
+		{
+			$("#applicationUser").prop('disabled', false);
+			$("#applicationUser").removeClass("select2-loading-results");
+			$('#applicationUser').select2({ placeholder: "Nenhum usuário encontrado" });
+		}
+		else
+		{
+			usuarios.forEach(function (item) {
+				$("#applicationUser").append("<option value='"+item.id+"' selected>"+item.nome+"</option>");
+			});
+
+			$('#applicationUser').select2().val(null);
+			$('#applicationUser').select2({ 
+				placeholder: "Informe um usuário",
+				language: {
+					noResults: function (params) {
+						return "Nenhum registro encontrado";
+					}
+				}
+			});
+		}
+	};
+
+	var getUsuarios = function () {
+		setTimeout(function () {
+			$("#applicationUser").prop('disabled', true);
+			$('#applicationUser').select2(
+				{
+					containerCssClass : "select2-loading-results",
+					placeholder: "Procurando usuários..."
+				}
+			);
+
+			$.ajax({
+				url: "/api/users/get-all",
+				type: 'GET',
+				contentType: "application/json;charset=utf-8",
+				success: function(success) {
+					debugger;
+					if (success.length > 0)
+					{
+						$("#applicationUser").prop('disabled', false);
+						$("#applicationUser").removeClass("select2-loading-results");
+
+						populateSelect2Usuarios(success);
+					}
+					else
+					{
+						$('#applicationUser').select2({ placeholder: "Nenhum usuário encontrado" });
+					}
+				},
+				error: function (error, jqXHR, textStatus, errorThrown) {
+					$("#applicationUser").removeClass("select2-loading-results");
+					$('#applicationUser').select2({ placeholder: "Problemas ao obter usuários. Tente novamente." });
+
+					const returnObj = Object.entries(error.responseJSON.errors);
+
+					returnObj.forEach(function(err) {
+						err[1].forEach(function (int) {
+							toastr["error"](err[0], int);
+						})
+					});
+				}
+			});
+		}, 500);
+	};
+
+	var getUsuariosForEdicao = function () {
+		$('#applicationUser').select2(
+			{
+				containerCssClass : "select2-loading-results",
+				placeholder: "Obtendo os usuários, aguarde um instante..."
+			}
+		);
+		$("#applicationUser").prop('disabled', true);
+		
+		//obtenção do id do registro para obter o usuário
+		var professorId = $("#id").val();
+
+		var param = {
+			professorId: professorId
+		};
+
+		$.ajax({ 
+			url: "/api/users/get-all-for-edicao-professor",
+			type: 'POST',
+			contentType: "application/json;charset=utf-8",
+			data: JSON.stringify(professorId, null, 4),
+			success: function(success) {
+				if (success != null &&
+					success != "undefined" &&
+					success.length > 0)
+				{
+					if (success.length > 0)
+					{
+						$("#applicationUser").select2().removeClass("select2-loading-results");
+						$("#applicationUser").prop('disabled', false);		
+
+						const returnObj = Object.entries(success);
+						returnObj.forEach(function (item) {
+							$("#applicationUser").append("<option value='"+item[1].id+"' selected>"+item[1].nome+"</option>");
+							$('#applicationUser').trigger('change');
+						});	
+
+						$('#applicationUser').select2('focus');
+					}							
+				}
+			},
+			error: function (error, jqXHR, textStatus, errorThrown) {
+				const returnObj = Object.entries(error.responseJSON.errors);
+
+				returnObj.forEach(function(err) {
+					err[1].forEach(function (int) {
+						toastr["error"](err[0], int);
+					})
+				});
+			}
+		});
+	};
+
+	var setSelect2Galeria = function () {
+		$('#galeria').select2().val(null);
+		$('#galeria').select2({ 
+			placeholder: "Informe uma galeria",
+			language: {
+				noResults: function (params) {
+					return "Nenhum registro encontrado";
+				}
+			}
+		});
+	};
+
+	var getInfosCards = function () {
+		$.ajax({ 
+			url: "/api/professores/get-info-cards", 
+			type: 'GET',
+			contentType: "application/json;charset=utf-8",
+			success: function(success) {
+				$(".card-total").html(success.total);
+				$(".card-ativos").html(success.ativos);
+				$(".card-inativos").html(success.inativos);
+			},
+			error: function (error, jqXHR, textStatus, errorThrown) {
+				if (error.responseJSON != null)
+				{
+					if (error.responseJSON.title != null)
+					{
+						toastr["error"](error.responseJSON.title);
+					}
+				}
+			}
+		});
+	};
+
+	$(document).ready( function () {
+
+		//Tecla de atalho para criar um novo registro (Teclado 'S + N')			
+		$(document).keydown(function(e) {
+			if (e.ctrlKey && e.which === 90) $(".btn-add").click();				
+		});	
+
+		//Evento botão adição
+		$(document).on("click", ".btn-add", function () {
+			setTimeout(function() {
+				$("input[name=Nome]").focus();
+				getUsuarios();
+				setSelect2Galeria();
+
+				//add handle event in field Nome
+				$('input[name=Nome]').on('keyup', function () {
+					var fields = [
+						{ id: "input[name=Nome]", val: this.value }
+					];
+					toUpperCaseFormFields(fields);
+				});
+
+				$('input[name=Cpf]').mask("999.999.999-99");
+			}, 500);
+		});
+
+		//Evento botão de edição
+		$(document).on("click", ".btn-edit", function () {
+			setTimeout(function() {
+				$("input[name=Nome]").focus();
+				getUsuariosForEdicao();
+
+				$('input[name=Cpf]').mask("999.999.999-99");
+			}, 500);
+		});
+
+		// Event Lot
+		var events = $("#app-eventlog");
+
+		// Column Definitions
+		var columnSet = [
+			{
+				title: "Id",
+				id: "id",
+				data: "id",
+				placeholderMsg: "Automático",
+				visible: false,
+				type: "readonly",
+				required: false
+			},
+			{
+				title: "Nome",
+				id: "nome",
+				data: "nome",
+				type: "text",
+				visible: true,
+				searchable: true,
+				orderable: true,
+				required: true,
+				name: "Nome"
+			},
+			{
+				title: "Cpf",
+				id: "cpf",
+				data: "cpf",
+				type: "text",
+				visible: true,
+				searchable: false,
+				orderable: false,
+				required: true,
+				name: "Cpf"
+			},
+			{
+				title: "Galeria",
+				id: "galeria",
+				data: "galeria",
+				type: "select",
+				multiple : false,
+				options: galerias,
+				visible: true,
+				select2 : {
+					placeholder: "Selecione uma galeria",
+					width: "100%",
+					allowClear: true,
+					minimumInputLength: 3,
+					language: {
+						inputTooShort: function() {
+							return 'Digite 3 ou mais caracteres para iniciar a busca';
+						}						
+					}
+				},
+				searchable: false,
+				orderable: true,
+				visible: true,
+				name: "Galeria"
+			},
+			{
+				title: "Usuário",
+				id: "applicationUser",
+				data: "applicationUser",
+				type: "select",
+				multiple : false,
+				select2 : {
+					placeholder: "Informe um usuário",
+					width	: "100%",
+					allowClear: true,
+					minimumInputLength: 3,
+					language: {
+						inputTooShort: function() {
+							return 'Digite 3 ou mais caracteres para iniciar a busca';
+						},
+						noResults: function () {
+							return "Nenhum registro encontrado";
+						}
+					}
+				},
+				searchable: false,
+				orderable: true,
+				visible: true,
+				required: false,
+				render: function (data) {
+					var professorNome = data.contaUsuario.nome;
+					return professorNome;
+				},	
+				name: "ContaUsuario.Nome"
+			}
+		];
+
+		/* start data table */
+		var myTable = $('#dt-basic-example').dataTable({
+			/* check datatable buttons page for more info on how this DOM structure works */
+			dom: "<'row mb-3'<'col-sm-12 col-md-6 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-6 d-flex align-items-center justify-content-end'B>>" +
+				"<'row'<'col-sm-12'tr>>" +
+				"<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",			
+			ajax: {
+				url : endpointProfessoresLista,
+				type: 'POST',
+				dataSrc: function (json) {
+					return transformObjArrayFieldBoolBackToFront(json.data);
+				},
+				error: function (error, jqXHR, textStatus, errorThrown) {
+					if (error != null)
+					{
+						if (error.responseJSON != null)
+						{
+							toastr["error"](error.responseJSON.title);
+						}
+					}
+				}
+        	},
+			columns: columnSet,
+			/* selecting multiple rows will not work */
+			select: 'single',
+			/* altEditor at work */
+			altEditor: true,
+			responsive: true,
+			/* buttons uses classes from bootstrap, see buttons page for more details */
+			buttons: [
+				{
+					extend: 'selected',
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-times mr-1"></i> Delete',
+					name: 'delete',
+					className: 'btn-danger btn-sm mr-1 btn-actions'
+				},
+				{
+					extend: 'selected',
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-edit mr-1"></i> Editar',
+					name: 'edit',
+					className: 'btn-warning btn-sm mr-1 btn-actions btn-edit'
+				},
+				{
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-plus mr-1"></i> Novo',
+					name: 'add',
+					className: 'btn-primary btn-sm mr-1 btn-actions btn-add'
+				},
+				{
+					extend: 'excelHtml5',
+					text: 'Excel',
+					exportOptions: {
+						columns: [0, 1]
+					},
+					className: 'btn-outline-success btn-sm',
+					action: newExportAction
+				}							
+			],
+			serverSide: true,
+			processing: true,
+			pagingType: "full_numbers",
+			language: {
+				select: {
+					rows: "%d linhas selecionadas"
+				},
+            	decimal: ",",
+            	thousands: ".",
+        		searchPlaceholder: "Busque pelo NOME",
+				sProcessing: '<span id=\"loading-image\" "class="fa fa-spinner fa-spin fa-2x spinner-border spinner-border-sm text-primary mr-2""><img class="manImg" src="img/loading_alt_3.gif" width="50" height="50"></img></span>',
+				sZeroRecords: "Nenhum registro encontrado.",
+				oPaginate: {
+                    "sFirst": "Primeiro",
+                    "sPrevious": "Anterior",
+                    "sNext": "Próximo",
+                    "sLast": "Último"
+                },
+				sInfo: "Mostrando _START_ de _END_ de um total de _TOTAL_",
+                sInfoEmpty: "Nenhuma registro encontrado.",
+                sInfoFiltered: " (filtrado a partir de um total de _MAX_ registros)",
+                sInfoPostFix: ""
+        	},
+			columnDefs: [],
+			/* default callback for insertion: mock webservice, always success */
+			onAddRow: function(dt, rowdata, success, error) {
+				rowdata.applicationUserId = rowdata.applicationUser;
+				delete rowdata.applicationUser;
+
+				rowdata.cpf = rowdata.cpf.replace(/[^\d]+/g,'');
+
+				$.ajax({ 
+					url: endpointProfessoresNovo, 
+					type: 'POST',
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(transformObjFieldBoolFrontToBack(rowdata), null, 4),
+					success: function (data) {
+						$(".modal").modal('hide');
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						Swal.fire({
+							text: "Registro criado com sucesso!",
+							icon: "success",
+							timer: 2000,
+							showCancelButton: false,
+							showConfirmButton: true,
+							confirmButtonColor: "#179c8e",
+							timerProgressBar: true,
+							buttons: false
+						});
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						if (error.responseJSON != null)
+						{
+							if (error.responseJSON.title != null)
+							{
+								toastr["error"](error.responseJSON.title);
+							}
+						}
+						else
+						{
+							const returnObj = Object.entries(error.responseJSON.errors);
+
+							returnObj.forEach(function(err) {
+								err[1].forEach(function (int) {
+									toastr["error"](err[0], int);
+								})
+							});
+						}
+					}
+				});
+			},
+			onEditRow: function(dt, rowdata, success, error) {
+				rowdata.applicationUserId = rowdata.applicationUser;
+				delete rowdata.applicationUser;
+
+				rowdata.cpf = rowdata.cpf.replace(/[^\d]+/g,'');
+				
+				$.ajax({
+					url: endpointProfessoresEdicao, 
+					type: 'PUT',
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(transformObjFieldBoolFrontToBack(rowdata), null, 4),
+					success: function (data) {
+						$(".modal").modal('hide');
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						Swal.fire({
+							text: "Registro atualizado com sucesso!",
+							icon: "success",
+							timer: 2000,
+							showCancelButton: false,
+							showConfirmButton: true,
+							confirmButtonColor: "#179c8e",
+							timerProgressBar: true,
+							buttons: false
+						});
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						if (error.responseJSON != null)
+						{
+							if (error.responseJSON.title != null)
+							{
+								toastr["error"](error.responseJSON.title);
+							}
+						}
+						else
+						{
+							const returnObj = Object.entries(error.responseJSON.errors);
+
+							returnObj.forEach(function(err) {
+								err[1].forEach(function (int) {
+									toastr["error"](err[0], int);
+								})
+							});
+						}
+					}
+				});
+			},
+			onDeleteRow: function(dt, rowdata, success, error) {
+				rowdata.applicationUserId = rowdata.applicationUser.id;
+				delete rowdata.applicationUser;
+
+				$.ajax({ 
+					url: endpointProfessoresDelete, 
+					type: 'DELETE', 
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(transformObjFieldBoolFrontToBack(rowdata), null, 4), 
+					success: function (data) {
+						$(".modal").modal('hide');
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						Swal.fire({
+							text: "Registro deletado com sucesso!",
+							icon: "success",
+							timer: 2000,
+							showCancelButton: false,
+							showConfirmButton: true,
+							confirmButtonColor: "#179c8e",
+							timerProgressBar: true,
+							buttons: false
+						});
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						if (error.responseJSON != null)
+						{
+							if (error.responseJSON.title != null)
+							{
+								toastr["error"](error.responseJSON.title);
+							}
+						}
+						else
+						{
+							const returnObj = Object.entries(error.responseJSON.errors);
+
+							returnObj.forEach(function(err) {
+								err[1].forEach(function (int) {
+									toastr["error"](err[0], int);
+								})
+							});
+						}
+					}
+				});
+			}		
+		});
+		
+		$('.select2').each(function () {
+			var select = $(this);
+
+			select.select2({
+				width: '100%',
+				allowClear: true,
+				language: {
+					noResults: function () {
+						return "Nenhum registro encontrado";
+					}
+				}
+			});
+		});
+
+		$('#dt-basic-example_filter input').bind('keyup', function(e) {
+			$('#dt-basic-example_filter input').val($('#dt-basic-example_filter input').val().toUpperCase());
+		});
+
+		getInfosCards();
+	});
+</script>
+}

@@ -1,0 +1,497 @@
+@model Sigesp.Application.ViewModels.Cards.EdiCardViewModel
+
+@{
+	ViewData["Title"] = "EDI's";
+	ViewData["PageName"] = "edi_todos";
+	ViewData["Category0"] = @Settings.App;
+	ViewData["Category1"] = "Sistema";
+	ViewData["Heading"] = "<i class='subheader-icon fal fa-exchange'></i> EDI's<span class='fw-300'></span> <sup class='badge badge-primary fw-500'>NOVO</sup>";
+	ViewData["PageDescription"] = "Listagem das importações de EDI disponíveis";
+}
+@section HeadBlock {
+	<link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/formplugins/select2/select2.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/theme-demo.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/notifications/toastr/toastr.css">
+}
+
+<div class="row">
+	<div class="col-xl-4 col-sm-12">
+		<div class="p-3 bg-primary-300 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="display-4 d-block l-h-n m-0 fw-500">
+					<span id="card-total"></span>
+					<small class="m-0 l-h-n">Total importações</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-file-import position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>
+	<div class="col-xl-4 col-sm-12">
+		<div class="p-3 bg-warning-400 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="display-4 d-block l-h-n m-0 fw-500">
+				    <span id="card-em-processamento"></span>
+					<small class="m-0 l-h-n">Em processamento</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-spinner position-absolute pos-right pos-bottom opacity-15  mb-n1 mr-n1" style="font-size: 6rem;"></i>
+		</div>
+	</div>
+	<div class="col-xl-4 col-sm-12">
+		<div class="p-3 bg-success-200 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="display-4 d-block l-h-n m-0 fw-500">
+					<span id="card-processados"></span>
+					<small class="m-0 l-h-n">Processados</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-file-check position-absolute pos-right pos-bottom opacity-15  mb-n1 mr-n1" style="font-size: 6rem;"></i>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xl-12">
+		<div id="panel-1" class="panel">
+			<div class="panel-hdr">	
+				<h2>
+					Gerenciamento das <span class="fw-300"><i>Importações</i></span> 
+				</h2>
+				<div class="panel-toolbar">
+					<button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Abrir/Fechar"></button>
+				</div>
+			</div>
+			<div class="panel-container show">
+				<div class="panel-content">
+					<div class="row">
+						<div class="col-xl-12">
+							<div class="alert alert-info p-1">
+								<strong>Edis disponíveis:</strong> Os botões abaixo são opções de <code>EDI já homologados e disponíveis</code> para importação.
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xl-2 col-sm-2" id="btn-ESA">
+							<form asp-action="Novo" name="edi-novo" asp-controller="Edi" id="edi-novo" method="post">
+								<div class="form-group">
+									<div class="row text-left mb-3">
+										<div class="col-lg-12">
+											<div class="form-group">
+												<button type="submit" name="andamentoPenalNovo"
+													class="btn btn-sm btn-primary waves-effect waves-themed" value="false">
+													<span class="fal fa-recycle mr-2"></span>Detentos - Entrada/Saída/Atualização
+												</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</form>
+						</div>
+						<div class="col-xl-2 col-sm-2" id="btn-ESR">
+							<form asp-action="DetentoAtualizacaoRegime" name="edi-detento-atualizacao-regime" asp-controller="Edi" id="edi-detento-atualizacao-regime" method="post">
+								<div class="form-group">
+									<div class="row text-left mb-3">
+										<div class="col-lg-12">
+											<div class="form-group">
+												<button type="submit" name="detento-atualizacao-regime-btn"
+													class="btn btn-sm btn-dark waves-effect waves-themed">
+													<span class="fal fa-recycle mr-2"></span>Detentos - Entrada/Atualização Regime
+												</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</form>
+						</div>
+						<div class="col-xl-2 col-sm-2" id="btn-AST">
+							<form asp-action="DetentoUpdateST" name="detento-update-st" id="detento-update-st"
+									 asp-controller="Edi" method="post">
+								<div class="form-group">
+									<div class="row text-left mb-3">
+										<div class="col-lg-12">
+											<div class="form-group">
+												<button type="submit" name="detento-update-st-btn"
+													class="btn btn-sm text-white
+															btn-info waves-effect waves-themed">
+													<span class="fal fa-recycle mr-2"></span>Detentos - Atualização Saída Temporária
+												</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</form>
+						</div>
+						<div class="col-xl-2 col-sm-2" id="btn-AETST">
+							<form asp-action="APEnderecoTelefoneST" name="ap-endereco-telefone-st" 
+												id="ap-endereco-telefone-st"
+									 asp-controller="Edi" method="post">
+								<div class="form-group">
+									<div class="row text-left mb-3">
+										<div class="col-lg-12">
+											<div class="form-group">
+												<button type="submit" name="ap-endereco-telefone-st-btn"
+													class="btn btn-sm text-white
+															btn-success waves-effect waves-themed">
+													<span class="fal fa-recycle mr-2"></span>A. Penal - Atualização Endereço/Telefone ST
+												</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</form>
+						</div>
+						<div class="col-xl-2 col-sm-2" id="btn-PIL">
+							<form asp-action="Livros" name="form-livros" 
+												id="form-livros"
+									 asp-controller="Edi" method="post">
+								<div class="form-group">
+									<div class="row text-left mb-3">
+										<div class="col-lg-12">
+											<div class="form-group">
+												<button type="submit" name="livros-btn"
+													class="btn btn-sm text-white
+															bg-warning waves-effect waves-themed">
+													<span class="fal fa-recycle mr-2"></span>Livros - Programa para importação em lote
+												</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</form>
+						</div>
+						<div class="col-xl-2 col-sm-2" id="btn-PALG">
+							<form asp-action="DetentoDiversos" name="form-update-galeria-detentos" 
+												id="form-update-galeria-detentos"
+									 asp-controller="Edi" method="post">
+								<div class="form-group">
+									<div class="row text-left mb-3">
+										<div class="col-lg-12">
+											<div class="form-group">
+												<button type="submit" name="btn-update-galeria-detentos"
+													class="btn btn-sm text-white
+															bg-danger waves-effect waves-themed">
+													<span class="fal fa-recycle mr-2"></span>Detentos - Programa para atualização em lote da galeria
+												</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+					<hr class="mb-g">
+					<form asp-action="Logs" asp-controller="Edi" method="post">
+						<table id="dt-basic-example" class="table table-bordered table-hover table-striped w-100">
+							<thead>
+								<tr>
+									<th>Id</th>
+									<th>Nome arquivo</th>
+									<th>Extensão arquivos</th>
+									<th>Data importação</th>
+									<th>Total logs</th>
+									<th>Status</th>
+									<th>Ações</th>
+								</tr>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section ScriptsBlock {
+<script src="~/js/dependency/moment/moment.js"></script>
+<script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+<script src="~/js/formplugins/select2/select2.bundle.js"></script>
+<script src="~/js/datagrid/datatables/datatables.export.js"></script>
+<script src="~/js/notifications/toastr/toastr.js"></script>
+<script src="~/js/extensions/automapper-extensions.js"></script>
+<script src="~/js/extensions/string-extensions.js"></script>
+
+<script type="text/javascript">
+	const endpointEdiList = "api/edis/lista";
+	const endpointEdiDownload = "api/edis/download-file";
+
+	var boolOptions = ["SIM", "NÃO"];
+	toastr.options = {
+		"closeButton": false,
+		"debug": false,
+		"newestOnTop": true,
+		"progressBar": true,
+		"positionClass": "toast-top-right",
+		"preventDuplicates": true,
+		"onclick": null,
+		"showDuration": 500,
+		"hideDuration": 100,
+		"timeOut": 10000,
+		"extendedTimeOut": 1000,
+		"showEasing": "swing",
+		"hideEasing": "linear",
+		"showMethod": "fadeIn",
+		"hideMethod": "fadeOut"
+	};
+
+	var viewLogs = function(param)
+	{
+		console.log(param);
+	};
+
+	$("#btn-delete-detentos").click(function () {
+		$.ajax({
+			url: "api/edis/delete-detentos-duplicados",
+			type: 'POST',
+			processData: false,
+			contentType: false,
+			success: function(success) {
+				debugger;
+			},
+			error: function(error) {
+				debugger;
+				toastr["error"](error.responseJSON.message);
+			}
+		});
+	});	
+
+	var ediDowloadFile = function(id, fileName)
+	{
+		$.ajax({
+			url: endpointEdiDownload,
+			cache: false,
+			type: "POST",
+			contentType: "application/json;charset=utf-8",
+			data: JSON.stringify(id, null, 4),
+			xhr: function () {
+				var xhr = new XMLHttpRequest();
+				xhr.onreadystatechange = function () {
+					if (xhr.readyState == 2) {
+						if (xhr.status == 200) {
+							xhr.responseType = "blob";
+						} else {
+							xhr.responseType = "text";
+						}
+					}
+				};
+				return xhr;
+			},
+			success: function (data) {
+				//Convert the Byte Data to BLOB object.
+				var blob = new Blob([data], { type: "application/octetstream" });
+
+				debugger;
+
+				//Check the Browser type and download the File.
+				var isIE = false || !!document.documentMode;
+				if (isIE) {
+					window.navigator.msSaveBlob(blob, fileName);
+				} else {
+					var url = window.URL || window.webkitURL;
+					link = url.createObjectURL(blob);
+					var a = $("<a />");
+					a.attr("download", fileName);
+					a.attr("href", link);
+					$("body").append(a);
+					a[0].click();
+					$("body").remove(a);
+				}
+			}
+		});
+	}
+
+	//Substituir urgente implementação pela implementação -> Asana -> Sprint Cross - Issue 01
+	var hideButtonsByApiKey = function () {
+		var apiKey = localStorage.getItem("ApiKey");
+		if (apiKey != 'bed67d28-49f5-4496-9d32-334cba103736' && apiKey != '06b5fb02-57cb-126b-3ab2-a05f805f1e97')
+		{
+			$("#btn-AST").hide();
+			$("#btn-AETST").hide();
+			$("#btn-PIL").hide();
+			$("#btn-PALG").hide();
+		}
+		else
+		{
+			console.error("ApiKey foi substituída ou não existe mais, portanto, a partir do 2º botão nenhum botão será renderizado.")
+			console.error("Substituir urgente implementação pela implementação -> Asana -> Sprint Cross - Issue 01.")
+		}
+	};
+
+	var getInfosCards = function () {
+		$.ajax({ 
+			url: "/api/edis/get-info-cards",
+			type: 'GET',
+			contentType: "application/json;charset=utf-8",
+			success: function(success) {
+				$("#card-total").html(success.totalImportacoes);
+				$("#card-em-processamento").html(success.emProcessamento);
+				$("#card-processados").html(success.processados);
+			},
+			error: function (error, jqXHR, textStatus, errorThrown) {
+				if (error.responseJSON != null)
+				{
+					if (error.responseJSON.title != null)
+					{
+						toastr["error"](error.responseJSON.title);
+					}
+				}
+			}
+		});
+	};
+
+	$(document).ready( function () {
+		hideButtonsByApiKey();
+
+		var paramsEndpointEdiList = {
+			order: [
+				{
+					"column": 3,
+					"dir": "desc"
+				}
+			]
+		};
+
+		$('#dt-basic-example').dataTable({
+			responsive: true,
+			sPaginationType: "full_numbers",
+			altEditor: true,
+			ajax: {
+				url : endpointEdiList,
+				type: 'POST',
+				data: paramsEndpointEdiList,
+				dataSrc: function (json) {
+					return transformObjArrayFieldBoolBackToFront(json.data);
+				}
+			},
+			columnDefs: [
+				{
+					targets: 0,
+					data: "id",
+                	visible: false,
+                	searchable: false,
+					name: "Id"
+				},
+				{
+					targets: 1,
+					data: "arquivoNome",
+                	visible: true,
+					orderable: true,
+                	searchable: true,
+					name: "ArquivoNome"
+				},
+				{
+					targets: 2,
+					data: "arquivoExtensao",
+                	visible: true,
+					orderable: true,
+                	searchable: false,
+					name: "ArquivoExtensao"
+				},
+				{
+					targets: 3,
+					title: "Data importação",
+					data: "createdAt",
+					type: "date",
+					render: function (data) {
+						return data;
+					},
+					searchable: false,
+					orderable: true,
+					name: "CreatedAt"
+				},
+				{
+					targets: 4,
+					data: "logs",
+                	visible: true,
+					orderable: false,
+                	searchable: false,
+					name: "Logs"
+				},
+				{
+					targets: 5,
+					data: "status",
+                	visible: true,
+					orderable: true,
+                	searchable: false,
+					render: function(data, type, full, meta) {
+						var badge = {
+							'NAO_INFORMADO': {'title': 'NÃO INFORMADO', 'class': 'badge-danger'},
+							'PROCESSANDO': {'title': 'PROCESSANDO', 'class': 'badge-warning'},
+							'CONCLUIDO': {'title': 'CONCLUIDO', 'class': 'badge-success'},
+							'NAO_PROCESSADO': {'title': 'NÃO PROCESSADO', 'class': 'badge-danger'}
+						};
+						if (typeof badge[data] === 'undefined') {
+							return data;
+						}
+						return '<span class="badge ' + badge[data].class + ' badge-pill">' + badge[data].title + '</span>';
+					},
+					name: "Status"
+				},
+				{
+					targets: 6,
+					visible: true,
+					data: "acoes",
+					title: 'Ações',
+					searchable: false,
+					orderable: false,
+					render: function(data, type, full, meta) {
+						/*
+						-- ES6
+						-- convert using https://babeljs.io online transpiler
+						return `
+						<div class='d-flex mt-2'>
+							<a href='javascript:void(0);' class='btn btn-sm btn-outline-danger mr-2' title='Delete Record'>
+								<i class="@(Settings.Theme.IconPrefix) fa-times"></i> Delete Record
+							</a>
+							<a href='javascript:void(0);' class='btn btn-sm btn-outline-primary mr-2' title='Edit'>
+								<i class="@(Settings.Theme.IconPrefix) fa-edit"></i> Edit
+							</a>
+							<div class='dropdown d-inline-block'>
+								<a href='#'' class='btn btn-sm btn-outline-primary mr-2' data-toggle='dropdown' aria-expanded='true' title='More options'>
+									<i class="@(Settings.Theme.IconPrefix) fa-plus"></i>
+								</a>
+								<div class='dropdown-menu'>
+									<a class='dropdown-item' href='javascript:void(0);'>Change Status</a>
+									<a class='dropdown-item' href='javascript:void(0);'>Generate Report</a>
+								</div>
+							</div>
+						</div>`;
+						ES5 example below:	
+						*/
+						
+						@* return "<a id='btnLog' name='btnLog' href='/edi/logs' class='btn btn-sm btn-primary' value='"+full.id+"'><i class=\"@(Settings.Theme.IconPrefix) fa-clipboard-list mr-2\"></i>Logs</a>" *@
+					return "<button id='btnLog' name='btnLog' type='submit' value='"+full.id+"' onClick=viewLogs('"+full.id+"') class='btn btn-sm btn-primary mr-3' ><i class=\"@(Settings.Theme.IconPrefix) fa-clipboard-list mr-2\"></i>Logs</button><button id='btnDownload' name='btnDownload' type='button' value='"+full.id+"' onClick='ediDowloadFile(\""+full.id+"\", \""+full.arquivoNome+"\")' class='btn btn-sm btn-success' ><i class=\"@(Settings.Theme.IconPrefix) fa-cloud-download mr-2\"></i>Download arquivo</button>"
+						@* return "<div class='d-flex mt-2'><a onclick='getEdit()' class='btn btn-sm btn-outline-primary mr-2' title='Editar'><i class=\"@(Settings.Theme.IconPrefix) fa-edit\"></i> Editar</a></div>"; *@
+					},
+				}
+			],
+			serverSide: true,
+			processing: true,
+			pagingType: "full_numbers",
+			language: {
+				decimal: ",",
+				thousands: ".",
+				searchPlaceholder: "Busque pelo NOME arquivo",
+				sProcessing: '<span id=\"loading-image\" "class="fa fa-spinner fa-spin fa-2x spinner-border spinner-border-sm text-primary mr-2""><img class="manImg" src="img/loading_alt_3.gif" width="50" height="50"></img></span>',
+				sZeroRecords: "Nenhum registro encontrado.",
+				oPaginate: {
+					"sFirst": "Primeiro",
+					"sPrevious": "Anterior",
+					"sNext": "Próximo",
+					"sLast": "Último"
+				},
+				sInfo: "Mostrando _START_ de _END_ de um total de _TOTAL_",
+				sInfoEmpty: "Nenhuma registro encontrado.",
+				sInfoFiltered: " (filtrado a partir de um total de _MAX_ registros)",
+				sInfoPostFix: "",
+				lengthMenu: "Mostrar   _MENU_    por página",
+			}
+		});
+
+		getInfosCards();
+
+	});
+</script>
+}

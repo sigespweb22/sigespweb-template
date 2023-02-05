@@ -1,0 +1,4 @@
+
+https://mahedee.net/configure-ci-cd-pipeline-with-jenkins-github-and-asp.net-core/
+
+https://docs.microsoft.com/pt-br/aspnet/core/host-and-deploy/visual-studio-publish-profiles?view=aspnetcore-6.0

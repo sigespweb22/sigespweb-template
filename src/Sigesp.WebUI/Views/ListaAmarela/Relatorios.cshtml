@@ -1,0 +1,529 @@
+@model Sigesp.Application.ViewModels.Selects.ListaAmarelaSelectViewModel
+@{
+	ViewData["Title"] = "Relatórios";
+	ViewData["PageName"] = "lista-amarela_relatorios";
+	ViewData["Category0"] = @Settings.App;
+	ViewData["Category1"] = "Jurídico";
+    ViewData["Category2"] = "Lista Amarela";
+	ViewData["Heading"] = "<i class='notprint subheader-icon fal fa-file-alt'></i>Lista amarela Relatórios<span class='notprint fw-300'></span> <sup class='notprint badge badge-primary fw-500'>NOVO</sup>";
+	ViewData["PageDescription"] = "";
+}
+
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/page-invoice.css">
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/select2/select2.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/notifications/toastr/toastr.css">
+}
+
+<div class="row notprint">
+    <div class="col-xl-12">
+		<div id="panel-1" class="panel">
+			<div class="panel-hdr">
+				<h2>
+					Relatório transferidos <span class="fw-300"><i> Consolidado por Tipo Transferência/Data saída/Data retorno previsto</i></span> 
+				</h2>
+				<div class="panel-toolbar">
+					<button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Abrir/Fechar"></button>
+				</div>
+			</div>
+			<div class="panel-container show">
+				<div class="panel-content">									
+					<div class="panel-tag">
+						Faça suas escolhas, depois clique em "GERAR" para que o relatório seja criado de acordo com suas definições.
+					</div>
+                    <form asp-action="RelatorioTransferidos" asp-controller="ListaAmarela" id="reportTransferidos-form" method="post">
+                        <div class="form-group">
+                            <label class="form-label" for="select2-transferenciaTipo">
+                                Transferência tipos:
+                            </label>
+                            <select name="transferenciaTipo" class="select2 form-control" 
+										id="select2-transferenciaTipo">
+                                <option></option>
+								@foreach (var transferenciaTipo in @Model.TransferenciaTipos)
+                                {
+                                    <option value=@transferenciaTipo>@transferenciaTipo</option>    
+                                }
+                            </select>
+                            <label class="form-label mt-3" for="datepicker-dataSaidaReportTransferidos">Data saída (Escolha um período):</label>
+							<div class="input-daterange input-group" id="datepicker-dataSaidaReportTransferidos">
+								<input type="text" name="dataSaidaPeriodoInicioReportTransferidos" 
+									class="form-control" id="dataSaidaPeriodoInicioReportTransferidos">
+								<div class="input-group-append input-group-prepend">
+									<span class="input-group-text fs-xl"><i class="@(Settings.Theme.IconPrefix) fa-ellipsis-h"></i></span>
+								</div>
+								<input type="text" name="dataSaidaPeriodoFimReportTransferidos"
+									 class="form-control" id="dataSaidaPeriodoFimReportTransferidos">
+							</div>
+							<label class="form-label mt-3" for="datepicker-dataRetornoPrevistoReportTransferidos">Data retorno previsto (Escolha um período):</label>
+							<div class="input-daterange input-group" id="datepicker-dataRetornoPrevistoReportTransferidos">
+								<input type="text" name="dataRetornoPrevistoPeriodoInicioReportTransferidos" 
+									class="form-control" id="dataRetornoPrevistoPeriodoInicioReportTransferidos">
+								<div class="input-group-append input-group-prepend">
+									<span class="input-group-text fs-xl"><i class="@(Settings.Theme.IconPrefix) fa-ellipsis-h"></i></span>
+								</div>
+								<input type="text" name="dataRetornoPrevistoPeriodoFimReportTransferidos"
+									 class="form-control" id="dataRetornoPrevistoPeriodoFimReportTransferidos">
+							</div>
+                        </div>
+						<div class="alert alert-info p-1 mb-1">
+							<strong>Nota 1:</strong> É possível optar apenas por um período: <strong>Data saída (início e fim)</strong> ou <strong>Data retorno previsto (início e fim)</strong>.
+						</div>
+						<div class="alert alert-info p-1">
+							<strong>Nota 2:</strong> Ao omitir qualquer informação <strong>será retornado todos os dados</strong>.
+						</div>
+					    <button id="reportTransferidos-btn" type="button" class="btn btn-outline-primary mb-g" >GERAR</button>
+                    </form>
+				</div>
+			</div>
+		</div>		
+	</div>
+</div>
+
+<div class="row notprint">
+    <div class="col-xl-12">
+		<div id="panel-1" class="panel">
+			<div class="panel-hdr">
+				<h2>
+					Relatório ingresso <span class="fw-300"><i> Consolidado pela Data do Ingresso do Reeducando na UNIDADE PRISIONAL</i></span> 
+				</h2>
+				<div class="panel-toolbar">
+					<button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Abrir/Fechar"></button>
+				</div>
+			</div>
+			<div class="panel-container show">
+				<div class="panel-content">									
+					<div class="panel-tag">
+						Faça suas escolhas, depois clique em GERAR" para que o relatório seja criado de acordo com suas definições.
+					</div>
+                    <form asp-action="RelatorioDataIngresso" asp-controller="ListaAmarela" id="reportDataIngresso-form" method="post">
+                        <div class="form-group">
+                            <label class="form-label" for="select2-regime">
+                                Regime:
+                            </label>
+                            <select name="regime" class="select2 form-control" 
+										id="select2-regime">
+                                <option></option>
+								@foreach (var regime in @Model.Regimes)
+                                {
+                                    <option value=@regime>@regime</option>    
+                                }
+                            </select>
+							<div id="data-ingresso">
+								<label class="form-label mt-3" for="datepicker-dataIngresso">Data ingresso (Escolha um período):</label>
+								<div class="input-daterange input-group" id="datepicker-dataIngresso">
+									<input type="text" name="dataIngressoInicio" 
+										class="form-control" id="dataIngressoInicio">
+									<div class="input-group-append input-group-prepend">
+										<span class="input-group-text fs-xl"><i class="@(Settings.Theme.IconPrefix) fa-ellipsis-h"></i></span>
+									</div>
+									<input type="text" name="dataIngressoFim"
+										class="form-control" id="dataIngressoFim">
+								</div>
+							</div>
+                        </div>
+						<div class="alert alert-info p-1">
+							<strong>Nota 1:</strong> Ao omitir qualquer informação <strong>será retornado todos os dados</strong>.
+						</div>
+					    <button id="reportDataIngresso-btn" type="button" class="btn btn-outline-primary mb-g" >GERAR</button>
+                    </form>
+				</div>
+			</div>
+		</div>		
+	</div>
+</div>
+
+<div class="row notprint">
+    <div class="col-xl-12">
+		<div id="panel-1" class="panel">
+			<div class="panel-hdr">
+				<h2>
+					Relatório previsão benefício <span class="fw-300"><i> Consolidado por Regime e período de previsão de benefício</i></span> 
+				</h2>
+				<div class="panel-toolbar">
+					<button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Abrir/Fechar"></button>
+				</div>
+			</div>
+			<div class="panel-container show">
+				<div class="panel-content">									
+					<div class="panel-tag">
+						Faça suas escolhas, depois clique em "GERAR" para que o relatório seja criado de acordo com suas definições.
+					</div>
+                    <form asp-action="RelatorioPrevisaoBeneficio" asp-controller="ListaAmarela" id="reportPrevisaoBeneficio-form" method="post">
+                        <div class="form-group">
+                            <label class="form-label" for="select2-regime">
+                                Regime:
+                            </label>
+                            <select name="regime" class="select2 form-control" 
+										id="select2-regime">
+                                <option></option>
+								@foreach (var regime in @Model.Regimes)
+                                {
+                                    <option value=@regime>@regime</option>    
+                                }
+                            </select>
+							<div id="data-previsao-beneficio">
+								<label class="form-label mt-3" for="datepicker-dataPrevisaoBeneficio">Previsão benefício (Escolha um período):</label>
+								<div class="input-daterange input-group" id="datepicker-dataPrevisaoBeneficio">
+									<input type="text" name="dataPrevisaoBeneficioInicio" 
+										class="form-control" id="dataPrevisaoBeneficioInicio">
+									<div class="input-group-append input-group-prepend">
+										<span class="input-group-text fs-xl"><i class="@(Settings.Theme.IconPrefix) fa-ellipsis-h"></i></span>
+									</div>
+									<input type="text" name="dataPrevisaoBeneficioFim"
+										class="form-control" id="dataPrevisaoBeneficioFim">
+								</div>
+							</div>
+							<div id="data-saida-prevista">
+								<label class="form-label mt-3" for="datepicker-dataSaidaPrevista">Data saída prevista (Escolha um período):</label>
+								<div class="input-daterange input-group" id="datepicker-dataSaidaPrevista">
+									<input type="text" name="dataSaidaPrevistaInicio" 
+										class="form-control" id="dataSaidaPrevistaInicio">
+									<div class="input-group-append input-group-prepend">
+										<span class="input-group-text fs-xl"><i class="@(Settings.Theme.IconPrefix) fa-ellipsis-h"></i></span>
+									</div>
+									<input type="text" name="dataSaidaPrevistaFim"
+										class="form-control" id="dataSaidaPrevistaFim">
+								</div>
+							</div>
+                        </div>
+						<div class="alert alert-info p-1">
+							<strong>Nota 1:</strong> Ao omitir qualquer informação <strong>será retornado todos os dados</strong>.
+						</div>
+					    <button id="reportPrevisaoBeneficio-btn" type="button" class="btn btn-outline-primary mb-g" >GERAR</button>
+                    </form>
+				</div>
+			</div>
+		</div>		
+	</div>
+</div>
+
+<div class="row notprint">
+    <div class="col-xl-12">
+		<div id="panel-1" class="panel">
+			<div class="panel-hdr">
+				<h2>
+					Relatório totalizador<span class="fw-300"><i> Consolidado por Galeria e Regime</i></span>
+				</h2>
+				<div class="panel-toolbar">
+					<button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Abrir/Fechar"></button>
+				</div>
+			</div>
+			<div class="panel-container show">
+				<div class="panel-content">									
+					<div class="panel-tag">
+						Faça suas escolhas, depois clique em "GERAR" para que o relatório seja criado de acordo com suas definições.
+					</div>
+                    <form asp-action="RelatorioTotalizadorGaleriaRegime" asp-controller="ListaAmarela" id="reportTotalizadorGaleriaRegime-form" method="post">
+                        <div class="form-group">
+                            <label class="form-label" for="select2-regime-reportTotalizadorGaleriaRegime">
+                                Regime:
+                            </label>
+                            <select name="select2RegimeReportTotalizadorGaleriaRegime" class="select2 form-control" 
+										id="select2-regime-reportTotalizadorGaleriaRegime">
+                                <option></option>
+								@foreach (var regime in @Model.Regimes)
+                                {
+                                    <option value=@regime>@regime</option>    
+                                }
+                            </select>
+                        </div>
+						<div class="alert alert-info p-1">
+							<strong>Nota:</strong> Ao omitir qualquer informação <strong>será retornado todos os dados</strong>.
+						</div>
+					    <button id="reportTotalizadorGaleriaRegime-btn" type="button" class="btn btn-outline-primary mb-g" >GERAR</button>
+                    </form>
+				</div>
+			</div>
+		</div>		
+	</div>
+</div>
+
+<div class="row notprint">
+    <div class="col-xl-12">
+		<div id="panel-1" class="panel">
+			<div class="panel-hdr">
+				<h2>
+					Relatório saídas previstas<span class="fw-300"><i> Consolidado por Galeria e nome por ordem alfabética</i></span>
+				</h2>
+				<div class="panel-toolbar">
+					<button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Abrir/Fechar"></button>
+				</div>
+			</div>
+			<div class="panel-container show">
+				<div class="panel-content">									
+					<div class="panel-tag">
+						Faça suas escolhas, depois clique em "GERAR" para que o relatório seja criado de acordo com suas definições.
+					</div>
+                    <form asp-action="ReportSaidasPrevistas" asp-controller="ListaAmarela" id="report-saidasPrevistas-form" method="post">
+					    <div id="data-dataSaidasPrevistasST">
+							<label class="form-label mt-3" for="datepicker-dataSaidaPrevistaST">Saída prevista (Escolha um período):</label>
+							<div class="input-daterange input-group" id="datepicker-dataSaidaPrevistaST">
+								<input type="text" name="dataSaidaPrevistaSTInicio" 
+									class="form-control" id="dataSaidaPrevistaSTInicio">
+								<div class="input-group-append input-group-prepend">
+									<span class="input-group-text fs-xl"><i class="@(Settings.Theme.IconPrefix) fa-ellipsis-h"></i></span>
+								</div>
+								<input type="text" name="dataSaidaPrevistaSTFim"
+									class="form-control" id="dataSaidaPrevistaSTFim">
+							</div>
+						</div>
+						<label class="form-label mt-3" 
+							for="opcao-ordenacao-select">
+							Ordenar por (A-Z):
+						</label>
+						<select name="opcaoOrdenacaoSelect2" 
+							class="select2-placeholder
+								select2 form-control" 
+									id="opcao-ordenacao-select">
+							<option></option>
+							@foreach (var tmp in @Model.SaidaTemporariaOpcoesOrdenacaoRelatorio)
+							{
+								<option value=@tmp>@tmp</option>    
+							}
+						</select>
+						<div class="alert alert-info p-1 mt-4">
+							<strong>Nota:</strong> Ao omitir qualquer informação <strong>será retornado todos os dados</strong>.
+						</div>
+						<button id="report-saidasPrevistas-btn" type="button" class="btn btn-outline-primary mb-g" >GERAR</button>
+                    </form>
+				</div>
+			</div>
+		</div>		
+	</div>
+</div>
+
+<div class="row notprint">
+    <div class="col-xl-12">
+		<div id="panel-1" class="panel">
+			<div class="panel-hdr">
+				<h2>
+					Relatório Aguardando transferência<span class="fw-300"><i> Consolidado por comarca</i></span>
+				</h2>
+				<div class="panel-toolbar">
+					<button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Abrir/Fechar"></button>
+				</div>
+			</div>
+			<div class="panel-container show">
+				<div class="panel-content">									
+					<div class="panel-tag">
+						Faça suas escolhas, depois clique em "GERAR" para que o relatório seja criado de acordo com suas definições.
+					</div>
+                    <form asp-action="ReportAguardandoTransferencia" asp-controller="ListaAmarela" id="report-aguardandoTransferencia-form" method="post">
+						<button id="report-aguardandoTransferencia-btn" type="button" class="btn btn-outline-primary mb-g" >GERAR</button>
+                    </form>
+				</div>
+			</div>
+		</div>		
+	</div>
+</div>
+
+<div class="row notprint">
+    <div class="col-xl-12">
+		<div id="panel-1" class="panel">
+			<div class="panel-hdr">
+				<h2>
+					Relatório totalizador condenação tipo<span class="fw-300"><i> Consolidado por condenação tipo</i></span>
+				</h2>
+				<div class="panel-toolbar">
+					<button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Abrir/Fechar"></button>
+				</div>
+			</div>
+			<div class="panel-container show">
+				<div class="panel-content">									
+					<div class="panel-tag">
+						Faça suas escolhas, depois clique em "GERAR" para que o relatório seja criado de acordo com suas definições.
+					</div>
+                    <form asp-action="ReportTotalizadorCondenacaoTipo" asp-controller="ListaAmarela" id="report-totalizador-condenacaoTipo-form" method="post">
+						<button id="report-totalizador-condenacaoTipo-btn" type="button" class="btn btn-outline-primary mb-g" >GERAR</button>
+                    </form>
+				</div>
+			</div>
+		</div>		
+	</div>
+</div>
+
+@section ScriptsBlock {
+	<script src="~/js/formplugins/select2/select2.bundle.js"></script>
+	<script src="~/js/dependency/moment/moment.js"></script>
+	<script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+	<script src="~/js/notifications/toastr/toastr.js"></script>
+	<script src="~/js/extensions/jquery-serialization-extensions.js"></script>
+
+	<script>
+		toastr.options = {
+			"closeButton": false,
+			"debug": false,
+			"newestOnTop": true,
+			"progressBar": true,
+			"positionClass": "toast-top-right",
+			"preventDuplicates": true,
+			"onclick": null,
+			"showDuration": 500,
+			"hideDuration": 100,
+			"timeOut": 10000,
+			"extendedTimeOut": 1000,
+			"showEasing": "swing",
+			"hideEasing": "linear",
+			"showMethod": "fadeIn",
+			"hideMethod": "fadeOut"
+		};
+
+		$("#data-saida-prevista").hide();
+
+        $("#reportTransferidos-btn").click(function (event) {
+			if ($('#dataSaidaPeriodoInicioReportTransferidos').val() != '' && 
+				 $('#dataRetornoPrevistoPeriodoInicioReportTransferidos').val() != '')
+			{
+				$('#dataSaidaPeriodoInicioReportTransferidos').val('');
+				$('#dataSaidaPeriodoFimReportTransferidos').val('');
+				$('#dataRetornoPrevistoPeriodoInicioReportTransferidos').val('');
+				$('#dataRetornoPrevistoPeriodoFimReportTransferidos').val('');
+
+				toastr["error"]("É permitido somente um filtro de data. </br> Consulte a 'Nota 1' acima do botão 'GERAR' para maiores esclarecimentos.");
+			}
+			else
+			{
+				$("#reportTransferidos-form").submit();
+
+				@* const urlRelatorioTransferencia = `@Url.Action("RelatorioTransferidos", "ListaAmarela")`;
+				var formData = $("#reportTransferidos-form").serializeJSON();
+
+				$.ajax({ 
+					url: urlRelatorioTransferencia,
+					type: 'POST',
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(formData, null, 4),
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						const returnObj = Object.entries(error.responseJSON.errors);
+
+						returnObj.forEach(function(err) {
+							err[1].forEach(function (int) {
+								toastr["error"](err[0], int);
+							})
+						});
+					}
+				}); *@
+			}
+        });
+
+		$("#reportPrevisaoBeneficio-btn").click(function (event) {
+			$("#reportPrevisaoBeneficio-form").submit();
+        });
+
+		$("#reportDataIngresso-btn").click(function (event) {
+			$("#reportDataIngresso-form").submit();
+        });
+
+		$("#reportTotalizadorGaleriaRegime-btn").click(function (event) {
+			$("#reportTotalizadorGaleriaRegime-form").submit();
+        });
+
+		$("#report-saidasPrevistas-btn").click(function (event) {
+			$("#report-saidasPrevistas-form").submit();
+        });
+
+		$("#report-aguardandoTransferencia-btn").click(function (event) {
+			$("#report-aguardandoTransferencia-form").submit();
+        });
+
+		$("#report-totalizador-condenacaoTipo-btn").click(function (event) {
+			$("#report-totalizador-condenacaoTipo-form").submit();
+        });
+
+		//Datepicker config
+		// Class definition
+		var controls = {
+			leftArrow: '<i class="@(Settings.Theme.IconPrefix) fa-angle-left" style="font-size: 1.25rem"></i>',
+			rightArrow: '<i class="@(Settings.Theme.IconPrefix) fa-angle-right" style="font-size: 1.25rem"></i>'
+		};
+
+		var runDatePicker = function () {
+			// range picker
+			$('#datepicker-dataSaidaReportTransferidos').datepicker({
+				todayHighlight: true,
+				templates: controls,
+				format: 'dd/mm/yy'
+			});
+
+			$('#datepicker-dataRetornoPrevistoReportTransferidos').datepicker({
+				todayHighlight: true,
+				templates: controls,
+				format: 'dd/mm/yy'
+			});
+
+			$('#datepicker-dataPrevisaoBeneficio').datepicker({
+				todayHighlight: true,
+				templates: controls,
+				format: 'dd/mm/yy'
+			});
+
+			$('#datepicker-dataIngresso').datepicker({
+				todayHighlight: true,
+				templates: controls,
+				format: 'dd/mm/yy'
+			});
+
+			$('#datepicker-dataSaidaPrevista').datepicker({
+				todayHighlight: true,
+				templates: controls,
+				format: 'dd/mm/yy'
+			});
+
+			$('#datepicker-dataSaidaPrevistaST').datepicker({
+				todayHighlight: true,
+				templates: controls,
+				format: 'dd/mm/yy'
+			});
+		};
+
+		$(document).ready(function () {
+            //init select2
+            $('.select2').select2();
+            
+			$("#select2-regime").on('change', function(event) {
+				var regime = $("#select2-regime").select2().val();
+
+				if (regime == 'ALIMENTOS' || regime == 'PRISAO_TEMPORARIA')
+				{
+					$("#data-previsao-beneficio").hide();
+					$("#data-saida-prevista").show();
+				}
+				else
+				{
+					$("#data-previsao-beneficio").show();
+					$("#data-saida-prevista").hide();
+				}
+			});
+
+            //set placeholder for single
+            $("#select2-transferenciaTipo").select2({
+                placeholder: "Selecione um tipo de transferência",
+				allowClear: true,
+            });
+
+			$("#select2-regime").select2({
+                placeholder: "Selecione um regime",
+				allowClear: true
+            });
+
+			$("#select2-regime-reportTotalizadorGaleriaRegime").select2({
+                placeholder: "Selecione um regime",
+				allowClear: true
+            });
+
+			//set placeholder for single
+            $("#opcao-ordenacao-select").select2({
+                placeholder: "Selecione uma ordem",
+				@* maximumSelectionLength: 2,
+				formatSelectionTooBig: function (limit) {
+					return 'Too many selected items';
+				}, *@
+				allowClear: true,
+            });
+
+			//run datepicker
+			runDatePicker();
+		});
+	</script>
+}

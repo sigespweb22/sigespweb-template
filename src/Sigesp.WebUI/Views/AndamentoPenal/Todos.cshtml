@@ -1,0 +1,1835 @@
+@model Sigesp.Application.ViewModels.Cards.AndamentoPenalCardViewModel
+
+@{
+	ViewData["Title"] = "Andamento Penal";
+	ViewData["PageName"] = "andamento-penal_todos";
+	ViewData["Category0"] = @Settings.App;
+	ViewData["Category1"] = "Jurídico";
+	ViewData["Heading"] = "<i class='subheader-icon fal fa-users'></i> Andamento Penal<span class='fw-300'></span> <sup class='badge badge-primary fw-500'>NOVO</sup>";
+	ViewData["PageDescription"] = "Listagem das informações de andamento penal dos detentos";
+}
+@section HeadBlock {
+	<link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/formplugins/select2/select2.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/theme-demo.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/notifications/toastr/toastr.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/notifications/sweetalert2/sweetalert2.bundle.css">
+}
+
+<div class="row">
+	<div class="col-sm-6 col-xl-1">
+		<div class="p-3 bg-primary rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="text-center display-4 d-block l-h-n m-0 fw-500">
+					@Model.Total
+					<small class="m-0 l-h-n">Total</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-ballot position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>
+	<div class="col-sm-6 col-xl-1">
+		<div class="p-3 bg-secondary rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="text-center display-4 d-block l-h-n m-0 fw-500">
+					@Model.Normal
+					<small class="m-0 l-h-n">Normal</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-user-check position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>
+	<div class="col-sm-6 col-xl-2">
+		<div class="p-3 bg-success rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="text-center display-4 d-block l-h-n m-0 fw-500">
+					@Model.CTCs
+					<small class="m-0 l-h-n">CTCs</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-tasks position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>
+	<div class="col-sm-6 col-xl-2">
+		<div class="p-3 bg-danger rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="text-center display-4 d-block l-h-n m-0 fw-500">
+				    @Model.PADs
+					<small class="m-0 l-h-n">PADs</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-poll-people position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>
+	<div class="col-sm-6 col-xl-2">
+		<div class="p-3 bg-warning rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="text-center display-4 d-block l-h-n m-0 fw-500">
+				    @Model.SaidasTemporarias
+					<small class="m-0 l-h-n">STs</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-street-view position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>
+		<div class="col-sm-6 col-xl-2">
+		<div class="p-3 bg-fusion-600 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="text-center display-4 d-block l-h-n m-0 fw-500">
+				    @Model.EvasoesFugas
+					<small class="m-0 l-h-n">Evasões/Fugas</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-running position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>
+	<div class="col-sm-6 col-xl-2">
+		<div class="p-3 bg-info rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="text-center display-4 d-block l-h-n m-0 fw-500">
+				    @Model.PrisaoDomiciliar
+					<small class="m-0 l-h-n">Prisão Domiciliar</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-house-user position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xl-12">
+		<div id="panel-1" class="panel">
+			<div class="panel-hdr">	
+				<h2>
+					Gerenciamento das informações de <span class="fw-300"><i>Andamento penal</i></span>
+				</h2>
+				<div class="panel-toolbar">
+					<button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Abrir/Fechar"></button>
+				</div>
+			</div>	
+			<div class="panel-container show">
+				<div class="panel-content">		
+					<div class="row text-left mb-3 mr-5">
+						<div class="col-xl-12">
+							<div class="form-group">
+								<form asp-action="Novo" name="andamentoPenal-novo" asp-controller="AndamentoPenal" id="andamentoPenal-novo" method="post">
+									<button data-toggle="tooltip" data-placement="top" title="Adicionar novo registro no ANDAMENTO PENAL" type="submit" name="ap-novo-btn" id="ap-novo-btn"
+										class="btn btn-sm btn-primary waves-effect waves-themed" value="false">
+										<span class="fal fa-plus mr-2"></span>Novo
+									</button>									
+								</form>								
+							</div>
+						</div>
+						<div class="col-xl-12">
+							<div class="form-group">
+								<label class="mt-3 form-label">
+									Busca pelo histórico?:
+								</label>
+								<div class="frame-wrap demo">
+									<div class="demo">
+										<div class="custom-control custom-switch" style="margin-bottom: -40px !important;">
+											<input name="ativa" type="checkbox" class="custom-control-input" id="ativaSwitch" value="false">
+											<label id="label-ativo" class="custom-control-label" for="ativaSwitch">Não</label>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>	
+					<div class="tab-content pt-4">
+						<div class="tab-pane fade show active" id="tab_default-1" role="tabpanel">
+							<div class="row">
+								<div class="col-xl-12">
+									<table id="dt-basic-example" class="table table-bordered table-hover table-striped w-100"></table>
+								</div>
+							</div>	
+						</div>
+					</div>					
+				</div>
+			</div>
+		</div>
+	</div>	
+</div>
+
+<div class="modal fade" id="modal-lista-amarela-edicao" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header" id="modal-header-lista-amarela-edicao">
+				<h5 class="modal-title" id="modal-titulo"></h5>
+				<button type="button" class="close" onclick="cleanModal()" data-dismiss="modal" aria-label="Close">
+				<span aria-hidden="true"><i class="@(Settings.Theme.IconPrefix) fa-times"></i></span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<form id="lista-amarela-edicao-form" method="post">
+					<div class="form-group">
+						<!-- Id -->
+						<div class="row mb-2">
+							<div class="col-lg-12">
+								<div class="form-group">
+									<label class="form-label" for="listaAmarela-id">
+										Id:
+									</label>
+									<div class="input-group">
+										<input type="text" name="listaAmarela-id" 
+											id="listaAmarela-id" class="form-control" 
+											placeholder="Auto" disabled value="">
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- Ipen, Nome -->
+						<div class="row mb-2">
+							<div class="col-lg-6">
+								<div class="form-group">
+									<label class="form-label" for="listaAmarela-detentoIpen">
+										Ipen:
+									</label>
+									<input type="text" name="listaAmarela-detentoIpen" 
+											id="listaAmarela-detentoIpen" class="form-control" 
+											placeholder="Auto" disabled value="">
+								</div>
+							</div>
+							<div class="col-lg-6">
+								<div class="form-group">
+									<label class="form-label" for="listaAmarela-detentoNome">
+										Nome:
+									</label>
+									<input type="text" name="listaAmarela-detentoNome" 
+											id="listaAmarela-detentoNome" class="form-control" 
+											placeholder="Auto" disabled value="">
+								</div>
+							</div>
+						</div>
+						<!-- Regime -->
+						<div class="row mb-2">
+							<div class="col-lg-12">
+								<div class="form-group">
+									<label class="form-label" for="listaAmarela-detentoRegime">
+										Regime:
+									</label>
+									<select name="listaAmarela-detentoRegime" 
+										class="select2 form-control" 
+											id="listaAmarela-detentoRegime">
+										@foreach (var regime in @Model.Regimes)
+										{
+											<option value=@regime>@regime</option>
+										}
+									</select>
+								</div>
+							</div>
+						</div>
+						<!-- Revisão ipen, Data ingresso -->
+						<div class="row mb-2">
+							<div class="col-lg-6">
+								<div class="form-group">
+									<label class="form-label" for="listaAmarela-revisaoIpen">
+										Revisão ipen:
+									</label>
+									<div class="input-group">
+										<div class="input-group-prepend">
+											<span class="input-group-text fs-xl"><i class="@(Settings.Theme.IconPrefix) fa-calendar"></i></span>
+										</div>
+										<input type="text" id="listaAmarela-revisaoIpen" class="datepicker-datas form-control" placeholder="Selecione uma data" aria-label="date" aria-describedby="listaAmarela-revisaoIpen">
+									</div>
+								</div>
+							</div>
+							<div class="col-lg-6">
+								<div class="form-group">
+									<label class="form-label" for="listaAmarela-dataPrisao">
+										Data ingresso:
+									</label>
+									<div class="input-group">
+										<div class="input-group-prepend">
+											<span class="input-group-text fs-xl"><i class="@(Settings.Theme.IconPrefix) fa-calendar"></i></span>
+										</div>
+										<input type="text" id="listaAmarela-dataPrisao" class="datepicker-datas form-control" placeholder="Selecione uma data" aria-label="date" aria-describedby="listaAmarela-dataPrisao">
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- Artigos, Comarcas -->
+						<div class="row mb-2">
+							<div class="col-lg-6">
+								<div class="form-group">
+									<label class="form-label" for="listaAmarela-artigos">
+										Artigos:
+									</label>
+									<input type="text" name="listaAmarela-artigos" 
+											id="listaAmarela-artigos" class="form-control" 
+											placeholder="Informe os artigos"  value="">
+								</div>
+							</div>
+							<div class="col-lg-6">
+								<div class="form-group">
+									<label class="form-label" for="listaAmarela-comarca">
+										Comarca:
+									</label>
+									<input type="text" name="listaAmarela-comarca" 
+											id="listaAmarela-comarca" class="form-control" 
+											placeholder="Informe uma comarca" value="">
+								</div>
+							</div>
+						</div>
+						<!-- Pena ano, Pena mês, pena Dia -->
+						<div class="row mb-2">
+							<div class="col-lg-4">
+								<div class="form-group">
+									<label class="form-label" for="listaAmarela-penaAno">
+										Pena ano:
+									</label>
+									<input type="text" name="listaAmarela-penaAno"
+											id="listaAmarela-penaAno" class="form-control" 
+											placeholder="Informe a pena (Ano)" value="">
+								</div>
+							</div>
+							<div class="col-lg-4">
+								<div class="form-group">
+									<label class="form-label" for="listaAmarela-penaMes">
+										Pena mês:
+									</label>
+									<input type="text" name="listaAmarela-penaMes"
+											id="listaAmarela-penaMes" class="form-control" 
+											placeholder="Informe a pena (Mês)" value="">
+								</div>
+							</div>
+							<div class="col-lg-4">
+								<div class="form-group">
+									<label class="form-label" for="listaAmarela-penaDia">
+										Pena dia:
+									</label>
+									<input type="text" name="listaAmarela-penaDia" 
+											id="listaAmarela-penaDia" class="form-control" 
+											placeholder="Informe a pena (Dia)" value="">
+								</div>
+							</div>
+						</div>
+						<!-- Instrumentos prisão -->
+						<div class="row mb-2">
+							<div class="col-lg-12">
+								<div class="form-group">
+									<label class="form-label" for="listaAmarela-instrumentosPrisao">
+										Instrumentos prisão:
+									</label>
+									<select name="listaAmarela-instrumentosPrisao" 
+										class="select2 form-control" 
+											id="listaAmarela-instrumentosPrisao" multiple="">
+										@foreach (var ip in @Model.InstrumentosPrisao)
+										{
+											<option value=@ip>@ip</option>
+										}
+									</select>
+								</div>
+							</div>
+						</div>
+						<!-- Data saída prevista, Aguardando transferência e Aguardando transferência tipo -->
+						<div class="row mb-2">
+							<div class="col-lg-4">
+								<div class="form-group">
+									<label class="form-label" for="listaAmarela-dataSaidaPrevista">
+										Data saída prevista:
+									</label>
+									<div class="input-group">
+										<div class="input-group-prepend">
+											<span class="input-group-text fs-xl"><i class="@(Settings.Theme.IconPrefix) fa-calendar"></i></span>
+										</div>
+										<input type="text" id="listaAmarela-dataSaidaPrevista" class="datepicker-datas form-control" placeholder="Selecione uma data" aria-label="date" aria-describedby="listaAmarela-dataSaidaPrevista">
+									</div>
+								</div>
+							</div>
+							<div class="col-lg-4">
+								<div class="form-group">
+									<label class="form-label" for="listaAmarela-aguardandoTransferencia">
+										Aguardando transferência:
+									</label>
+									<select name="listaAmarela-aguardandoTransferencia" 
+										class="select2 form-control" 
+											id="listaAmarela-aguardandoTransferencia">
+										@* @foreach (var transferenciaTipo in @Model.TransferenciaTipos)
+										{
+											<option value=@transferenciaTipo>@transferenciaTipo</option>
+										} *@
+									</select>
+								</div>
+							</div>
+							<div class="col-lg-4">
+								<div class="form-group">
+									<label class="form-lbel" for="listaAmarela-aguardandoTransferenciaTipo">
+										Aguardando transferência tipo:
+									</label>
+									<select name="listaAmarela-aguardandoTransferenciaTipo" 
+										class="select2 form-control" 
+											id="listaAmarela-aguardandoTransferenciaTipo">
+									</select>
+								</div>
+							</div>
+						</div>
+						<!-- Condenação tipo, Dias medida disciplinar -->
+						<div class="row mb-2">
+							<div class="col-lg-6">
+								<div class="form-group">
+									<label class="form-label" for="listaAmarela-condenacaoTipo">
+										Condenação tipo:
+									</label>
+									<select name="listaAmarela-condenacaoTipo" 
+										class="select2 form-control" 
+											id="listaAmarela-condenacaoTipo">
+										@foreach (var ct in @Model.CondenacaoTipos)
+										{
+											<option value=@ct>@ct</option>
+										}
+									</select>
+								</div>
+							</div>
+							<div class="col-lg-6">
+								<div class="form-group">
+									<label class="form-label" for="listaAmarela-diasMedidaDisciplinar">
+										Dias medida disciplinar:
+									</label>
+									<input type="text" name="listaAmarela-diasMedidaDisciplinar" 
+											id="listaAmarela-diasMedidaDisciplinar" class="form-control" 
+											placeholder="Informe os dias de medida disciplinar" value="">
+								</div>
+							</div>							
+						</div>
+						<!-- Ação penal/PEC -->
+						<div class="row mb-2">
+							<div class="col-lg-12">
+								<div class="form-group">
+									<label class="form-label" for="listaAmarela-acaoPenal">
+										Ação penal/PEC:
+									</label>
+									<input type="text" name="listaAmarela-acaoPenal" 
+											id="listaAmarela-acaoPenal" class="form-control" 
+											placeholder="Informe os dados de ação penal ou PEC" value="">
+								</div>
+							</div>							
+						</div>
+						<!-- Data previsão benefício, Previsão benefício observação -->
+						<div class="row mb-2">
+							<div class="col-lg-6">
+								<div class="form-group">
+									<label class="form-label" for="listaAmarela-dataPrevisaoBeneficio">
+										Data previsão benefício:
+									</label>
+									<div class="input-group">
+										<div class="input-group-prepend">
+											<span class="input-group-text fs-xl"><i class="@(Settings.Theme.IconPrefix) fa-calendar"></i></span>
+										</div>
+										<input type="text" id="listaAmarela-dataPrevisaoBeneficio" class="datepicker-datas form-control" placeholder="Selecione uma data" aria-label="date" aria-describedby="listaAmarela-dataPrevisaoBeneficio">
+									</div>
+								</div>
+							</div>
+							<div class="col-lg-6">
+								<div class="form-group">
+									<label class="form-label" for="listaAmarela-previsaoBeneficioObservacao">
+										Previsão benefício observação:
+									</label>
+									<input type="text" name="listaAmarela-previsaoBeneficioObservacao" 
+											id="listaAmarela-previsaoBeneficioObservacao" class="form-control" 
+											placeholder="Informe as observações para previsão benefício" value="">
+									</select>
+								</div>
+							</div>
+						</div>
+						<!-- Data última progressão -->
+						<div class="row mb-2">
+							<div class="col-lg-12">
+								<div class="form-group">
+									<label class="form-label" for="listaAmarela-dataUltimaProgressao">
+										Data última progressão:
+									</label>
+									<div class="input-group">
+										<div class="input-group-prepend">
+											<span class="input-group-text fs-xl"><i class="@(Settings.Theme.IconPrefix) fa-calendar"></i></span>
+										</div>
+										<input type="text" id="listaAmarela-dataUltimaProgressao" class="datepicker-datas form-control" placeholder="Selecione uma data" aria-label="date" aria-describedby="listaAmarela-dataUltimaProgressao">
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer" style="margin-right: -17px;">
+						<button type="button" id="lista-amarela-edicao-btn-fechar" class="btn btn-secondary" data-dismiss="modal" onclick="cleanModal()">Fechar</button>
+						<button type="button" id="lista-amarela-edicao-btn-salvar" class="btn btn-primary">Salvar</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="modal-oficio-pad-parecer" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header" id="modal-header-oficio-pad-parecer">
+				<h3 class="modal-title fw-700" id="modal-titulo-oficio-pad-parecer"></h3>
+				<button type="button" class="close" data-dismiss="modal" onclick="cleanModalOficioPadParecer()"></button>
+				<span aria-hidden="true"><i class="@(Settings.Theme.IconPrefix) fa-times"></i></span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="form-group">
+					<!--  ID Andamento penal -->
+					<div class="row mb-2">
+						<div class="col-lg-12">
+							<div class="form-group">
+								<input type="hidden" name="andamentoPenalId" 
+									id="andamento-penal-id" class="form-control" 
+									value="">
+							</div>
+						</div>
+					</div>
+					<!--  ID Nº / Portaria N° -->
+					<div class="row mb-2">
+						<div class="col-lg-12">
+							<div class="form-group">
+								<label class="form-label" 
+										for="portaria-numero">
+									ID nº / Portaria nº:
+								</label>
+								<input type="text" name="portariaNumero" 
+									id="portariaNumero" class="form-control" 
+									placeholder="Informe o número do INCIDENTE DISCIPLINAR (Deverá ser o mesmo número da PORTARIA)" value="">
+							</div>
+						</div>
+					</div>
+					<!-- É procedente -->
+					<div class="row mb-2">
+						<div class="col-lg-12">
+							<div class="form-group">
+								<label class="form-label" 
+										for="isProcedente">
+									É Procedente?:
+								</label>
+								<select name="isProcedente"
+									class="select2 form-control" 
+										id="isProcedente">
+								</select>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="cleanModalOficioPadParecer()">Fechar</button>
+				<button type="button" onclick="getOficioPADParecer()" class="btn btn-primary">
+					<span class="text-gerar-leituras">Gerar</span>
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="modal-alter-pec" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-md modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header" id="modal-alter-pec-header">
+				<h5 class="modal-title" id="modal-alter-pec-titulo"></h5>
+				<button type="button" class="close" onclick="cleanModalAlterPec()" data-dismiss="modal" aria-label="Close">
+				<span aria-hidden="true"><i class="@(Settings.Theme.IconPrefix) fa-times"></i></span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<form id="form-alter-pec" method="post">
+					<div class="form-group">
+						<!-- Ipen -->
+						<div class="row mb-2">
+							<div class="col-lg-12">
+								<div class="form-group">
+									<label class="form-label" for="modal-ap-ipen">
+										Ipen:
+									</label>
+									<input type="number" name="modal-ap-ipen" 
+										   oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+									       id="modal-ap-ipen" class="form-control" 
+										   maxlength = "6"
+									       placeholder="Informe o IPEN" value="">
+								</div>
+							</div>
+						</div>
+						<!-- Pec -->
+						<div class="row mb-2">
+							<div class="col-lg-12">
+								<div class="form-group">
+									<label class="form-label" for="modal-ap-pec">
+										Pec:
+									</label>
+									<input type="text" name="modal-ap-pec"
+											oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+											id="modal-ap-pec" class="form-control" 
+											maxlength = "25"
+											placeholder="Informe o PEC" value="">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer" style="margin-right: -17px;">
+						<button type="button" id="btn-fechar-alter-pec" class="btn btn-secondary" data-dismiss="modal" onclick="cleanModalAlterPec()">Fechar</button>
+						<button type="button" id="btn-salvar-alter-pec" class="btn btn-primary">Salvar</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section ScriptsBlock {
+<script src="~/js/dependency/moment/moment.js"></script>
+<script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+<script src="~/js/formplugins/select2/select2.bundle.js"></script>
+<script src="~/js/datagrid/datatables/datatables.export.js"></script>
+<script src="~/js/notifications/toastr/toastr.js"></script>
+<script src="~/js/extensions/automapper-extensions.js"></script>
+<script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+<script src="~/js/notifications/sweetalert2/sweetalert2.bundle.js"></script>
+<script src="~/js/extensions/mask-extensions.js"></script>
+
+<script>
+	
+	const endpointAP = "/api/andamento-penal";
+	const endpointAPNovo = "/api/andamento-penal/novo";
+	const endpointAPEdicao = "/api/andamento-penal/edicao";
+	const endpointAPDelete = "/api/andamento-penal/delete";
+	const endpointAPLista = "/api/andamento-penal/lista";
+
+	toastr.options = {
+		"closeButton": false,
+		"debug": false,
+		"newestOnTop": true,
+		"progressBar": true,
+		"positionClass": "toast-top-right",
+		"preventDuplicates": true,
+		"onclick": null,
+		"showDuration": 300,
+		"hideDuration": 100,
+		"timeOut": 5000,
+		"extendedTimeOut": 1000,
+		"showEasing": "swing",
+		"hideEasing": "linear",
+		"showMethod": "fadeIn",
+		"hideMethod": "fadeOut"
+	};
+
+	var boolOptions = ["NÃO", "SIM"];
+	var controls = {
+		leftArrow: '<i class="@(Settings.Theme.IconPrefix) fa-angle-left" style="font-size: 1.25rem"></i>',
+		rightArrow: '<i class="@(Settings.Theme.IconPrefix) fa-angle-right" style="font-size: 1.25rem"></i>'
+	};
+
+	var oldExportAction = function (self, e, dt, button, config) {
+		if (button[0].className.indexOf('buttons-excel') >= 0) {
+			if ($.fn.dataTable.ext.buttons.excelHtml5.available(dt, config)) {
+				$.fn.dataTable.ext.buttons.excelHtml5.action.call(self, e, dt, button, config);
+			}
+			else {
+				$.fn.dataTable.ext.buttons.excelFlash.action.call(self, e, dt, button, config);
+			}
+		} else if (button[0].className.indexOf('buttons-print') >= 0) {
+			$.fn.dataTable.ext.buttons.print.action(e, dt, button, config);
+		}
+	};
+
+	var newExportAction = function (e, dt, button, config) {
+		var self = this;
+		var oldStart = dt.settings()[0]._iDisplayStart;
+
+		dt.one('preXhr', function (e, s, data) {
+			// Just this once, load all data from the server...
+			data.start = 0;
+			data.length = 2147483647;
+
+			dt.one('preDraw', function (e, settings) {
+				// Call the original action function 
+				oldExportAction(self, e, dt, button, config);
+
+				dt.one('preXhr', function (e, s, data) {
+					// DataTables thinks the first item displayed is index 0, but we're not drawing that.
+					// Set the property to what it was before exporting.
+					settings._iDisplayStart = oldStart;
+					data.start = oldStart;
+				});
+
+				// Reload the grid with the original page. Otherwise, API functions like table.cell(this) don't work properly.
+				setTimeout(dt.ajax.reload, 0);
+
+				// Prevent rendering of the full data to the DOM
+				return false;
+			});
+		});
+
+		// Requery the server with the new one-time export settings
+		dt.ajax.reload();
+	};
+
+	var runDatePicker = function () {
+		// input group layout for modal demo
+		$('.datepicker-datas').datepicker({
+			orientation: "top left",
+			todayHighlight: true,
+			templates: controls,
+			format: 'dd/mm/yy'
+		});
+	};
+
+	var hasBar = function (value) {
+		if(value.match('/')){
+			return true;
+		}
+		return false;
+	};
+
+	var isValidDate = function (date) {
+		let regex = new RegExp(/^[0-9]{2}[\/]{1}[0-9]{2}[\/]{1}[0-9]{4}$/g);
+		var test = regex.test(date)
+
+		return test;
+	};
+
+	var isEditNewTab = function (value) {
+		var val = localStorage.getItem('isEditNewTab');
+
+		if (val == "true")
+		{
+			localStorage.setItem('isEditNewTab', false);
+			$('.btn-isEditNewTab').html('<i class="@(Settings.Theme.IconPrefix) fa-external-link mr-1"></i> Habilitar ENT');
+		}
+		else
+		{
+			localStorage.setItem('isEditNewTab', true);
+			$('.btn-isEditNewTab').html('<i class="@(Settings.Theme.IconPrefix) fa-external-link-square mr-1"></i> Desabilitar ENT');
+		}
+
+		window.location.href = '/andamentopenal/todos';
+	};
+
+	const modalOpenToAlterPecEgresso = () => {
+		// ** abrir modal	
+		$('#modal-alter-pec').modal('toggle');
+		$("#modal-alter-pec-titulo")
+			.text("ATUALIZAR PEC DE EGRESSO");
+		
+		cleanModalAlterPec();
+		$("#modal-ap-ipen").focus();
+	};
+
+	var setBtnIsEditNewTab = function (value) {
+		var val = localStorage.getItem('isEditNewTab');
+
+		if (val == "true")
+		{
+			$('.btn-isEditNewTab').html('<i class="@(Settings.Theme.IconPrefix) fa-external-link-square mr-1"></i> Desabilitar ENT');
+		}
+		else
+		{
+			$('.btn-isEditNewTab').html('<i class="@(Settings.Theme.IconPrefix) fa-external-link mr-1"></i> Habilitar ENT');
+		}
+	};
+
+	var cleanModal = function() {
+		$('#lista-amarela-edicao-form')[0].reset();
+
+		$("#listaAmarela-detentoRegime").select2().val(null);
+		$("#listaAmarela-instrumentosPrisao").select2().val(null);
+		$("#listaAmarela-condenacaoTipo").select2().val(null);
+		$("#listaAmarela-aguardandoTransferencia").select2().val(null);
+		$("#listaAmarela-aguardandoTransferenciaTipo").select2().val(null);
+	};
+
+	var cleanModalAlterPec = function() {
+		$("#modal-ap-ipen").val(null);
+		$("#modal-ap-pec").val(null);
+	};
+
+	var dateMapper = function(dateString) {
+		var dia = dateString.substring(8,13);
+		var mes = dateString.substring(5,7);
+		var ano = dateString.substring(2,4)
+
+		return dia + "/" + mes + "/" + ano;
+	};
+
+	var getListaAmarelaByIpenForModal = function (ipen) {
+
+		if (ipen == null || ipen == "")
+		{
+			toastr["error"]("Problemas ao obter o IPEN do registro para atualizar seus dados na LISTA AMARELA. Tente mais tarde, caso persista o problema, informe o suporte do sistema.");
+		};
+
+		$.ajax({ 
+			url: "/api/lista-amarela/get-by-ipen", 
+			type: 'POST',
+			contentType: "application/json;charset=utf-8",
+			data: JSON.stringify(ipen, null, 4),
+			success: function(success) {			
+				if (success.data == null)
+				{
+					setTimeout(function() {
+						$('#lista-amarela-edicao-btn-fechar').click();
+						toastr["error"]("Detento não possui registro na LISTA AMARELA para edição.");
+					}, 500);
+				}
+				else
+				{
+					setTimeout(function() {
+						$("#listaAmarela-id").val(success.data.id);
+						$("#listaAmarela-detentoIpen").val(success.data.detentoIpen);
+						$("#listaAmarela-detentoNome").val(success.data.detentoNome);
+						
+						$("#listaAmarela-detentoRegime").select2().val(success.data.detentoRegime);
+						$("#listaAmarela-detentoRegime").select2();
+
+						$("#listaAmarela-revisaoIpen").val(dateMapper(success.data.revisaoIpenData));
+						$("#listaAmarela-dataPrisao").val(dateMapper(success.data.dataPrisao));
+						$("#listaAmarela-artigos").val(success.data.artigos);
+						$("#listaAmarela-comarca").val(success.data.comarca);
+						$("#listaAmarela-penaAno").val(success.data.penaAno);
+						$("#listaAmarela-penaMes").val(success.data.penaMes);
+						$("#listaAmarela-penaDia").val(success.data.penaDia);
+
+						$("#listaAmarela-instrumentosPrisao").select2().val(success.data.instrumentosPrisao);
+						$("#listaAmarela-instrumentosPrisao").select2();
+
+						$("#listaAmarela-dataSaidaPrevista").val(dateMapper(success.data.dataSaidaPrevista));
+
+						if (success.data.aguardandoTransferencia)
+						{
+							$("#listaAmarela-aguardandoTransferencia").select2().val("SIM");
+							$("#listaAmarela-aguardandoTransferencia").select2();
+						}
+						else
+						{
+							$("#listaAmarela-aguardandoTransferencia").select2().val("NÃO");
+							$("#listaAmarela-aguardandoTransferencia").select2();
+						}
+
+						$("#listaAmarela-aguardandoTransferenciaTipo").select2().val(success.data.aguardandoTransferenciaTipo);
+						$("#listaAmarela-aguardandoTransferenciaTipo").select2();
+
+						$("#listaAmarela-condenacaoTipo").select2().val(success.data.condenacaoTipo);
+						$("#listaAmarela-condenacaoTipo").select2();
+
+						$("#listaAmarela-diasMedidaDisciplinar").val(success.data.diasMedidaDisciplinar);
+						$("#listaAmarela-acaoPenal").val(success.data.acaoPenal);
+						$("#listaAmarela-dataPrevisaoBeneficio").val(dateMapper(success.data.dataPrevisaoBeneficio));
+						$("#listaAmarela-previsaoBeneficioObservacao").val(success.data.previsaoBeneficioObservacao);
+						$("#listaAmarela-dataUltimaProgressao").val(dateMapper(success.data.dataProgressao));
+
+						//Após popular todos os dados, set focus no primeiro campo editável
+						$("#listaAmarela-detentoRegime").select2('focus');
+						
+					}, 500);
+				}
+			},
+			error: function (error, jqXHR, textStatus, errorThrown) {
+				const returnObj = Object.entries(error.responseJSON.errors);
+
+				returnObj.forEach(function(err) {
+					err[1].forEach(function (int) {
+						toastr["error"](err[0], int);
+					})
+				});
+			}
+		});	
+	};
+
+	var toUpperCaseFormFields = function () {
+		$('#listaAmarela-artigos').val($('#listaAmarela-artigos').val().toUpperCase());
+		$('#listaAmarela-comarca').val($('#listaAmarela-comarca').val().toUpperCase());
+		$('#listaAmarela-penaAno').val($('#listaAmarela-penaAno').val().toUpperCase());
+		$('#listaAmarela-penaMes').val($('#listaAmarela-penaMes').val().toUpperCase());
+		$('#listaAmarela-penaDia').val($('#listaAmarela-penaDia').val().toUpperCase());
+		$('#listaAmarela-diasMedidaDisciplinar').val($('#listaAmarela-diasMedidaDisciplinar').val().toUpperCase());
+		$('#listaAmarela-acaoPenal').val($('#listaAmarela-acaoPenal').val().toUpperCase());
+		$('#listaAmarela-previsaoBeneficioObservacao').val($('#listaAmarela-previsaoBeneficioObservacao').val().toUpperCase());
+	};
+
+	var aguardandoTransferenciaMapper = function () {
+		if ($("#listaAmarela-aguardandoTransferencia").val() == "SIM")
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	};
+
+	var cleanModalOficioPadParecer = function () {
+		$('#portariaNumero').val(null);
+		$('#isProcedente').select2().val(null);
+		$("#isProcedente").select2().empty();
+		$('#isProcedente').select2({ placeholder: "É tipo procedente?" });
+
+		//re-init select2
+		$('.select2').select2();		
+		$('.select2').each(function () {
+			var select = $(this);
+
+			select.select2({
+				width: '100%',
+				allowClear: true,
+				language: {
+					noResults: function () {
+						return "Nenhum registro encontrado";
+					}
+				}
+			});
+		});
+	};
+
+	var getModalOficioPADParecer = function (event) {
+		//abrir modal	
+		$('#modal-oficio-pad-parecer').modal('toggle');
+		$("#modal-titulo-oficio-pad-parecer")
+			.text("GERAR OFÍCIO - PAD PARECER");
+		
+		cleanModalOficioPadParecer();
+		
+		$("#portariaNumero").focus();
+		
+		boolOptions.forEach(function (item) {
+			$("#isProcedente").append("<option value='"+item+"' selected>"+item+"</option>");
+		});
+
+		$('#isProcedente').select2().val(null);
+		$('#isProcedente').select2({ placeholder: "É tipo procedente?" });
+
+		$('input[name=andamentoPenalId]').val(event.value);
+	};
+
+	var getOficioPADParecer = function () {
+		$("input[name=inputAndamentoPenalId]").val($('input[name=andamentoPenalId]').val());
+		$("input[name=inputIsProcedente]").val($("#isProcedente").select2().val());
+		$("input[name=inputPortariaNumero]").val($("#portariaNumero").val());
+
+		setTimeout(function() {
+			$("#oj-pad-parecer-form").submit();
+		}, 500);
+	};
+
+	const atTipo = function () {
+		$.ajax({ 
+			url: "/api/lista-amarela/get-attipos", 
+			type: 'GET',
+			contentType: "application/json;charset=utf-8",
+			success: function(data) {
+				if (data.success)
+				{
+					$('#listaAmarela-aguardandoTransferenciaTipo').select2().empty();
+					data.data.forEach(function(el) {
+						$('#listaAmarela-aguardandoTransferenciaTipo').append('<option value=' + el + '>' + el + '</option>');
+					});
+				} else {
+					toastr["error"](data.message);
+				}
+			},
+			error: function (error, jqXHR, textStatus, errorThrown) {
+				const returnObj = Object.entries(error.responseJSON.errors);
+
+				returnObj.forEach(function(err) {
+					err[1].forEach(function (int) {
+						toastr["error"](err[0], int);
+					})
+				});
+			}
+		});		
+	};
+
+	const copyToClipBoard = (item) => {
+		var textArea = document.createElement("textarea");
+
+		textArea.style.position = 'fixed';
+		textArea.style.top = 0;
+		textArea.style.left = 0;
+		textArea.style.width = '2em';
+		textArea.style.height = '2em';
+		textArea.style.padding = 0;
+		textArea.style.border = 'none';
+		textArea.style.outline = 'none';
+		textArea.style.boxShadow = 'none';
+		textArea.style.background = 'transparent';
+		textArea.value = item;
+
+		document.body.appendChild(textArea);
+		textArea.select();
+
+		try {
+			var successful = document.execCommand('copy');
+			var msg = successful ? 'successful' : 'unsuccessful';
+			console.log('Copying text command was ' + msg);
+		} catch (err) {
+			console.log('Oops, unable to copy');
+			window.prompt("Copie para área de transferência: Ctrl+C e tecle Enter", text);
+		}
+
+		document.body.removeChild(textArea);
+	}
+
+	const pecMask = (o, f) => {
+		v_obj = o
+    	v_fun = f
+
+    	setTimeout(execMask(), 1)
+	}
+
+	const execMask = () => {
+		v_obj.value = v_fun(v_obj.value)
+	}
+
+	const mPec = (v) => {
+		//Remove tudo o que não é dígito
+		v=v.replace(/\D/g,""); 
+		
+		//Coloca hífen entre o sétimo e o oitavo dígito
+		v = v.replace(/(\d)(\d{13})$/,"$1-$2");
+		
+		//Coloca ponto entre o décimo e o décimo primeiro dígito
+		v = v.replace(/(\d)(\d{11})$/,"$1.$2");
+		
+		//Coloca ponto entre o décimo quinto e o décimo sexto dígito
+		v = v.replace(/(\d)(\d{7})$/,"$1.$2");
+		
+		//Coloca ponto entre o décimo sétimo e o décimo oitavo dígito
+		v = v.replace(/(\d)(\d{6})$/,"$1.$2");
+		
+		//Coloca ponto entre o vigésimo e o vigésimo primeiro dígito
+		v = v.replace(/(\d)(\d{4})$/,"$1.$2");
+
+		return v;
+	}
+	
+	$(document).ready( function () {
+		$(document).on("click", ".open-modal-la-editar", function (e) {
+			var id = $(this).data('id');
+			var detentoIpen = $(this).data('id');			
+
+			//set values in select2 aguardandoTransferencia
+			//limpar registros antes de adicionar novos
+			$('#listaAmarela-aguardandoTransferencia').select2().empty();
+			boolOptions.forEach(function(el) {
+				$('#listaAmarela-aguardandoTransferencia').append('<option value=' + el + '>' + el + '</option>');
+			});
+
+			//set titulo modal
+			$("#modal-titulo").html("Alterar informações da LISTA AMARELA - <span class='fw-700 text-primary'>IPEN " + $(this).val() + "</span>");
+			
+			//clear modal
+			cleanModal();
+			//show modal
+			$('#modal-lista-amarela-edicao').modal('show');		
+
+			// get and set enuns AguardandoTransferenciaTipo
+			
+			atTipo();
+
+			//obtém os dados da lista amarela do detento do ap-andamento penal
+			getListaAmarelaByIpenForModal($(this).val());
+		});		
+
+		$("#lista-amarela-edicao-btn-salvar").click(function (evt) {
+			var listaAmarelaViewModel = {
+				id: $("#listaAmarela-id").val(),
+				detentoIpen: $("#listaAmarela-detentoIpen").val(),
+				detentoNome: $("#listaAmarela-detentoNome").val(),
+				detentoRegime: $("#listaAmarela-detentoRegime").select2().val(),
+				revisaoIpenData: $("#listaAmarela-revisaoIpen").val(),
+				dataPrisao: $("#listaAmarela-dataPrisao").val(),
+				artigos: $("#listaAmarela-artigos").val(),
+				comarca: $("#listaAmarela-comarca").val(),
+				penaAno: $("#listaAmarela-penaAno").val(),
+				penaMes: $("#listaAmarela-penaMes").val(),
+				penaDia: $("#listaAmarela-penaDia").val(),
+				instrumentosPrisao: $("#listaAmarela-instrumentosPrisao").select2().val(),
+				dataSaidaPrevista: $("#listaAmarela-dataSaidaPrevista").val(),
+				aguardandoTransferencia: aguardandoTransferenciaMapper(),
+				aguardandoTransferenciaTipo: $("#listaAmarela-aguardandoTransferenciaTipo").select2().val(),
+				condenacaoTipo: $("#listaAmarela-condenacaoTipo").val(),
+				diasMedidaDisciplinar: $("#listaAmarela-diasMedidaDisciplinar").val(),
+				acaoPenal: $("#listaAmarela-acaoPenal").val(),
+				dataPrevisaoBeneficio: $("#listaAmarela-dataPrevisaoBeneficio").val(),
+				previsaoBeneficioObservacao: $("#listaAmarela-previsaoBeneficioObservacao").val(),
+				dataProgressao: $("#listaAmarela-dataUltimaProgressao").val(),
+			};
+
+			console.log(listaAmarelaViewModel);
+			
+			$.ajax({
+				url: "/api/lista-amarela/edicao",
+				type: 'PUT',
+				contentType: "application/json;charset=utf-8",
+				data: JSON.stringify(listaAmarelaViewModel, null, 4),
+				success: function (success) {
+					$('#modal-lista-amarela-edicao').modal('toggle');
+
+					Swal.fire({
+						text: "Dados da LISTA AMARELA atualizados com sucesso!",
+						icon: "success",
+						timer: 2000,
+						showCancelButton: false,
+						showConfirmButton: true,
+						confirmButtonColor: "#179c8e",
+						timerProgressBar: true,
+						buttons: false
+					});
+				},
+				error: function (error, jqXHR, textStatus, errorThrown) {
+					debugger;
+					const returnObj = Object.entries(error.responseJSON.errors);
+
+					returnObj.forEach(function(err) {
+						err[1].forEach(function (int) {
+							toastr["error"](err[0], int);
+						})
+					});
+				}
+			});
+		});
+
+		// ** begin - Methods modal alter pec
+		$("#btn-salvar-alter-pec").click(function (evt) {
+			const ipen = $("#modal-ap-ipen").val()
+			const pec = $("#modal-ap-pec").val()
+
+			// ** Required validations
+			if (bobcatJS.GeneralExtensions.isNullOrEmptyOrUndefined(ipen))
+			{
+				// return toast error message
+				toastr.error('Ipen requerido.');
+			} else if (bobcatJS.GeneralExtensions.isNullOrEmptyOrUndefined(pec))
+			{
+				// return toast error message
+				toastr.error("Pec requerido.");
+			} else {
+				const params = {
+					ipen: ipen,
+					pec: pec
+				}
+
+				bobcatJS
+					.DetentoStoreService
+					.alterPecAsync(params)
+					.then((response) => {
+						if (response.status === 204)
+						{
+							$('#dt-basic-example').dataTable().api().ajax.reload();
+							$('#modal-alter-pec').modal('toggle');
+
+							Swal.fire({
+								text: "Pec atualizado com sucesso.",
+								icon: "success",
+								timer: 2000,
+								showCancelButton: false,
+								showConfirmButton: true,
+								confirmButtonColor: "#179c8e",
+								timerProgressBar: true,
+								buttons: false
+							});
+						}
+					})
+					.catch((e) => {
+						const returnObj = Object.entries(e.response.data.errors.Messages);
+
+						returnObj.forEach(function(err) {
+							toastr["error"](err[1]);
+						});
+					})
+			}
+		});
+
+		$("#modal-ap-pec").keyup(function (evt) {
+			pecMask(this, mPec)
+		});
+		// ** end
+
+		//Tecla de atalho para criar um novo registro (CTRL + Z)	
+		$(document).keydown(function(e) {
+			if (e.ctrlKey && e.which === 90) $("#ap-novo-btn").click();
+
+			toUpperCaseFormFields();
+		});
+
+		$("#ativaSwitch").click(function(e){
+			if (this.checked) {
+				$(this).attr("value", "true");
+				$("#label-ativo").html("SIM");
+			} else {
+				$(this).attr("value", "false");
+				$("#label-ativo").html("NÃO");
+			}
+		});
+
+		//init select2
+		$('.select2').select2();
+
+		$('#detento.regime').select2({
+			dropdownParent: $('#modal-lista-amarela-edicao')
+		});
+
+		runDatePicker();
+
+		setTimeout(function() {
+			setBtnIsEditNewTab();		               
+		}, 100);
+
+		setTimeout(function() {
+			$('#listaAmarela-revisaoIpen').keyup(function(e) {
+				const $this = $(this);
+
+				maskDatePicker($(this).val(), "#listaAmarela-revisaoIpen", e.which);
+			});
+
+			$('#listaAmarela-dataPrisao').keyup(function(e) {
+				const $this = $(this);
+
+				maskDatePicker($(this).val(), "#listaAmarela-dataPrisao", e.which);
+			});
+
+			$('#listaAmarela-dataSaidaPrevista').keyup(function(e) {
+				const $this = $(this);
+
+				maskDatePicker($(this).val(), "#listaAmarela-dataSaidaPrevista", e.which);
+			});
+
+			$('#listaAmarela-dataPrevisaoBeneficio').keyup(function(e) {
+				const $this = $(this);
+
+				maskDatePicker($(this).val(), "#listaAmarela-dataPrevisaoBeneficio", e.which);
+			});
+
+			$('#listaAmarela-dataUltimaProgressao').keyup(function(e) {
+				const $this = $(this);
+
+				maskDatePicker($(this).val(), "#listaAmarela-dataUltimaProgressao", e.which);
+			});
+			
+		}, 500);
+
+		// Event Lot
+		var events = $("#app-eventlog");
+
+		// Column Definitions
+		var columnSet = [
+			{
+				title: "Id",
+				id: "id",
+				data: "id",
+				placeholderMsg: "Automático",
+				type: "readonly",
+				visible: false,
+				searchable: false,
+				orderable: false,
+				name: "Id"
+			},
+			{
+				title: "Data evento",
+				id: "dataEventoPrincipal",
+				data: "dataEventoPrincipal",
+				type: "date",
+				visible: true,
+				orderable: true,
+				searchable: true,
+				render: function (data) {
+					return moment(data).format('DD/MM/YYYY');
+				},
+				name: "DataEventoPrincipal"
+			},
+			{
+				title: "Ipen",
+				id: "detentoIpen",
+				data: "detentoIpen",
+				type: "text",
+				visible: true,
+				orderable: true,
+				searchable: true,
+				render: function (data) {
+					return data;
+				},
+				name: "Detento.Ipen"
+			},
+			{
+				title: "Nome",
+				id: "detentoNome",
+				data: "detentoNome",
+				type: "text",
+				visible: true,
+				orderable: true,
+				searchable: true,
+				name: "Detento.Nome"
+			},				
+			{
+				title: "Observação",
+				id: "observacao",
+				data: "observacao",
+				type: "text",
+				visible: true,
+				orderable: false,
+				searchable: false,
+				render: function (data) {
+					return data;
+				},
+				name: "Observacao"
+			},
+			{
+				title: "Histórico",
+				id: "historico",
+				data: "historico",
+				type: "text",
+				visible: true,
+				orderable: false,
+				searchable: false,
+				render: function (data) {
+					return data;
+				},
+				name: "Historico"
+			},
+			{
+				title: "Status",
+				id: "status",
+				data: "status",
+				type: "select",
+				multiple : true,
+				options: [],
+				visible: true,
+				select2 : {
+					placeholder: "Selecione um status",
+					width: "100%",
+					allowClear: true,
+					minimumInputLength: 3,
+					language: {
+						inputTooShort: function() {
+							return 'Digite 3 ou mais caracteres para iniciar a busca';
+						}
+					}
+				},
+				searchable: false,
+				orderable: true,
+				visible: true,
+				name: "Status"
+			},
+			{
+				title: "Pec",
+				id: "pec",
+				data: "pec",
+				placeholderMsg: "Automático",
+				type: "readonly",
+				visible: false,
+				orderable: false,
+				searchable: false,
+				name: "Pec"
+			},
+			{
+				title: "Ações",
+				id: "acoes",
+				visible: true,
+				orderable: false,
+				searchable: false,
+				name: "Acoes"
+			}
+		];
+
+		/* start data table */
+		var myTable = $('#dt-basic-example').dataTable({
+			/* check datatable buttons page for more info on how this DOM structure works */
+			dom: "<'row mb-3'<'col-sm-12 col-md-6 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-6 d-flex align-items-center justify-content-end'B>>" +
+				"<'row'<'col-sm-12'tr>>" +
+				"<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",			
+			ajax: {
+				url : endpointAPLista,
+				type: 'POST',
+				data: function (d) {
+					d.fetchHistory = $("input[name=ativa]").val();
+				},
+				dataSrc: function (json) {
+					return transformObjArrayFieldBoolBackToFront(json.data.data);
+				},
+				beforeSend: function (jqXHR, settings){
+					if (hasBar($('#dt-basic-example_filter input').val()))
+					{
+						if (!isValidDate($('#dt-basic-example_filter input').val()))
+						{
+							jqXHR.abort();
+						}
+					}
+				},
+        	},
+			aaSorting: [ [1,'asc'], [3,'asc'] ],
+			scrollY:        400,
+			scrollX:        true,
+			scrollCollapse: true,
+			columns: columnSet,
+			select: 'single',
+			fixedColumns: {
+				leftColumns: 3
+			},
+			/* selecting multiple rows will not work */
+			select: 'single',
+			/* altEditor at work */
+			altEditor: true,
+			
+			/* buttons uses classes from bootstrap, see buttons page for more details */
+			buttons: [
+				{
+					text: 'Alterar PEC de EGRESSO',
+					name: '',
+					titleAttr: 'Incluir ou Editar PEC de egresso da minha unidade',
+					className: 'btn-info btn-sm mr-1 btn-alter-pec',
+					action: function (e, dt, node, config) {
+						modalOpenToAlterPecEgresso();
+					}
+				},
+				{
+					extend: 'selected',
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-times mr-1"></i> Delete',
+					name: 'delete',
+					titleAttr: 'Excluir registro do ANDAMENTO PENAL',
+					className: 'btn-danger btn-sm mr-1 btn-actions'
+				},
+				{					
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-file-word mr-1"></i> Gerar SO',
+					name: '',
+					titleAttr: 'Gerar SEQUÊNCIA DE OFÍCIO',
+					className: 'btn-success btn-sm mr-1 btn-gerar-so',
+					action: function (e, dt, node, config) {
+						Swal.fire({
+							title: "Sequência Ofício",
+							text: "Tem certeza que deseja gerar uma sequência de ofício?",
+							icon: "info",
+							showCancelButton: true,
+							confirmButtonColor: "#2196F3",
+							confirmButtonText: "Gerar SO",
+							cancelButtonText: "Desistir",
+							@* html: '<div class="form-group row">' +
+								  	'<div class="col-xl-12">' +
+										'<input type="number" id="swal-localizacao" name="swal-localizacao"' +
+									  		'placeholder="Informe a localização do livro que deseja colocar na estante" class="form-control">' +
+								  	'</div>' +
+								  '</div>' +	  
+								  '<div style="clear:both;"></div>' +
+								  '<p/>' +
+								  '<div class="form-group row mt-3">' +
+								  	'<div class="col-xl-12 text-right">' +
+										'<input type="checkbox" name="swal-localizacao-todos"' +
+											'id="swal-localizacao-todos" />' +
+										'<span class="ml-1 mr-1">Todos</span>' +
+									'</div>' +
+								  '</div>', *@
+							confirmButtonText: 'Gerar SO',
+							preConfirm: () => {
+								@* var localizacao = Swal.getPopup().querySelector('#swal-localizacao').value 
+								var todos = Swal.getPopup().querySelector('#swal-localizacao-todos').checked
+
+								if (localizacao != "" && todos)
+								{
+									Swal.fire({
+										title: "Problemas com os dados informados",
+										text: "Ao informar uma localização não deverá marcar a opção todos.",
+										icon: "warning",
+										confirmButtonColor: "#ffcd65",
+										confirmButtonText: "Tentar novamente"
+									}).then((result) => {
+										$('.btn-colocar-estante').click();
+									});
+								}
+
+								return {
+									localizacao: localizacao,
+									todos: todos
+								}; *@
+							}
+						}).then((result) => {
+							if (result.dismiss == null)
+							{
+								$.ajax({
+									url: "/api/sequencias-oficios/gerar",
+									type: 'POST',
+									contentType: "application/json;charset=utf-8",
+									@* data: JSON.stringify(result.value, null, 4), *@
+									success: function(success) {
+										debugger;
+										Swal.fire({
+											title: "Sequência gerada com sucesso!",
+											text: success.data,
+											@* timer: 2000,
+											timerProgressBar: true, *@
+											icon: "success",
+											cancelButtonText: "Sair",
+											confirmButtonColor: "#1dc9b7"
+										});
+
+										$('#dt-basic-example').dataTable().api().ajax.reload();
+									},
+									error: function (error, jqXHR, textStatus, errorThrown) {
+
+										$('#dt-basic-example').dataTable().api().ajax.reload();
+
+										const returnObj = Object.entries(error.responseJSON.errors);
+
+										returnObj.forEach(function(err) {
+											err[1].forEach(function (int) {
+												toastr["error"](err[0], int);
+											})
+										});
+									}
+								});
+							}					
+							
+							@* Swal.fire("localizacao: "+`${result.value.localizacao}`+" and todos: "+`${result.value.todos}`); *@
+						})                    	
+                	}
+				},
+				{
+					text: '',
+					name: '',
+					titleAttr: 'Habilitar/Desabilitar Edição de registro em uma nova tela',
+					className: 'btn-dark btn-sm mr-1 btn-isEditNewTab',
+					action: function (e, dt, node, config) {
+						isEditNewTab();
+					}
+				},
+				{
+					extend: 'excelHtml5',
+					text: 'Excel',
+					titleAttr: 'Exportar o ANDAMENTO PENAL em uma planilha de EXCEL',
+					exportOptions: {
+						columns: [0, 1, 2, 3, 4, 5, 6, 7]
+					},
+					className: 'btn-outline-success btn-sm',
+					action: newExportAction
+				}							
+			],
+			serverSide: true,
+			processing: true,
+			pagingType: "full_numbers",
+			language: {
+				select: {
+					rows: "%d linhas selecionadas"
+				},
+            	decimal: ",",
+            	thousands: ".",
+        		searchPlaceholder: "Busque pelo IPEN ou NOME",
+				sProcessing: '<span id=\"loading-image\" "class="fa fa-spinner fa-spin fa-2x spinner-border spinner-border-sm text-primary mr-2""><img class="manImg" src="img/loading_alt_3.gif" width="50" height="50"></img></span>',
+				sZeroRecords: "Nenhum registro encontrado.",
+				oPaginate: {
+                    "sFirst": "Primeiro",
+                    "sPrevious": "Anterior",
+                    "sNext": "Próximo",
+                    "sLast": "Último"
+                },
+				sInfo: "Mostrando _START_ de _END_ de um total de _TOTAL_",
+                sInfoEmpty: "Nenhuma registro encontrado.",
+                sInfoFiltered: " (filtrado a partir de um total de _MAX_ registros)",
+                sInfoPostFix: ""
+        	},
+			columnDefs: [
+				{ 
+					targets: 1,
+					width: "8%"
+				},
+				{ 
+					targets: 2,
+					width: "6%"
+				},
+				{ 
+					targets: 3,
+					width: "20%",
+				  	render: function(data, type, full, meta)
+					{
+						var nomeExibicao = full.detentoNome + ' (IPEN ' + full.detentoIpen + ' - ' +
+											'PEC ' + full.pec;
+						return nomeExibicao;
+					}
+				},
+				{ 
+					targets: 5,
+					width: "40%"
+				},
+				{ 
+					targets: 6,
+					width: "8%"
+				},
+				{
+					targets: -1,
+					width: "15%",
+					render: function(data, type, full, meta) {
+						var colorButton = full.isDeleted ? "danger" : "success";
+						var iconButton = full.isDeleted ? "level-down" : "level-up";
+						var titleNew = full.isDeleted ? "Retirar registro da lista amarela" : "Devolver registro para lista amarela";
+						
+						var val = localStorage.getItem('isEditNewTab');
+						if (val == "true")
+						{
+							return '<form target="_blank" name="andamentoPenal-editar" id="andamentoPenal-editar" method="post" action="/AndamentoPenal/Edicao">'+
+										'<button data-toggle="tooltip" data-placement="top" title="Editar registro ANDAMENTO PENAL" id="id" name="id" type="submit" class="btn btn-sm btn-info mr-1 mb-2" value="' + full.id + '"><i class=\"@(Settings.Theme.IconPrefix) fa-edit mr-1\"></i>Editar AP</button>'+
+								   '</form>'+
+								   '<button data-toggle="tooltip" data-placement="top" title="Editar registro LISTA AMARELA" id="btn-lista-amarela-editar" name="btn-lista-amarela-editar" type="button" class="open-modal-la-editar btn btn-sm btn-warning mr-1 mb-2" value="' + full.detentoIpen + '"><i class=\"@(Settings.Theme.IconPrefix) fa-list-ol mr-1\"></i>Editar LA</button>'+
+								   '<div class="dropdown">'+
+										'<button data-toggle-second="tooltip" data-placement="bottom" title="Opções de geração de ofício" class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'+
+											'<i class=\"@(Settings.Theme.IconPrefix) fa-file-plus mr-1\"></i>Ofícios'+
+										'</button>'+
+										'<div class="dropdown-menu dropdown-menu-left" aria-labelledby="dropdownMenuButton">'+
+											'<form target="_blank" name="oj-progressao-aberto-form" id="oj-progressao-aberto-form" method="post" action="/OficioJuridico/ProgressaoAberto">'+
+												'<button name="andamentoPenalIdBtn" id="andamentoPenalIdBtn"'+
+													'data-toggle="tooltip" data-placement="top"'+
+													'title="Ofício PROGRESSÃO ABERTO" type="submit"'+
+													'style="padding-left: 6px !important;" class="btn" value="'+full.id +'">'+
+													'PROGRESSÃO ABERTO'+
+												'</button>'+
+											'</form>'+
+											'<form target="_blank" name="oj-progressao-aberto-plus-st-form" id="oj-progressao-aberto-form" method="post" action="/OficioJuridico/ProgressaoAbertoPlusST">'+
+												'<button name="andamentoPenalIdBtn" id="andamentoPenalIdBtn"'+
+													'data-toggle="tooltip" data-placement="top"'+
+													'title="Ofício PROGRESSÃO ABERTO + SAÍDA TEMPORÁRIA" type="submit"'+
+													'style="padding-left: 6px !important;" class="btn" value="'+full.id +'">'+
+													'ABERTO + ST'+
+												'</button>'+
+											'</form>'+
+											'<form target="_blank" name="oj-progressao-sa-plus-st-form" id="oj-progressao-sa-plus-st-form" method="post" action="/OficioJuridico/ProgressaoSAPlusST">'+
+												'<button name="andamentoPenalIdBtn" id="andamentoPenalIdBtn"'+
+													'data-toggle="tooltip" data-placement="top"'+
+													'title="Ofício PROGRESSÃO SEMIABERTO + SAÍDA TEMPORÁRIA" type="submit"'+
+													'style="padding-left: 6px !important;" class="btn" value="'+full.id +'">'+
+													'PROGRESSÃO SA + ST'+
+												'</button>'+
+											'</form>'+
+											'<form target="_blank" name="oj-progressao-saida-temporaria-form" id="oj-progressao-saida-temporaria-form" method="post" action="/OficioJuridico/SaidaTemporaria">'+
+												'<button name="andamentoPenalIdBtn" id="andamentoPenalIdBtn"'+
+													'data-toggle="tooltip" data-placement="top"'+
+													'title="Ofício SAÍDA TEMPORÁRIA" type="submit"'+
+													'style="padding-left: 6px !important;" class="btn" value="'+full.id +'">'+
+													'SAÍDA TEMPORÁRIA'+
+												'</button>'+
+											'</form>'+
+											'<form target="_blank" name="oj-progressao-livramento-condicional-form" id="oj-progressao-livramento-condicional-form" method="post" action="/OficioJuridico/LivramentoCondicional">'+
+												'<button name="andamentoPenalIdBtn" id="andamentoPenalIdBtn"'+
+													'data-toggle="tooltip" data-placement="top"'+
+													'title="Ofício LIVRAMENTO CONDICIONAL" type="submit"'+
+													'style="padding-left: 6px !important;" class="btn" value="'+full.id +'">'+
+													'LIV. CONDICIONAL'+
+												'</button>'+
+											'</form>'+
+											'<form target="_blank" name="oj-info-endereco-telefone-form" id="oj-info-endereco-telefone-form" method="post" action="/OficioJuridico/InfoEnderecoTelefone">'+
+												'<button name="andamentoPenalIdBtn" id="andamentoPenalIdBtn"'+
+													'data-toggle="tooltip" data-placement="top"'+
+													'title="Ofício ENDEREÇO/TELEFONE" type="submit"'+
+													'style="padding-left: 6px !important;" class="btn" value="'+full.id +'">'+
+													'ENDEREÇO/TELEFONE'+
+												'</button>'+
+											'</form>'+
+											'<form target="_blank" name="oj-pad-parecer-form" id="oj-pad-parecer-form" method="post" action="/OficioJuridico/PADParecer">'+
+												'<input name="inputAndamentoPenalId" id="input-andamentoPenalId" type="hidden" value=""/>' +
+												'<input name="inputPortariaNumero" id="input-portariaNumero" type="hidden" value=""/>' +
+												'<input name="inputIsProcedente" id="input-isProcedente" type="hidden" value=""/>' +
+												'<button name="paramPadParecer" onClick="getModalOficioPADParecer(this)" id="btn-pad-parecer"'+
+													'data-toggle="tooltip" data-placement="top"'+
+													'title="Ofício PAD - PARECER" type="button"'+
+													'style="padding-left: 6px !important;" class="btn" value="'+full.id +'">'+
+													'PAD - PARECER'+
+												'</button>'+
+											'</form>'+
+										'</div>'+
+									'</div>'+
+									'<form target="_blank" name="andamentoPenal-imprimir-historico-memorando"'+
+											'id="andamentoPenal-imprimir-historico-memorando" method="post"'+
+											' action="/AndamentoPenal/ImprimirHistoricoMemorando">'+
+										'<button data-toggle="tooltip" data-placement="top"'+
+											'title="Imprimir informações de histórico para memorando"'+
+											'id="andamentoPenalIdBtn"'+
+											'name="andamentoPenalIdBtn"'+
+											'type="submit" class="mt-2 btn btn-sm btn-danger mr-1 mb-2" value="' + full.id + '">'+
+											'<i class=\"@(Settings.Theme.IconPrefix) fa-print mr-1\"></i>Histórico'+
+										'</button>'+
+								   	'</form>'+
+									'<div class="dropdown">'+
+										'<a class="btn btn-warning dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'+
+											'<i class=\"@(Settings.Theme.IconPrefix) fa-copy mr-1\"></i>Copiar'+
+										'</a>'+
+										'<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">'+
+											'<a class="dropdown-item" onclick="copyToClipBoard(\''+full.detentoNome+'\')">Nome</a>'+
+											'<a class="dropdown-item" onclick="copyToClipBoard(\''+full.detentoIpen+'\')">Ipen</a>'+
+											'<a class="dropdown-item" onclick="copyToClipBoard(\''+full.pec+'\')">Pec</a>'+
+											'<a class="dropdown-item" onclick="copyToClipBoard(\''+full.detentoNome+ " (IPEN " +full.detentoIpen+ " - PEC " +full.pec+ ")"+'\')">Tudo</a>'+
+										'</div>'+
+									'</div>';
+						}
+						else
+						{
+							return '<form name="andamentoPenal-editar" id="andamentoPenal-editar" method="post" action="/AndamentoPenal/Edicao">'+
+										'<button data-toggle="tooltip" data-placement="top" title="Editar registro ANDAMENTO PENAL" id="id" name="id" type="submit" class="btn btn-sm btn-info mr-1 mb-2" value="' + full.id + '"><i class=\"@(Settings.Theme.IconPrefix) fa-edit mr-1\"></i>Editar AP</button>'+
+								   '</form>'+
+								   '<button data-toggle="tooltip" data-placement="top" title="Editar registro LISTA AMARELA" id="btn-lista-amarela-editar" name="btn-lista-amarela-editar" type="button" class="open-modal-la-editar btn btn-sm btn-warning mr-1 mb-2" value="' + full.detentoIpen + '"><i class=\"@(Settings.Theme.IconPrefix) fa-list-ol mr-1\"></i>Editar LA</button>'+
+								   '<div class="dropdown">'+
+										'<button data-toggle-second="tooltip" data-placement="bottom" title="Opções de geração de ofício de progressão" class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'+
+											'<i class=\"@(Settings.Theme.IconPrefix) fa-file-plus mr-1\"></i>Ofícios'+
+										'</button>'+
+										'<div class="dropdown-menu dropdown-menu-left" aria-labelledby="dropdownMenuButton">'+
+											'<form name="oj-progressao-aberto-form" id="oj-progressao-aberto-form" method="post" action="/OficioJuridico/ProgressaoAberto">'+
+												'<button name="andamentoPenalIdBtn" id="andamentoPenalIdBtn"'+
+													'data-toggle="tooltip" data-placement="top"'+
+													'title="Ofício PROGRESSÃO ABERTO" type="submit"'+
+													'style="padding-left: 6px !important;" class="btn" value="'+full.id +'">'+
+													'PROGRESSÃO ABERTO'+
+												'</button>'+
+											'</form>'+
+											'<form name="oj-progressao-aberto-plus-st-form" id="oj-progressao-aberto-plus-form" method="post" action="/OficioJuridico/ProgressaoAbertoPlusST">'+
+												'<button name="andamentoPenalIdBtn" id="andamentoPenalIdBtn"'+
+													'data-toggle="tooltip" data-placement="top"'+
+													'title="Ofício PROGRESSÃO ABERTO + SAÍDA TEMPORÁRIA" type="submit"'+
+													'style="padding-left: 6px !important;" class="btn" value="'+full.id +'">'+
+													'ABERTO + ST'+
+												'</button>'+
+											'</form>'+
+											'<form name="oj-progressao-sa-plus-st-form" id="oj-progressao-sa-plus-st-form" method="post" action="/OficioJuridico/ProgressaoSAPlusST">'+
+												'<button name="andamentoPenalIdBtn" id="andamentoPenalIdBtn"'+
+													'data-toggle="tooltip" data-placement="top"'+
+													'title="Ofício PROGRESSÃO SEMIABERTO + SAÍDA TEMPORÁRIA" type="submit"'+
+													'style="padding-left: 6px !important;" class="btn" value="'+full.id +'">'+
+													'PROGRESSÃO SA + ST'+
+												'</button>'+
+											'</form>'+
+											'<form name="oj-progressao-saida-temporaria-form" id="oj-progressao-saida-temporaria-form" method="post" action="/OficioJuridico/SaidaTemporaria">'+
+												'<button name="andamentoPenalIdBtn" id="andamentoPenalIdBtn"'+
+													'data-toggle="tooltip" data-placement="top"'+
+													'title="Ofício SAÍDA TEMPORÁRIA" type="submit"'+
+													'style="padding-left: 6px !important;" class="btn" value="'+full.id +'">'+
+													'SAÍDA TEMPORÁRIA'+
+												'</button>'+
+											'</form>'+
+											'<form name="oj-progressao-livramento-condicional-form" id="oj-progressao-livramento-condicional-form" method="post" action="/OficioJuridico/LivramentoCondicional">'+
+												'<button name="andamentoPenalIdBtn" id="andamentoPenalIdBtn"'+
+													'data-toggle="tooltip" data-placement="top"'+
+													'title="Ofício LIVRAMENTO CONDICIONAL" type="submit"'+
+													'style="padding-left: 6px !important;" class="btn" value="'+full.id +'">'+
+													'LIV. CONDICIONAL'+
+												'</button>'+
+											'</form>'+
+											'<form name="oj-info-endereco-telefone-form" id="oj-info-endereco-telefone-form" method="post" action="/OficioJuridico/InfoEnderecoTelefone">'+
+												'<button name="andamentoPenalIdBtn" id="andamentoPenalIdBtn"'+
+													'data-toggle="tooltip" data-placement="top"'+
+													'title="Ofício ENDEREÇO/TELEFONE" type="submit"'+
+													'style="padding-left: 6px !important;" class="btn" value="'+full.id +'">'+
+													'ENDEREÇO/TELEFONE'+
+												'</button>'+
+											'</form>'+
+											'<form name="oj-pad-parecer-form" id="oj-pad-parecer-form" method="post" action="/OficioJuridico/PADParecer">'+
+												'<input name="inputAndamentoPenalId" id="input-andamentoPenalId" type="hidden" value=""/>' +
+												'<input name="inputPortariaNumero" id="input-portariaNumero" type="hidden" value=""/>' +
+												'<input name="inputIsProcedente" id="input-isProcedente" type="hidden" value=""/>' +
+												'<button name="paramPadParecer" onClick="getModalOficioPADParecer(this)" id="btn-pad-parecer"'+
+													'data-toggle="tooltip" data-placement="top"'+
+													'title="Ofício PAD - PARECER" type="button"'+
+													'style="padding-left: 6px !important;" class="btn" value="'+full.id +'">'+
+													'PAD - PARECER'+
+												'</button>'+
+											'</form>'+
+										'</div>'+
+									'</div>'+
+									'<form name="andamentoPenal-imprimir-historico-memorando"'+
+											'id="andamentoPenal-imprimir-historico-memorando" method="post"'+
+											' action="/AndamentoPenal/ImprimirHistoricoMemorando">'+
+										'<button data-toggle="tooltip" data-placement="top"'+
+											'title="Imprimir informações de histórico para memorando"'+
+											'id="andamentoPenalIdBtn"'+
+											'name="andamentoPenalIdBtn"'+
+											'type="submit" class="mt-2 btn btn-sm btn-danger mr-1 mb-2" value="' + full.id + '">'+
+											'<i class=\"@(Settings.Theme.IconPrefix) fa-print mr-1\"></i>Histórico'+
+										'</button>'+
+								   	'</form>'+
+									'<div class="dropdown">'+
+										'<a class="btn btn-warning dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'+
+											'<i class=\"@(Settings.Theme.IconPrefix) fa-copy mr-1\"></i>Copiar'+
+										'</a>'+
+										'<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">'+
+											'<a class="dropdown-item" onclick="copyToClipBoard(\''+full.detentoNome+'\')">Nome</a>'+
+											'<a class="dropdown-item" onclick="copyToClipBoard(\''+full.detentoIpen+'\')">Ipen</a>'+
+											'<a class="dropdown-item" onclick="copyToClipBoard(\''+full.pec+'\')">Pec</a>'+
+											'<a class="dropdown-item" onclick="copyToClipBoard(\''+full.detentoNome+ " (IPEN " +full.detentoIpen+ " - PEC " +full.pec+ ")"+'\')">Tudo</a>'+
+										'</div>'+
+									'</div>';
+						}
+					}
+				},
+				{ 
+					targets: 3,
+					width: "25%",
+					render: function(data, type, full, meta) {
+						var dataMapped = '<span class="">' +data + ' (IPEN '+ full.detentoIpen + ' - PEC ' + full.pec + ')' + '</span>';
+						
+						return dataMapped;
+					}
+				},
+				{ 
+					targets: 4,
+					width: "15%"
+				},
+				{ 
+					targets: 5,
+					width: "30%"
+				},
+				{
+					targets: 6,					
+					render: function(data, type, full, meta) {
+						var badge = {
+							'NORMAL': {'title': 'NORMAL', 'class': 'badge-secondary'},
+							'CTC_EM_ANDAMENTO': {'title': 'CTC ANDAMENTO', 'class': 'badge-success'},
+							'PAD_EM_ANDAMENTO': {'title': 'PAD ANDAMENTO', 'class': 'badge-danger'},
+							'SAIDA_TEMPORARIA': {'title': 'SAÍDA TEMPORÁRIA', 'class': 'badge-warning'},
+							'EVASAO_FUGA': {'title': 'EVASÃO FUGA', 'class': 'badge-dark'},
+							'PRISAO_DOMICILIAR': {'title': 'PRISÃO DOMICILIAR', 'class': 'badge-info'}
+						};
+						if (typeof badge[data] === 'undefined') {
+							return data;
+						}
+						return '<span class="badge ' + badge[data].class + ' badge-pill">' + badge[data].title + '</span>';
+					},
+				}
+			],
+			onDeleteRow: function(dt, rowdata, success, error) {
+				$.ajax({ 
+					url: endpointAPDelete, 
+					type: 'DELETE', 
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(transformObjFieldBoolFrontToBack(rowdata), null, 4),
+					success: function (data) {
+						$(".modal").modal('hide');
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						Swal.fire({
+							text: "Registro deletado com sucesso!",
+							icon: "success",
+							timer: 2000,
+							showCancelButton: false,
+							showConfirmButton: true,
+							confirmButtonColor: "#179c8e",
+							timerProgressBar: true,
+							buttons: false
+						});
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						const returnObj = Object.entries(error.responseJSON.errors);
+
+						returnObj.forEach(function(err) {
+							err[1].forEach(function (int) {
+								toastr["error"](err[0], int);
+							})
+						});
+					}
+				});
+			}
+		});
+
+		$('#dt-basic-example_filter input').bind('keyup', function(e) {
+			var isAtivoBuscaHistorico = $("input[name=ativa]").val()
+			if (isAtivoBuscaHistorico == "false") {
+				$('#dt-basic-example_filter input').val($('#dt-basic-example_filter input').val().toUpperCase());
+
+				if (hasBar($('#dt-basic-example_filter input').val()	))
+					isValidDate($('#dt-basic-example_filter input').val());
+			}
+		});
+	});
+</script>
+}

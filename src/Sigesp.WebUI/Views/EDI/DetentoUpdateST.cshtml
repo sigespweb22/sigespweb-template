@@ -1,0 +1,156 @@
+@{
+	ViewData["Title"] = "Detento Atualização Saída Temporária";
+    ViewData["Heading"] = "<i class='notprint subheader-icon fal fa-edit'></i> EDI - Atualização data (s) de Saída Temporária do (s) Detento (s)<span class='notprint fw-300'></span> <sup class='notprint badge badge-primary fw-500'>NOVO</sup>";
+    ViewData["PageDescription"] = "Efetuar alteração (ões) de data (s) de Saída Temporária  do (s) detento (s)";
+	ViewData["PageName"] = "edi_detento-update-st";
+	ViewData["Category0"] = @Settings.App;
+	ViewData["Category1"] = "Sistema";
+    ViewData["Category2"] = "EDI";
+}
+
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+    <link rel="stylesheet" media="screen, print" href="~/css/notifications/toastr/toastr.css">
+}
+
+<div>
+	<div class="row">
+        <div class="col-xl-12">
+            <div id="panel-1" class="panel">
+                <div class="panel-hdr">	
+                    <h2>
+                        Atualização em lote de data (s) de Saída Temporária <span class="fw-300"><i>Detento (s)</i></span>
+                    </h2>
+                    <div class="panel-toolbar">
+                        <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Abrir/Fechar"></button>
+                    </div>
+                </div>
+                <div class="panel-container show">
+                    <div class="panel-content">
+						<form id="detento-update-st-form">
+							<div class="form-group">
+								<div class="row text-right mb-3">
+									<div class="col-lg-12">
+										<button type="button" id="btn-voltar" 
+											class="btn btn-outline-primary waves-effect waves-themed">
+											<span class="fal fa-arrow-circle-left mr-1"></span>Voltar
+										</button>
+									</div>
+								</div>
+								<hr class="mt-4 mb-g">
+								<div class="row">
+									<div class="col-lg-12">
+										<div class="alert alert-info p-1">
+											<strong>Como criar o arquivo para importação?</strong> </br></br>Gerar no sistema IPEN o relatório 2.10. Após, copie e cole este relatório em um arquivo excel, mantendo por fim um total de 4 colunas (Prontuário | Nome, Cadastro, Saída, Retorno) somente com os dados para importação. </br></br><strong>PRONTO!</strong> </br>Agora prossiga com o processo de importação abaixo. 
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-lg-12">
+										<label class="form-label" for="inputGroupFile01">Localize o arquivo em seu computador:</label>
+										<div class="input-group">
+											<div class="input-group-prepend">
+												<span class="input-group-text" id="inputGroupFileAddon01">Upload</span>
+											</div>
+											<div class="custom-file">
+												<input type="file" class="custom-file-input" aria-describedby="inputGroupFileAddon01" name="multi_img_file[]" id="multi_img_file" accept=".xls,.xlsx,.csv" />
+												<label class="custom-file-label" for="multi_img_file">Clique aqui ou no botão "Browse" ao lado e escolha o arquivo para importação</label>
+											</div>
+										</div>
+									</div>
+								</div>
+								@* <span class="help-block">Some help content goes here</span> *@
+							</div>
+							<button type="button" name="submit_1" id="submit_1"
+								class="btn btn-md btn-primary waves-effect waves-themed">
+								<span class="fal fa-file-download mr-2"></span>Importar o arquivo selecionado
+							</button>
+						</form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsBlock {
+	<script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+	<script src="~/js/datagrid/datatables/datatables.export.js"></script>
+	<script src="~/js/notifications/toastr/toastr.js"></script>
+	<script src="~/js/extensions/automapper-extensions.js"></script>
+
+	<script type="text/javascript">
+		const endpointDetentoUpdateST = "api/edis/detento-update-st";
+		const boolOptions = ["SIM", "NÃO"];
+
+		toastr.options = {
+			"closeButton": false,
+			"debug": false,
+			"newestOnTop": true,
+			"progressBar": true,
+			"positionClass": "toast-top-right",
+			"preventDuplicates": true,
+			"onclick": null,
+			"showDuration": 500,
+			"hideDuration": 100,
+			"timeOut": 10000,
+			"extendedTimeOut": 1000,
+			"showEasing": "swing",
+			"hideEasing": "linear",
+			"showMethod": "fadeIn",
+			"hideMethod": "fadeOut"
+		};
+
+		$(document).ready( function () {
+			$('#submit_1').on('click', function() {
+				let data = new FormData($("#detento-update-st-form")[0]);
+
+				if ($("#multi_img_file").val() == '')
+				{
+					toastr["error"]("Favor selecionar um arquivo antes de efetuar a importação.");
+				}
+				else
+				{
+					$.ajax({
+						url: endpointDetentoUpdateST,
+						type: 'POST',
+						data: data,
+						processData: false,
+						contentType: false,
+						beforeSend : function() {
+							toastr.success('</br>Você será redirecionado para tela inicial de importações, onde poderá acompanhar o processamento do arquivo a partir de seu STATUS.', 'Enviando arquivo para processamento...', {
+								timeOut: 20000,
+								preventDuplicates: true,
+								positionClass: 'toast-top-center',
+								// Redirect 
+								onHidden: function() {
+									window.location.href = '/edi/todos';
+								}
+							});
+							//$("#resultado").html("ENVIANDO..."); 
+						},
+						success: function(success) {
+							@* toastr.success('</br>Você será redirecionado para tela inicial de importações, onde poderá acompanhar o processamento do arquivo a partir de seu STATUS.', 'Arquivo enviado com sucesso para processamento!', {
+								timeOut: 20000,
+								preventDuplicates: true,
+								positionClass: 'toast-top-center',
+								// Redirect 
+								onHidden: function() {
+									window.location.href = '/edi/todos';
+								}
+							}); *@
+						},
+						error: function(error) {
+							toastr["error"](error.responseJSON.message);
+						}
+					});
+				}
+			});
+
+			$("#btn-voltar").click(function (event) {
+				window.location.href = '/edi/todos';
+			});
+		});
+
+	</script>
+}

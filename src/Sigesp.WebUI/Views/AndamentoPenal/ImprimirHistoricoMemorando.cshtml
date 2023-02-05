@@ -1,0 +1,170 @@
+@using System.Globalization
+@using System.Web
+@model Sigesp.Application.ViewModels.AndamentoPenalViewModel
+
+@{
+	ViewData["Title"] = "Dados de histórico para memorando";
+	ViewData["PageName"] = "andamento-penal-imprimir-historico-memorando_print";
+    ViewData["Category0"] = @Model.DetentoNome;
+	ViewData["Category1"] = "Jurídico";
+    ViewData["Category2"] = "Andamento Penal";
+	ViewData["Heading"] = "<i class='notprint subheader-icon fal fa-print'></i> <span class='notprint'>Impressão dados de histórico para memorando</span><span class='notprint fw-300'></span> <sup class='notprint badge badge-primary fw-500'>NOVO</sup>";
+	ViewData["PageDescription"] = "";
+}
+
+@section HeadBlock {
+<link rel="stylesheet" media="screen, print" href="~/css/page-invoice.css">
+<link rel="stylesheet" media="screen, print" href="~/css/extensions/generals-extensions.css">
+<link rel="stylesheet" media="screen, print" href="~/css/notifications/sweetalert2/sweetalert2.bundle.css">
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+<link href="~/css/formplugins/summernote/summernote-extensions.css" rel="stylesheet">
+}
+
+<div style="z-index: 1000000" class="row notprint mb-1">
+    <div class="col-xl-10">
+        <a class="mb-2 mr-1" href="/andamentoPenal/todos">
+            <button type="button" class="btn btn-primary waves-effect waves-themed">
+                <span class="fal fa-arrow-square-left mr-1"></span>Voltar
+            </button>
+        </a>
+        <a onClick="window.print()">
+            <button type="button" class="btn btn-dark waves-effect waves-themed">
+                <span class="fal fa-print mr-1"></span>Imprimir
+            </button>
+        </a>
+    </div>
+</div>
+
+<div class="container" style="margin-top: 35px;">
+    <div data-size="A4" class="mt-75">
+        
+        <div style="margin-left: 62px; margin-bottom: 68px;">
+            <hr class="mt-4 mb-g" style="border-top: 1px dashed #000;">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="d-flex align-items-center">
+                        <h4 class="text-left fw-700" style="margin-left: 46px;">Nome: </h4><span class="ml-3 fw-500">@Model.DetentoNome</span>
+                    </div>                                
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="d-flex align-items-center">
+                        <h4 class="text-right fw-700" style="margin-left: 58px;">  Ipen: </h4><span class="ml-3 fw-500">@Model.DetentoIpen</span>
+                    </div>                                
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="d-flex align-items-center">
+                        <h4 class="text-left fw-700">Data evento: </h4><span class="ml-3 fw-500">@Model.DataEventoPrincipal</span>
+                    </div>                                
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="d-flex align-items-center">
+                        <h4 class="text-left fw-700" style="margin-left: 42px;">Status: </h4><span class="ml-3 fw-500">@Model.Status</span>
+                    </div>                                
+                </div>
+            </div>
+            <hr class="" style="border-top: 1px dashed #000;">
+            <div class="row ml-1">
+                <h7 class="fw-700 ml-1">Observação: </h7><span class="fw-400 ml-1"> Onde houver informação com a citação <i style="text-decoration: underline;">"Nesta data",</i> a data será sempre a <i style="text-decoration: underline;">"Data evento"</i> informada acima.</span>
+            </div>
+            <hr class="" style="border-top: 1px dashed #000;">
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="panel-container show" style="margin-top: -50px !important;">
+                    <div class="panel-content">
+                        <div class="js-summernote" style="margin-left: 62px;font-size: 15px;" id="historico" name="historico"></div>
+                    </div>
+                </div>
+            </div>            
+        </div>
+        <div style="margin-left: 62px; margin-bottom: 68px;">
+            <hr class="" style="border-top: 1px dashed #000;">
+        </div>
+    </div>
+</div>
+
+@section ScriptsBlock {
+    <script src="~/js/notifications/sweetalert2/sweetalert2.bundle.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/lang/summernote-pt-BR.min.js"></script>
+    <script src="~/js/formplugins/summernote/summernote-extensions.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var getAndamentoPenalById = function(id) {
+                $.ajax({ 
+                    url: "/api/andamento-penal/get-by-id", 
+                    type: 'POST',
+                    contentType: "application/json;charset=utf-8",
+                    data: JSON.stringify(id, null, 4),
+                    success: function(success) {                                       
+
+                        $('#historico').summernote("code", success.data.historico);
+                        closeSummernote();
+                        
+                    },
+                    error: function (error, jqXHR, textStatus, errorThrown) {
+                        const returnObj = Object.entries(error.responseJSON.errors);
+
+                        returnObj.forEach(function(err) {
+                            err[1].forEach(function (int) {
+                                toastr["error"](err[0], int);
+                            })
+                        });
+                    }
+                });            
+            };
+
+            var closeSummernote = function(ele) {
+                $("#historico").summernote('destroy');
+            };
+
+            //init default
+            $('#historico').summernote({
+                height: 400,
+                tabsize: 2,
+                placeholder: "",
+                dialogsFade: true,
+                lang: 'pt-BR',
+                tabDisable: true,
+                fontSizes: ['8', '9', '10', '11', '12', '13', '14', '15', '16', '18', '20', '22' , '24', '28', '32', '36', '40', '48'],
+                toolbar: [
+                    ['style', ['style']],
+                    ['Misc', ['undo', 'redo']],
+                    ['font', ['strikethrough', 'superscript', 'subscript']],
+                    ['font', ['bold', 'italic', 'underline', 'clear']],
+                    ['fontsize', ['fontsize']],
+                    ['fontname', ['fontname']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['height', ['height']]
+                    ['table', ['table']],
+                    ['insert', ['link', 'picture', 'video']],
+                    ['view', ['fullscreen', 'codeview', 'help']],
+                    ['upperCase', ['upperCase']]
+                ],
+                buttons: {
+                    upperCase: upperCase
+                },	
+                callbacks: {
+                    //restore from localStorage
+                    onInit: function(e) {    
+                        @* $('#historico').summernote("code", '@Model.Historico');      *@
+                    },
+                    onChange: function(contents, $editable) {
+                        //código a partir de mudanças
+                    }
+                }
+            });
+
+            getAndamentoPenalById('@Model.Id');
+        });
+        
+    </script>
+}

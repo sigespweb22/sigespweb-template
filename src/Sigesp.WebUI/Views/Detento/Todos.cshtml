@@ -1,0 +1,797 @@
+@model Sigesp.Application.ViewModels.Cards.DetentoCardViewModel
+
+@{
+	ViewData["Title"] = "Detentos";
+	ViewData["PageName"] = "detento_todos";
+	ViewData["Category0"] = @Settings.App;
+	ViewData["Category1"] = "Carceragem";
+	ViewData["Heading"] = "<i class='subheader-icon fal fa-users'></i> Detentos<span class='fw-300'></span> <sup class='badge badge-primary fw-500'>NOVO</sup>";
+	ViewData["PageDescription"] = "Listagem de todos os detentos do sistema";
+}
+@section HeadBlock {
+	<link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/formplugins/select2/select2.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/theme-demo.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/notifications/toastr/toastr.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+}
+
+<div class="row">
+	<div class="col-sm-6 col-xl-3">
+		<div class="p-3 bg-primary-300 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="display-4 d-block l-h-n m-0 fw-500">
+					<span id="card-total"></span>
+					<small class="m-0 l-h-n">Total</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-users position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>
+	<div class="col-sm-6 col-xl-3">
+		<div class="p-3 bg-success-200 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="display-4 d-block l-h-n m-0 fw-500">
+					<span id="card-recolhidos"></span>
+					<small class="m-0 l-h-n">Recolhidos</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-border-all position-absolute pos-right pos-bottom opacity-15 mb-n5 mr-n1" style="font-size: 8rem;"></i>
+		</div>
+	</div>
+	<div class="col-sm-6 col-xl-3">
+		<div class="p-3 bg-info-200 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="display-4 d-block l-h-n m-0 fw-500">
+				    <span id="card-sts"></span>
+					<small class="m-0 l-h-n">Saída Temporária</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-user-clock position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size: 6rem;"></i>
+		</div>
+	</div>
+	<div class="col-sm-6 col-xl-3">
+		<div class="p-3 bg-warning-400 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="display-4 d-block l-h-n m-0 fw-500">
+				    <span id="card-provisorios"></span>
+					<small class="m-0 l-h-n">Provisorios</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-border-inner position-absolute pos-right pos-bottom opacity-15  mb-n1 mr-n1" style="font-size: 6rem;"></i>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xl-12">
+		<div id="panel-1" class="panel">
+			<div class="panel-hdr">	
+				<h2>
+					Gerenciamento de <span class="fw-300"><i>Detentos</i></span> 
+				</h2>
+				<div class="panel-toolbar">
+					<button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Abrir/Fechar"></button>
+				</div>
+			</div>
+			<div class="panel-container show">
+				<div class="panel-content">									
+					<div class="tab-content pt-4">
+						<div class="tab-pane fade show active" id="tab_default-1" role="tabpanel">
+							<div class="row">
+								<div class="col-xl-12">
+									<table id="dt-basic-example" style="width:100%"
+										class="table table-bordered 
+											table-hover table-striped w-100
+											display nowrap">
+									</table>									
+								</div>
+							</div>	
+						</div>
+					</div>					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section ScriptsBlock {
+<script src="~/js/dependency/moment/moment.js"></script>
+<script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+<script src="~/js/formplugins/select2/select2.bundle.js"></script>
+<script src="~/js/datagrid/datatables/datatables.export.js"></script>
+<script src="~/js/notifications/toastr/toastr.js"></script>
+<script src="~/js/extensions/automapper-extensions.js"></script>
+<script src="~/js/extensions/datatable-exports-extensions.js"></script>
+<script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script type="text/javascript">
+	const endpointDetentos = "/api/detentos";
+	const apiChangeTenancy = "/api/detentos/change-tenancy/";
+	const urlList = `@Url.Action("List", "Detento")`;
+
+	var detentoRegimes = [];
+	var tiposConta = [];
+	var galerias = [];
+	var instrumentosPrisao = [];
+	var condenacaoTipos = [];
+	var transferenciaTipos = [];
+
+	var oldExportAction = function (self, e, dt, button, config) {
+		if (button[0].className.indexOf('buttons-excel') >= 0) {
+			if ($.fn.dataTable.ext.buttons.excelHtml5.available(dt, config)) {
+				$.fn.dataTable.ext.buttons.excelHtml5.action.call(self, e, dt, button, config);
+			}
+			else {
+				$.fn.dataTable.ext.buttons.excelFlash.action.call(self, e, dt, button, config);
+			}
+		} else if (button[0].className.indexOf('buttons-print') >= 0) {
+			$.fn.dataTable.ext.buttons.print.action(e, dt, button, config);
+		}
+	};
+
+    var newExportAction = function (e, dt, button, config) {
+		var self = this;
+		var oldStart = dt.settings()[0]._iDisplayStart;
+
+		dt.one('preXhr', function (e, s, data) {
+			// Just this once, load all data from the server...
+			data.start = 0;
+			data.length = 2147483647;
+
+			dt.one('preDraw', function (e, settings) {
+				// Call the original action function 
+				oldExportAction(self, e, dt, button, config);
+
+				dt.one('preXhr', function (e, s, data) {
+					// DataTables thinks the first item displayed is index 0, but we're not drawing that.
+					// Set the property to what it was before exporting.
+					settings._iDisplayStart = oldStart;
+					data.start = oldStart;
+				});
+
+				// Reload the grid with the original page. Otherwise, API functions like table.cell(this) don't work properly.
+				setTimeout(dt.ajax.reload, 0);
+
+				// Prevent rendering of the full data to the DOM
+				return false;
+			});
+		});
+
+		// Requery the server with the new one-time export settings
+		dt.ajax.reload();
+	};
+
+	@foreach (var detentoRegime in @Model.DetentoRegimes)
+	{
+		@:detentoRegimes.push('@detentoRegime');
+	}
+
+	@foreach (var tipoConta in @Model.TiposConta)
+	{
+		@:tiposConta.push('@tipoConta');
+	}
+
+	@foreach (var galeria in @Model.Galerias)
+	{
+		@:galerias.push('@galeria');
+	}
+
+	@foreach (var intrumentoPrisao in @Model.InstrumentosPrisao)
+	{
+		@:instrumentosPrisao.push('@intrumentoPrisao');
+	}
+
+	@foreach (var condenacaoTipo in @Model.CondenacaoTipos)
+	{
+		@:condenacaoTipos.push('@condenacaoTipo');
+	}
+
+	@foreach (var transferenciaTipo in @Model.TransferenciaTipos)
+	{
+		@:transferenciaTipos.push('@transferenciaTipo');
+	}
+
+	var getInfosCards = function () {
+		$.ajax({ 
+			url: "/api/detentos/get-info-cards", 
+			type: 'GET',
+			contentType: "application/json;charset=utf-8",
+			success: function(success) {
+				
+				$("#card-total").html(success.total);
+				$("#card-recolhidos").html(success.recolhidos);
+				$("#card-sts").html(success.saidaTemporaria);
+				$("#card-provisorios").html(success.provisorios);
+
+			},
+			error: function (error, jqXHR, textStatus, errorThrown) {
+				if (error.responseJSON != null)
+				{
+					if (error.responseJSON.title != null)
+					{
+						toastr["error"](error.responseJSON.title);
+					}
+				}
+			}
+		});
+	};
+
+</script>
+
+<script>
+	toastr.options = {
+		"closeButton": false,
+		"debug": false,
+		"newestOnTop": true,
+		"progressBar": true,
+		"positionClass": "toast-top-right",
+		"preventDuplicates": true,
+		"onclick": null,
+		"showDuration": 300,
+		"hideDuration": 100,
+		"timeOut": 5000,
+		"extendedTimeOut": 1000,
+		"showEasing": "swing",
+		"hideEasing": "linear",
+		"showMethod": "fadeIn",
+		"hideMethod": "fadeOut"
+	};
+
+	var boolOptions = ["SIM", "NÃO"];
+
+	var toUpperCaseFormFields = function () {
+		$("input[name=Nome]").val($("input[name=Nome]").val().toUpperCase());
+		$('#transferenciaLocal').val($('#transferenciaLocal').val().toUpperCase());
+		$('#nomeFamiliar').val($('#nomeFamiliar').val().toUpperCase());
+	};
+
+	var eventFired = function (param) {
+        console.log(param);
+    };
+
+	$(document).ready( function () {
+		//Tecla de atalho para criar um novo registro (Teclado 'Ctrl + Z')			
+		$(document).keydown(function(e) {
+			if (e.ctrlKey && e.which === 90) $(".btn-add").click();
+			toUpperCaseFormFields();
+		});
+
+		//No evento de click do botão add, set focus no campo nome depois abre a select2
+		$(document).on("click", ".btn-add", function () {
+			setTimeout(function() {
+				$('#ipen').trigger('focus');
+			}, 500);
+		});
+		/* 
+		NOTES:
+			Column id
+			---------------------------------------------------
+			Please always keep in mind that DataTable framework allows two different kinds of "rows": Arrays and Objects. In first case columns are indexed through integers; in second case columns are indexed by their attribute name. Usually JSON's use the Object approach, but we cannot be sure.
+			Row key
+			---------------------------------------------------
+			There is no default key in the table. Inside your callback functions, probably you will need a row key to build URL's, in that case you can get them from the rowdata parameter.
+		COLUMN DEFINITIONS:
+			title = "string" - title name on table header th and on form labels
+			---------------------------------------------------
+			id = "string" - id assigned to imput element when editing/adding in modal
+			---------------------------------------------------
+			data = "string"  - data name from the dataset
+			---------------------------------------------------
+			type = "text" | "select" | "hidden" | "readonly"  - Type of HTML input to be shown.
+			---------------------------------------------------
+			hoverMsg = "some msg" - The message will appear as a tooltip over the input field.
+			---------------------------------------------------
+			pattern = r.e.  - If type is "input", the typed text will be matched against given regular expression, before submit.
+			---------------------------------------------------
+			msg = "some string" - An error message that is displayed in case pattern is not matched. Set HTML "data-errorMsg" attribute.
+			---------------------------------------------------
+			maxLength = integer - If type is "input", set HTML "maxlength" attribute.
+			---------------------------------------------------
+			options = ["a", "b", "c"] - If type is "select", the options that shall be presented.
+			---------------------------------------------------
+			select2 = {} - If type is "select", enable a select2 component. Select2 jQuery plugin must be linked. More select2 configuration options may be passed within the array.
+			---------------------------------------------------
+			datepicker = {} - If type is "text", enable a datepicker component. jQuery-UI plugin must be linked. More datepicker configuration options may be passed within the array.
+			---------------------------------------------------
+			multiple = true | false - Set HTML "multiple" attribute (for use with select2).
+			---------------------------------------------------
+			unique = true | false - Ensure that no two rows have the same value. The check is performed client side, not server side. Set HTML "data-unique" attribute. (Probably there's some issue with this).
+			---------------------------------------------------
+			uniqueMsg = "some string" - An error message that is displayed when the unique constraint is not respected. Set HTML "data-uniqueMsg" attribute.
+			---------------------------------------------------
+			special = "any string" - Set HTML "data-special" attribute (don't know what's that needed for).
+			---------------------------------------------------
+			defaultValue = "any string" - Adds a default value when adding a row
+			---------------------------------------------------
+		*/
+		// Event Lot
+		var events = $("#app-eventlog");
+		// Column Definitions
+		var columnSet = [
+			{
+				title: "Id",
+				id: "id",
+				data: "id",
+				placeholderMsg: "Automático",
+				type: "readonly",
+				visible: false,
+				required: false
+			},
+			{
+				title: "Ipen",
+				id: "ipen",
+				data: "ipen",
+				type: "number",
+				placeholderMsg: "IPEN",
+				required: true,
+				searchable: true,
+				orderable: true,
+				visible: true,
+				name: "Ipen"
+			},
+			{
+				title: "Nome",
+				id: "detentoNome",	
+				data: "nome",
+				type: "text",
+				placeholderMsg: "Informe o nome do detento",
+				searchable: true,
+				required: true,
+				orderable: true,
+				visible: true,
+				name: "Nome"
+			},
+			{
+				title: "Galeria",
+				data: "galeria",
+				type: "select",
+				options: galerias,
+				multiple : false,
+				visible: true,
+				select2 : { width: "100%" },
+				render : function (data, type, row, meta) {
+					return data;
+				},
+				searchable: false,
+				orderable: true,
+				name: "Galeria"
+			},
+			{	
+				title: "Cela",
+				id: "cela",	
+				data: "cela",
+				type: "number",
+				placeholderMsg: "Cela",
+				searchable: false,
+				required: true,
+				orderable: true,
+				visible: true,
+				name: "Cela"
+			},
+			{
+				title: "Provisório",
+				id: "isProvisorio",
+				data: "isProvisorio",
+				multiple : false,
+				select2 : { width: "100%"},
+				type: "select", 
+				options: boolOptions,
+				searchable: false,
+				orderable: true,
+				visible: true,
+				name: "IsProvisorio"
+			},
+			{
+				title: "Regime",
+				id: "regime",
+				data: "regime",
+				multiple : false,
+				select2 : { width: "100%" },
+				type: "select",
+				searchable: false,
+				visible: true,
+				options: detentoRegimes,
+				name: "Regime"
+			},
+			{
+				title: "Matrícula familiar",
+				id: "matriculaFamiliar",
+				data: "matriculaFamiliar",
+				type: "number",
+				placeholderMsg: "Automático",
+				searchable: false,
+				type: "readonly",
+				visible: true,
+				required: false
+			},
+			{
+				title: "Nome familiar",
+				id: "nomeFamiliar",	
+				data: "nomeFamiliar",
+				type: "text",
+				placeholderMsg: "Informe o nome do familiar",
+				searchable: false,
+				required: false	,
+				orderable: false,
+				visible: true,
+				name: "NomeFamiliar"
+			},
+			{
+				title: "Local transferência",
+				id: "transferenciaLocal",	
+				data: "transferenciaLocal",
+				type: "text",
+				placeholderMsg: "Informe o local para onde o detento foi transferido",
+				searchable: false,
+				required: false	,
+				orderable: false,
+				visible: false,
+				name: "TransferenciaLocal"
+			},
+			{
+				title: "Tipo transferência",
+				data: "transferenciaTipo",
+				type: "select",
+				options: transferenciaTipos,
+				multiple : false,
+				visible: false,
+				select2 : { width: "100%" },
+				render : function (data, type, row, meta) {
+					return data;
+				},
+				searchable: false,
+				orderable: true,
+				required: true,
+				name: "transferenciaTipo"
+			},
+			{
+				title: "Data de saída transferência",
+				data: "transferenciaDataSaida",
+				type: "date",
+				render: function (data) {
+					return moment(data).format('DD-MM-YYYY');
+				},
+				searchable: false,
+				orderable: true,
+				visible: false,
+				name: "TransferenciaDataSaida"
+			},
+			{
+				title: "Data de retorno previsto",
+				data: "transferenciaDataRetornoPrevisto",
+				type: "date",
+				render: function (data) {
+					return moment(data).format('DD-MM-YYYY');
+				},
+				searchable: false,
+				orderable: true,
+				visible: false,
+				name: "TransferenciaDataRetornoPrevisto"
+			},
+			{
+				title: "Data de retorno realizado",
+				data: "transferenciaDataRetornoRealizado",
+				type: "date",
+				render: function (data) {
+					return moment(data).format('DD-MM-YYYY');
+				},
+				searchable: false,
+				orderable: true,
+				visible: false,
+				name: "TransferenciaDataRetornoRealizado"
+			},
+			{
+				title: "Data saída prevista ST",
+				data: "saidaTemporariaSaidaPrevista",
+				type: "date",
+				render: function (data) {
+					return moment(data).format('DD-MM-YYYY');
+				},
+				searchable: false,
+				orderable: true,
+				visible: false,
+				name: "SaidaTemporariaSaidaPrevista"
+			},
+			{
+				title: "Data retorno previsto ST",
+				data: "saidaTemporariaRetornoPrevisto",
+				type: "date",
+				render: function (data) {
+					return moment(data).format('DD-MM-YYYY');
+				},
+				searchable: false,
+				orderable: true,
+				visible: false,
+				name: "SaidaTemporariaRetornoPrevisto"
+			}
+		];
+		/* start data table */
+		var myTable = $('#dt-basic-example')
+			.dataTable({
+			/* check datatable buttons page for more info on how this DOM structure works */
+			dom: "<'row mb-3'<'col-sm-12 col-md-6 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-6 d-flex align-items-center justify-content-end'B>>" +
+				"<'row'<'col-sm-12'tr>>" +
+				"<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+			ajax: {
+				url : urlList,
+				type: 'POST',
+				dataSrc: function (json) {
+					return transformObjArrayFieldBoolBackToFront(json.data);
+				}
+        	},
+			beforeSend: function (xhr) {
+            },
+			scrollY:        400,
+			scrollX:        true,
+			scrollCollapse: true,
+			serverSide: true,
+			processing: true,
+			altEditor: true,
+			pagingType: "full_numbers",
+			language: {
+            	decimal: ",",
+            	thousands: ".",
+				@* search: "_INPUT_", *@
+        		searchPlaceholder: "Busque pelo IPEN ou NOME",
+				sProcessing: '<span id=\"loading-image\" "class="fa fa-spinner fa-spin fa-2x spinner-border spinner-border-sm text-primary mr-2""><img class="manImg" src="img/loading_alt_3.gif" width="50" height="50"></img></span>',
+				sZeroRecords: "Nenhum registro encontrado.",
+				oPaginate: {
+                    "sFirst": "Primeiro",
+                    "sPrevious": "Anterior",
+                    "sNext": "Próximo",
+                    "sLast": "Último"
+                },
+				sInfo: "Mostrando _START_ de _END_ de um total de _TOTAL_",
+                sInfoEmpty: "Nenhuma registro encontrado.",
+                sInfoFiltered: " (filtrado a partir de um total de _MAX_ registros)",
+                sInfoPostFix: "",
+				@* sInfo: "_TOTAL_ Encontrados / Motrando _START_ De _END_ Total", *@
+				@* "sProcessing": "<span id=\"loading-image\" class=\"fa fa-spinner fa-spin fa-2x\" ></span>"
+                "sSearch": "অনুসন্ধান:",
+                "sUrl": "" *@
+				select: {
+					rows: "%d linhas selecionadas"
+				}
+        	},
+			columns: columnSet,
+			/* selecting multiple rows will not work */
+			select: 'single',
+			/* altEditor at work */
+			fixedColumns: {
+				leftColumns: 3
+			},
+			@* responsive: {
+			details: {
+					display: $.fn.dataTable.Responsive.display.modal({
+						header: function (row) {
+							var data = row.data();
+							return 'Detalhes de ' + data.nome + '';
+						}
+					}),
+					renderer: $.fn.dataTable.Responsive.renderer.tableAll({
+						tableClass: 'table table-responsive'
+					})
+				}
+			}, *@
+			/* buttons uses classes from bootstrap, see buttons page for more details */
+			buttons: [
+				{
+					extend: 'selected',
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-times mr-1"></i> Delete',
+					name: 'delete',
+					className: 'btn-danger btn-sm mr-1'
+				},
+				{
+					extend: 'selected',
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-edit mr-1"></i> Editar',
+					name: 'edit',
+					className: 'btn-warning btn-sm mr-1'
+				},
+				{
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-plus mr-1"></i> Novo',
+					name: 'add',
+					className: 'btn-primary btn-sm mr-1 btn-add'
+				},
+				{
+					extend: 'excelHtml5',
+					text: 'Excel',
+					exportOptions: {
+						columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+                	},
+					className: 'btn-outline-success btn-sm',
+					action: newExportAction
+            	}						
+			],
+			columnDefs: [
+			],
+			/* default callback for insertion: mock webservice, always success */
+			onAddRow: function(dt, rowdata, success, error) {
+				$.ajax({ 
+					url: endpointDetentos, 
+					type: 'POST',
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(transformObjFieldBoolFrontToBack(rowdata), null, 4),
+					success: function (data) {
+						$(".modal").modal('hide');
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						Swal.fire({
+							text: "Registro criado com sucesso!",
+							icon: "success",
+							timer: 2000,
+							showCancelButton: false,
+							showConfirmButton: true,
+							confirmButtonColor: "#179c8e",
+							timerProgressBar: true,
+							buttons: false
+						});
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						$(".modal").modal('hide');
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						if (error.status == 400)
+						{
+							if (typeof error.responseJSON == 'undefined')
+							{
+								Swal.fire({
+									title: error.responseText,
+									text: "Deseja recolhê-lo em sua unidade?",
+									showDenyButton: false,
+									showCancelButton: true,
+									confirmButtonText: 'Sim',
+									confirmButtonColor: "#179c8e",
+									cancelButtonText: 'Cancelar',
+								}).then((result) => {
+									if (result.isConfirmed) {
+										$.ajax({ 
+											url: apiChangeTenancy + rowdata.ipen, 
+											type: 'GET',
+											contentType: "application/json;charset=utf-8",
+											success: function (data) {
+												$(".modal").modal('hide');
+												$('#dt-basic-example').dataTable().api().ajax.reload();
+
+												if(data == 1)
+												{
+													Swal.fire({
+														text: "Detento recolhido com sucesso!",
+														icon: "success",
+														timer: 2000,
+														showCancelButton: false,
+														showConfirmButton: true,
+														confirmButtonColor: "#179c8e",
+														timerProgressBar: true,
+														buttons: false
+													});
+												} else {
+
+												}
+											},
+											error: function (error, jqXHR, textStatus, errorThrown) {
+												$(".modal").modal('hide');
+												$('#dt-basic-example').dataTable().api().ajax.reload();
+
+												if (error.status == 400)
+												{
+													toastr["error"](error.responseText);
+												} else if (error.status == 500) {
+													toastr["error"](error.responseJSON.title);
+												} else {
+													const returnObj = Object.entries(error.responseJSON.errors);
+													returnObj.forEach(function(err) {
+														err[1].forEach(function (int) {
+															toastr["error"](err[0], int);
+														})
+													});
+												}
+											}
+										});
+									}
+								})
+							} else {
+								const returnObj = Object.entries(error.responseJSON.errors);
+
+								returnObj.forEach(function(err) {
+									err[1].forEach(function (int) {
+										toastr["error"](err[0], int);
+									})
+								});
+							}
+						}
+						else {
+							const returnObj = Object.entries(error.responseJSON.errors);
+
+							returnObj.forEach(function(err) {
+								err[1].forEach(function (int) {
+									toastr["error"](err[0], int);
+								})
+							});
+						}
+					}
+				});
+			},
+			onEditRow: function(dt, rowdata, success, error) {
+				$.ajax({ 
+					url: endpointDetentos, 
+					type: 'PUT',
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(transformObjFieldBoolFrontToBack(rowdata), null, 4), 
+					success: function (data) {
+						$(".modal").modal('hide');
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						Swal.fire({
+							text: "Registro atualizado com sucesso!",
+							icon: "success",
+							timer: 2000,
+							showCancelButton: false,
+							showConfirmButton: true,
+							confirmButtonColor: "#179c8e",
+							timerProgressBar: true,
+							buttons: false
+						});
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						const returnObj = Object.entries(error.responseJSON.errors);
+
+						returnObj.forEach(function(err) {
+							err[1].forEach(function (int) {
+								toastr["error"](err[0], int);
+							})
+						});
+					}
+				});
+			},
+			onDeleteRow: function(dt, rowdata, success, error) {
+				$.ajax({ 
+					url: endpointDetentos, 
+					type: 'DELETE', 
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(transformObjFieldBoolFrontToBack(rowdata), null, 4), 
+					success: function (data) {
+						$(".modal").modal('hide');
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						Swal.fire({
+							text: "Registro deletado com sucesso!",
+							icon: "success",
+							timer: 2000,
+							showCancelButton: false,
+							showConfirmButton: true,
+							confirmButtonColor: "#179c8e",
+							timerProgressBar: true,
+							buttons: false
+						});
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						const returnObj = Object.entries(error.responseJSON.errors);
+
+						returnObj.forEach(function(err) {
+							err[1].forEach(function (int) {
+								toastr["error"](err[0], int);
+							})
+						});
+					}
+				});
+				@* console.log("Missing AJAX configuration for DELETE");
+				success(rowdata);
+				// demo only below:
+				events.prepend('<p class="text-danger fw-500">'+JSON.stringify(rowdata, null, 4) + '</p>');  *@
+			},		
+		});
+
+		$('#dt-basic-example_filter input').bind('keyup', function(e) {
+			$('#dt-basic-example_filter input').val($('#dt-basic-example_filter input').val().toUpperCase());
+		});
+
+		getInfosCards();
+	});
+</script>
+}

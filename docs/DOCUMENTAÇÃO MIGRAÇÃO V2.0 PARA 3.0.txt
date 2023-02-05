@@ -1,0 +1,27 @@
+SEQUENCIA DOS REGISTROS A SEREM IMPORTADOS
+
+-> LIVROSAUTORES
+-> LIVROSGENEROS
+-> LIVROS
+-> ALUNOS
+-> ALUNOSLEITORES
+
+
+AJUSTES APÓS IMPLANTAÇÃO V3.0:
+-> Livros - apresentação do dado ativo na tela está errado - true or false invertido - Ok;
+-> AlunoLeituras - Na tela de adição, 
+			ao trocar o leitor não está dando obtendo a galeria e cela do leitor novo - Ok;
+-> localização na edição e inclusão da leitura - Ok;
+-> Ajuste de retorno validationResult, para retornar um object com uma lista quando necessário - Ok
+-> não está trazendo o livro da edição - Ok
+-> AlunoLeitura - Problemas na edição - Ao trocar de livro está retornando exception /
+			Livro não encontrado com o TÍTULO informado. - 
+
+-> não permitir edição de registro com ocorrência de desistência
+
+-> alunoleitores -> lançar ocorrência para os inativos
+-> aluno -> desativação em cascata quando for embora - alunoleitor -> lançar ocorrencia de egresso
+
+
+-> excluir dados criados na apresentação
+

@@ -1,0 +1,3779 @@
+@model Sigesp.Application.ViewModels.Cards.AlunoLeituraCardViewModel
+
+@{
+	ViewData["Title"] = "Leituras";
+	ViewData["PageName"] = "aluno-leitura_todas";
+	ViewData["Category0"] = @Settings.App;
+	ViewData["Category1"] = "Educação";
+	ViewData["Category2"] = "Alunos";
+	ViewData["Heading"] = "<i class='subheader-icon fal fa-book-reader'></i> Alunos Leituras<span class='fw-300'></span> <sup class='badge badge-warning fw-500'>NOVIDADES</sup>";
+	ViewData["PageDescription"] = "Listagem de todas as leituras do PROJETO DESPERTAR PELA LEITURA";
+}
+@section HeadBlock {
+	<link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-daterangepicker/bootstrap-daterangepicker.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/formplugins/select2/select2.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/theme-demo.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/notifications/toastr/toastr.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/notifications/sweetalert2/sweetalert2.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/modal-printable.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/extensions/generals-extensions.css">
+	<style>
+		.my-swal {
+			display: -webkit-box;
+			display: flex;
+			position: fixed;
+			z-index: 300000 !important;
+		}
+	</style>
+}
+
+<div class="row">
+	<div class="col-sm-4 col-xl-4">
+		<div class="p-3 bg-info-900 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="text-center display-4 d-block l-h-n m-0 fw-500">
+				    @Model.Total
+					<small class="m-0 l-h-n">Total</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-address-book position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>
+	<div class="col-sm-4 col-xl-4">
+		<div class="p-3 bg-info rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="text-center display-4 d-block l-h-n m-0 fw-500">
+					@Model.LeituraLivroTipoRemissao
+					<small class="m-0 l-h-n">Leituras Remição</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-book-user position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>
+	<div class="col-sm-4 col-xl-4">
+		<div class="p-3 bg-warning rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="text-center display-4 d-block l-h-n m-0 fw-500">
+					@Model.LeituraLivroTipoSocial
+					<small class="m-0 l-h-n">Leituras Social</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-book-user position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>	
+</div>
+
+<div class="row">
+	<div class="col-xl-12">
+		<div id="panel-1" class="panel">
+			<div class="panel-hdr">	
+				<h2>
+					Gerenciamento das <span class="fw-300"><i>Leituras</i></span>
+				</h2>
+				<div class="panel-toolbar">
+					<ul class="nav nav-pills border-bottom-0" role="tablist">
+						<li class="nav-item">
+							<a class="nav-link active" data-toggle="tab" href="#pill_default-1" role="tab">Principal</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" data-toggle="tab" href="#pill_default-2" role="tab">Vídeos</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div class="panel-container show">
+				<div class="panel-content">									
+					<div class="tab-content pt-4">
+						<div class="tab-pane fade show active" id="pill_default-1" role="tabpanel" aria-labelledby="pill_default-1">
+							<div class="row">
+								<div class="col-xl-12">
+									<table id="dt-basic-example" style="width:100%"
+										class="table table-bordered 
+											table-hover table-striped w-100
+											display nowrap">
+									</table>									
+								</div>
+							</div>
+						</div>
+						<div class="tab-pane fade" id="pill_default-2" role="tabpanel" aria-labelledby="pill_default-2">
+							<div class="row">
+								<div class="col-xl-12">
+									<div class="panel-tag">
+										<code>Relatório avaliação | Como gerar um <strong>Relatório Avaliação</strong> com filtro de período (Data e Hora) das avaliações efetuadas:</code> <a href="https://youtu.be/xqxta7t718o" target="_blank">Clique aqui</a> e confira o vídeo com as instruções.</a>
+									</div>
+								</div>
+							</div>
+							<div class="row mt-2">
+								<div class="col-xl-12">
+									<div class="panel-tag">
+										<code>Reimpressão de ofício | Como fazer a <strong>Reimpressão de um ofício:</strong></code> <a href="https://youtu.be/bCoycfej8CI" target="_blank">Clique aqui</a> e confira o vídeo com as instruções.</a>
+									</div>
+								</div>
+							</div>
+							<div class="row mt-2">
+								<div class="col-xl-12">
+									<div class="panel-tag">
+										<code>Cancelamento de ofício | Como fazer o <strong>Cancelamento de um ofício:</strong></code> <a href="https://youtu.be/A9pX_BuBNbo" target="_blank">Clique aqui</a> e confira o vídeo com as instruções.</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="modal-leituras-novas" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header" id="modal-header-leituras-novas">
+				<h3 class="modal-title fw-700" id="modal-titulo-leituras-novas"></h3>
+				<button type="button" class="close" data-dismiss="modal" onclick="cleanModalNovas()"></button>
+				<span aria-hidden="true"><i class="@(Settings.Theme.IconPrefix) fa-times"></i></span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="form-group">
+					<!-- Tipo leitura -->
+					<div class="row mb-2">
+						<div class="col-lg-12">
+							<div class="form-group">
+								<label class="form-label" 
+										for="tiposLeitura">
+									Tipos leitura:
+								</label>
+								<select name="tiposLeitura" 
+									class="select2 form-control" 
+										id="tiposLeitura">
+								</select>
+							</div>
+						</div>
+					</div>
+					<!-- Galeria -->
+					<div class="row mb-2">
+						<div class="col-lg-12">
+							<div class="form-group">
+								<label class="form-label" 
+										for="galerias">
+									Galeria:
+								</label>
+								<select name="galerias" 
+									class="select2 form-control" 
+										id="galerias" data-placeholder="Selecione uma galeria">
+								</select>
+							</div>
+						</div>
+					</div>
+					<!-- Cela -->
+					<div class="row mb-2">
+						<div class="col-lg-12">
+							<div class="form-group">
+								<label class="form-label" 
+										for="celas">
+									Celas:
+								</label>
+								<select name="celas" 
+									class="select2 form-control" 
+										id="celas" multiple="" data-placeholder="Selecione quantas celas quiser">
+								</select>
+							</div>
+						</div>
+					</div>
+					<!-- Cronograma -->
+					<div class="row mb-2">
+						<div class="col-lg-12">
+							<div class="form-group">
+								<label class="form-label" 
+										for="modal-cronograma">
+									Cronograma:
+								</label>
+								<select name="modal-cronograma"
+									class="select2 form-control" 
+										id="modal-cronograma" data-placeholder="Selecione um cronograma">
+								</select>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="cleanModalNovas()">Fechar</button>
+				<button type="button" id="btn-gerar-leituras" onclick="gerarLeituras()" class="btn btn-primary"><span class="text-gerar-leituras">Gerar</span>
+					<img src="/img/spinner.gif" id="img-loading" style="display: none;" height ="20" width="20" />
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade printable autoprint" data-backdrop="static" data-keyboard="false" id="modal-leituras-novas-result" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header" id="modal-header-leituras-novas-result">
+				<h3 class="modal-title fw-700" id="modal-titulo-leituras-novas-result"></h3>
+			</div>
+			<div class="modal-body" style="max-height: calc(100vh - 200px); overflow-y: auto;">
+				<div class="mb-3 alert alert-info p-1 mb-1">
+					<p><strong>Tipo leitura:</strong> <span id="modal-leituras-result-tipo-leitura-criadas"></span></p>
+					<p><strong>Galeria:</strong> <span id="modal-leituras-result-galeria"></span></p>
+					<p><strong>Celas:</strong> <span id="modal-leituras-result-celas"></span></p>
+					<p><strong>Cronograma:</strong> <span id="modal-leituras-result-cronograma"></span></p>
+					<p><strong>Total leituras criadas:</strong> <span id="modal-leituras-result-total-leituras-criadas"></span></p>
+				</div>
+				<div class="h3">
+					<p><strong class="text-danger">Consulte nota de rodapé com explicações sobre as ocorrências geradas.</strong></p>
+				</div>
+				<table id="dt-leituras-resultado" style="width:100%"
+							class="table-bordered 
+									table-hover table-striped w-100">
+					<thead>
+						<tr>
+							<th class="text-left fw-700 h5">Ocorrência (s)</th>
+						</tr>
+					</thead>
+					<tbody id="tbody"></tbody>
+				</table>				
+				<div class="mt-3 alert alert-warning p-1 mb-1">
+					<p class="mb-3"><strong class="mb-1">Principais motivos para não geração de uma leitura:</strong></p>
+					<p><strong>1. JÁ POSSUI LEITURA PARA O CRONOGRAMA:</strong> O leitor já possui uma leitura cadastrada para o cronograma informado.</p>
+					<p><strong>2. NÃO FOI POSSÍVEL OBTER UM TÍTULO DE LIVRO:</strong> Não foi encontrado livro disponível, ainda não lido, para o gênero do leitor. Troque o gênero do leitor para conseguir criar uma nova leitura.</p>
+					<p><strong>3. QUANTITATIVO BAIXO DE LIVROS:</strong> O total de livros disponíveis é menor que o total de leitores obtidos com os dados informados. Verifique o total de LIVROS DISPONÍVEIS ATIVOS no cadastro de livros, sendo o caso, disponibilize mais livros pela opção COLOCAR NA ESTANTE, ou adicione mais livros. Caso ainda persista o problema, diminua o total de leitores, gerando individualmente por cela.</p>
+					<p><strong>4. NÃO FOI POSSÍVEL OBTER UMA CHAVE DE LEITURA:</strong> Problemas ao gerar uma CHAVE PARA LEITURA. Tente criar uma leitura individual para o LEITOR, caso o problema persista, informe a equipe técnica do sistema. </p>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button id="modal-leituras-novas-btn-fechar" type="button" class="btn btn-secondary">Fechar</button>
+				<button id="modal-leituras-novas-btn-imprimir" onclick="window.print();" type="button" class="btn btn-primary">Imprimir</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="modal-avaliacao" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header" id="modal-avaliacao-header">
+				<h5 class="modal-title" id="modal-avaliacao-titulo"></h5>
+				<button type="button" class="close" onclick="closeModalAvaliacaoLeitura()" data-dismiss="modal" aria-label="Close">
+				<span aria-hidden="true"><i class="@(Settings.Theme.IconPrefix) fa-times"></i></span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<form id="form-avaliacao" method="post">
+					<div class="form-group">
+						<!-- Dados gerais -->
+						<div class="row">
+							<div class="col-xl-4">
+								<div class="form-group">
+									<label class="h2 form-label">Dados gerais</label>
+								</div>
+							</div>
+						</div>
+						<hr class="mt-0 mb-g">
+						<!-- Id -->
+						<div class="row mb-2" id="modal-avaliacao-div-id">
+							<div class="col-lg-6">
+								<div class="form-group">
+									<input type="hidden" name="modal-avaliacao-id" 
+											id="modal-avaliacao-id" class="form-control" 
+											placeholder="Auto" disabled value="">
+								</div>
+							</div>
+						</div>
+						<!-- Chave leitura-->
+						<div class="row mb-2" id="chaveLeitura">
+							<div class="col-lg-12">
+								<div class="form-group">
+									<input type="text" name="modal-chaveLeitura" 
+											id="chaveLeitura" class="form-control" 
+											placeholder="Informe a chave da leitura e tecle enter para localizá-la" value="">
+								</div>
+							</div>
+						</div>
+						<!-- Ipen, Nome -->
+						<div class="row mb-2">
+							<div class="col-lg-6">
+								<div class="form-group">
+									<label class="form-label" for="modal-avaliacao-ipen">
+										Ipen:
+									</label>
+									<input type="text" name="modal-avaliacao-ipen" 
+											id="modal-avaliacao-ipen" class="form-control" 
+											placeholder="Auto" disabled value="">
+								</div>
+							</div>
+							<div class="col-lg-6">
+								<div class="form-group">
+									<label class="form-label" for="modal-avaliacao-nome">
+										Nome:
+									</label>
+									<input type="text" name="modal-avaliacao-nome" 
+											id="modal-avaliacao-nome" class="form-control" 
+											placeholder="Auto" disabled value="">
+								</div>
+							</div>
+						</div>
+						<!-- Galeria, Cela -->
+						<div class="row mb-2">
+							<div class="col-lg-6">
+								<div class="form-group">
+									<label class="form-label" for="modal-avaliacao-galeria">
+										Galeria:
+									</label>
+									<input type="text" name="modal-avaliacao-galeria" 
+											id="modal-avaliacao-galeria" class="form-control" 
+											placeholder="Auto" disabled value="">
+								</div>
+							</div>
+							<div class="col-lg-6">
+								<div class="form-group">
+									<label class="form-label" for="modal-avaliacao-cela">
+										Cela:
+									</label>
+									<input type="text" name="modal-avaliacao-cela" 
+											id="modal-avaliacao-cela" class="form-control" 
+											placeholder="Auto" disabled value="">
+								</div>
+							</div>
+						</div>
+						<!-- Cronograma, Título livro -->
+						<div class="row mb-2">
+							<div class="col-lg-6">
+								<div class="form-group">
+									<label class="form-label" for="modal-avaliacao-livroTitulo">
+										Livro título:
+									</label>
+									<input type="text" name="modal-avaliacao-livroTitulo"
+											id="modal-avaliacao-livroTitulo" class="form-control" 
+											placeholder="Auto" disabled value="">
+								</div>
+							</div>
+							<div class="col-lg-6">
+								<div class="form-group">
+									<label class="form-label" for="modal-avaliacao-cronograma">
+										Cronograma:
+									</label>
+									<input type="text" name="modal-avaliacao-cronograma"
+											id="modal-avaliacao-cronograma" class="form-control" 
+											placeholder="Auto" disabled value="">
+								</div>
+							</div>
+						</div>
+						<hr class="mt-5 mb-g">
+						<!-- Dados avaliação -->
+						<div class="row mt-3">
+							<div class="col-xl-4">
+								<div class="form-group">
+									<label class="h2 form-label">Dados avaliação</label>
+								</div>
+							</div>
+						</div>
+						<hr class="mt-0 mb-g">
+						<!-- Adequação texto ao gênero, Coesão e Coerência -->
+						<div class="row mb-2">
+							<div class="col-lg-6">
+								<div class="form-group">
+									<label class="form-label" for="avaliacaoCriterio1">
+										Adequação do texto ao gênero<span class="text-danger">*</span>:
+									</label>
+									<select name="avaliacaoCriterio1"
+										class="select2 form-control" 
+											id="avaliacaoCriterio1" data-placeholder="Selecione um critério">
+									</select>
+								</div>
+							</div>
+							<div class="col-lg-6">
+								<div class="form-group">
+									<label class="form-label" for="avaliacaoCriterio2">
+										Coesão e Coerência<span class="text-danger">*</span>:
+									</label>
+									<select name="avaliacaoCriterio2"
+										class="select2 form-control" 
+											id="avaliacaoCriterio2" data-placeholder="Selecione um critério">
+									</select>
+								</div>
+							</div>
+						</div>
+						<!-- Comprovação da leitura, Compreensão do conteúdo -->
+						<div class="row mb-2">
+							<div class="col-lg-6">
+								<div class="form-group">
+									<label class="form-label" for="avaliacaoCriterio3">
+										Comprovação da leitura<span class="text-danger">*</span>:
+									</label>
+									<select name="avaliacaoCriterio3"
+										class="select2 form-control" 
+											id="avaliacaoCriterio3" data-placeholder="Selecione um critério">
+									</select>
+								</div>
+							</div>
+							<div class="col-lg-6">
+								<div class="form-group">
+									<label class="form-label" for="avaliacaoCriterio4">
+										Compreensão do conteúdo<span class="text-danger">*</span>:
+									</label>
+									<select name="avaliacaoCriterio4"
+										class="select2 form-control" 
+											id="avaliacaoCriterio4" data-placeholder="Selecione um critério">
+									</select>
+								</div>
+							</div>
+						</div>
+						<!-- Linguagem clara e objetiva, Variedade de vocabulário -->
+						<div class="row mb-2">
+							<div class="col-lg-6">
+								<div class="form-group">
+									<label class="form-label" for="avaliacaoCriterio5">
+										Linguagem clara e objetiva<span class="text-danger">*</span>:
+									</label>
+									<select name="avaliacaoCriterio5"
+										class="select2 form-control" 
+											id="avaliacaoCriterio5" data-placeholder="Selecione um critério">
+									</select>
+								</div>
+							</div>
+							<div class="col-lg-6">
+								<div class="form-group">
+									<label class="form-label" for="avaliacaoCriterio6">
+										Variedade de vocabulário<span class="text-danger">*</span>:
+									</label>
+									<select name="avaliacaoCriterio6"
+										class="select2 form-control" 
+											id="avaliacaoCriterio6" data-placeholder="Selecione um critério">
+									</select>
+								</div>
+							</div>
+						</div>
+						<!-- Ortografia e aspectos gramaticais -->
+						<div class="row mb-2">
+							<div class="col-lg-12">
+								<div class="form-group">
+									<label class="form-label" for="avaliacaoCriterio7">
+										Ortografia e aspectos gramaticais<span class="text-danger">*</span>:
+									</label>
+									<select name="avaliacaoCriterio7"
+										class="select2 form-control" 
+											id="avaliacaoCriterio7" data-placeholder="Selecione um critério">
+									</select>
+								</div>
+							</div>
+						</div>
+						<!-- Conceito -->
+						<div class="row mb-2">
+							<div class="col-lg-12">
+								<div class="form-group">
+									<label class="form-label" for="avaliacaoConceito">
+										Conceito<span class="text-danger">*</span>:
+									</label>
+									<select name="avaliacaoConceito"
+										class="select2 form-control" 
+											id="avaliacaoConceito" data-placeholder="Selecione um conceito">
+									</select>
+								</div>
+							</div>
+						</div>
+						<!-- Justificativa, Observação -->
+						<div class="row mb-2">
+							<div class="col-lg-6">
+								<div class="form-group">
+									<label class="form-label" for="avaliacaoConceitoJustificativa">
+										Justificativa:
+									</label>
+									<textarea type="text" name="avaliacaoConceitoJustificativa" 
+											id="avaliacaoConceitoJustificativa" class="form-control"
+											rows="4" cols="50" 
+											placeholder="Informe uma justificativa" value=""></textarea>
+								</div>
+							</div>
+							<div class="col-lg-6">
+								<div class="form-group">
+									<label class="form-label" for="avaliacaoObservacao">
+										Observação:
+									</label>
+									<textarea type="text" name="avaliacaoObservacao" 
+											id="avaliacaoObservacao" class="form-control"
+											rows="4" cols="50"
+											placeholder="Informe uma observação" value=""></textarea>
+								</div>
+							</div>
+						</div>
+						<hr class="mt-5 mb-g">
+					</div>
+					<div class="modal-footer" style="margin-right: -17px;">
+						<button type="button" id="btn-alunoLeitura-avaliacao-salvar" class="btn btn-primary" onclick="avaliarLeitura()">Avaliar</button>
+						<button type="button" id="btn-alunoLeitura-avaliacao-limparDadosAvaliacao" class="btn btn-danger" onclick="clearDadosAvaliacao()">Limpar dados avaliação</button>
+						<button type="button" id="btn-alunoLeitura-avaliacao-fechar" class="btn btn-secondary" data-dismiss="modal" onclick="closeModalAvaliacaoLeitura()">Fechar</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="modal-forms-leituras" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header" id="modal-forms-leituras-header">
+				<h3 class="modal-title fw-700" id="modal-forms-leituras-titulo"></h3>
+				<button type="button" class="close" data-dismiss="modal" onclick="cleanModalFormsLeituras()"></button>
+				<span aria-hidden="true"><i class="@(Settings.Theme.IconPrefix) fa-times"></i></span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="form-group">
+					<!-- Galeria -->
+					<div class="row mb-2" id="modal-forms-leituras-galeria-container">
+						<div class="col-lg-12">
+							<div class="form-group">
+								<label class="form-label" 
+										for="modal-forms-leituras-galerias">
+									Galeria:
+								</label>
+								<select name="modal-forms-leituras-galerias" 
+									class="select2 form-control" 
+										id="modal-forms-leituras-galerias" data-placeholder="Selecione uma galeria">
+								</select>
+							</div>
+						</div>
+					</div>
+					<!-- Cela -->
+					<div class="row mb-2" id="modal-forms-leituras-cela-container">
+						<div class="col-lg-12">
+							<div class="form-group">
+								<label class="form-label" 
+										for="modal-forms-leituras-celas">
+									Celas:
+								</label>
+								<select name="modal-forms-leituras-celas" 
+									class="select2 form-control" 
+										id="modal-forms-leituras-celas" multiple="" data-placeholder="Selecione quantas celas quiser">
+								</select>
+							</div>
+						</div>
+					</div>
+					<!-- Dica de escrita -->
+					<div class="row mb-2" id="modal-forms-leituras-dica-escrita-container">
+						<div class="col-lg-12">
+							<div class="form-group">
+								<label class="form-label" 
+										for="modal-forms-leituras-dica-escrita">
+									Dica de escrita:
+								</label>
+								<select name="modal-forms-leituras-dica-escrita"
+									class="select2 form-control" 
+										id="modal-forms-leituras-dica-escrita" data-placeholder="Selecione uma dica de escrita">
+								</select>
+							</div>
+						</div>
+					</div>
+					<!-- Grupo perguntas -->
+					<div class="row mb-2" id="modal-forms-leituras-grupo-pergunta-container">
+						<div class="col-lg-12">
+							<div class="form-group">
+								<label class="form-label" 
+										for="modal-forms-leituras-grupo-pergunta">
+									Grupo perguntas:
+								</label>
+								<select name="modal-forms-leituras-grupo-pergunta"
+									class="select2 form-control" 
+										id="modal-forms-leituras-grupo-pergunta" data-placeholder="Selecione um grupo de perguntas">
+								</select>
+							</div>
+						</div>
+					</div>
+					<!-- Cronograma -->
+					<div class="row mb-2" id="modal-forms-leituras-cronograma-container">
+						<div class="col-lg-12">
+							<div class="form-group">
+								<label class="form-label" 
+										for="modal-forms-leituras-cronograma">
+									Cronograma:
+								</label>
+								<select name="modal-forms-leituras-cronograma"
+									class="select2 form-control" 
+										id="modal-forms-leituras-cronograma" data-placeholder="Selecione um cronograma">
+								</select>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" id="btn-modal-forms-leituras-fechar" class="btn btn-secondary" data-dismiss="modal" onclick="cleanModalFormsLeituras()">Fechar</button>
+				<button type="button" id="btn-gerar-forms-leituras" onclick="gerarFormsLeituras()" class="btn btn-primary"><span class="modal-forms-leituras-text-btn-gerar">Gerar</span>
+					<img src="/img/spinner.gif" id="modal-forms-leituras-img-loading" style="display: none;" height ="20" width="20" />
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="modal-rel-avaliacao" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header" id="modal-rel-avaliacao-header">
+				<h3 class="modal-title fw-700" id="modal-rel-avaliacao-titulo"></h3>
+				<button type="button" class="close" data-dismiss="modal" onclick="cleanModalRelAvaliacao()"></button>
+				<span aria-hidden="true"><i class="@(Settings.Theme.IconPrefix) fa-times"></i></span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="form-group">
+					<!-- Galeria -->
+					<div class="row mb-2" id="modal-rel-avaliacao-galeria-container">
+						<div class="col-lg-12">
+							<div class="form-group">
+								<label class="form-label" 
+										for="modal-rel-avaliacao-galerias">
+									Galeria:
+								</label>
+								<select name="modal-rel-avaliacao-galerias" 
+									class="select2 form-control" 
+										id="modal-rel-avaliacao-galerias" data-placeholder="Selecione uma galeria">
+								</select>
+							</div>
+						</div>
+					</div>
+					<!-- Cronograma -->
+					<div class="row mb-2" id="modal-rel-avaliacao-cronograma-container">
+						<div class="col-lg-12">
+							<div class="form-group">
+								<label class="form-label" 
+										for="modal-rel-avaliacao-cronograma">
+									Cronograma:
+								</label>
+								<select name="modal-rel-avaliacao-cronograma"
+									class="select2 form-control" 
+										id="modal-rel-avaliacao-cronograma" data-placeholder="Selecione um cronograma">
+								</select>
+							</div>
+						</div>
+					</div>
+					<!-- Período início e fim das avaliações -->
+					<div class="row mb-2">
+						<div class="col-lg-12">
+							<label class="form-label" for="datepicker-modal-3">Período avaliações</label>
+							<div class="input-group">
+								<input type="text" id="datepicker-modal-3" class="form-control" placeholder="End date" aria-label="date" aria-describedby="datepicker-modal-3">
+								<div class="input-group-append">
+									<span class="input-group-text fs-xl"><i class="@(Settings.Theme.IconPrefix) fa-calendar-alt"></i></span>
+								</div>
+							</div>
+							<span class="help-block">Informe a data e hora da primeira avaliação, data e hora da última avaliação. Sendo assim, o sistema irá considerar este período como sendo o período das avaliações efetudas, para confeccionar este relatório.</span>
+						</div>						
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" id="btn-modal-rel-avaliacao-fechar" class="btn btn-secondary" data-dismiss="modal" onclick="cleanModalRelAvaliacao()">Fechar</button>
+				<button type="button" id="btn-gerar-rel-avaliacao" onclick="gerarRelAvaliacao(true, 'undefined')" class="btn btn-primary"><span class="modal-forms-leituras-text-btn-gerar">Gerar</span>
+					<img src="/img/spinner.gif" id="modal-rel-avaliacao-img-loading" style="display: none;" height ="20" width="20" />
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section ScriptsBlock {
+<script src="~/js/dependency/moment/moment.js"></script>
+<script src="~/js/formplugins/bootstrap-daterangepicker/bootstrap-daterangepicker.js"></script>
+<script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+<script src="~/js/formplugins/select2/select2.bundle.js"></script>
+<script src="~/js/datagrid/datatables/datatables.export.js"></script>
+<script src="~/js/notifications/toastr/toastr.js"></script>
+<script src="~/js/extensions/automapper-extensions.js"></script>
+<script src="~/js/extensions/string-extensions.js"></script>
+<script src="~/js/extensions/helpers-extensions.js"></script>
+<script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+<script src="~/js/notifications/sweetalert2/sweetalert2.bundle.js"></script>
+<script src="~/js/extensions/jquery-serialization-extensions.js"></script>
+
+<script>
+	toastr.options = {
+		"closeButton": false,
+		"debug": false,
+		"newestOnTop": true,
+		"progressBar": true,
+		"positionClass": "toast-top-right",
+		"preventDuplicates": true,
+		"onclick": null,
+		"showDuration": 300,
+		"hideDuration": 100,
+		"timeOut": 10000,
+		"extendedTimeOut": 1000,
+		"showEasing": "swing",
+		"hideEasing": "linear",
+		"showMethod": "fadeIn",
+		"hideMethod": "fadeOut"
+	};
+
+	const apiAlunosLeituras = "/api/alunos-leituras";
+	const apiAlunosLeiturasNovo = "/api/alunos-leituras/novo";
+	const apiAlunosLeiturasEdicao = "/api/alunos-leituras/edicao";
+	const apiAlunosLeiturasDelete = "/api/alunos-leituras/delete";
+	const apiAlunosLeiturasLista = "/api/alunos-leituras/lista";
+	const apiAlunosLeiturasAvaliacao = "/api/alunos-leituras/avaliacao";
+
+	var boolOptions = ["NÃO", "SIM"];
+	var alunoLeituraTipos = [];
+	var periodosReferencia = [];
+	var alunosLeitoresForAdd = [];
+	var cronogramas = [];
+	var alcs = [];
+	var controls = {
+		leftArrow: '<i class="@(Settings.Theme.IconPrefix) fa-angle-left" style="font-size: 1.25rem"></i>',
+		rightArrow: '<i class="@(Settings.Theme.IconPrefix) fa-angle-right" style="font-size: 1.25rem"></i>'
+	};	
+	var avaliacaoCriterios = [];
+	var avaliacaoConceitos = [];
+	var alunoLeituraSelectedGlobal;
+
+	@foreach (var alt in @Model.AlunoLeituraTipos)
+	{
+		@:alunoLeituraTipos.push('@alt');
+	}
+
+	@foreach (var criterio in @Model.AvaliacaoCriterios)
+	{
+		@:avaliacaoCriterios.push('@criterio');
+	}
+
+	@foreach (var conceito in @Model.AvaliacaoConceitos)
+	{
+		@:avaliacaoConceitos.push('@conceito');
+	}
+
+	var oldExportAction = function (self, e, dt, button, config) {
+		if (button[0].className.indexOf('buttons-excel') >= 0) {
+			if ($.fn.dataTable.ext.buttons.excelHtml5.available(dt, config)) {
+				$.fn.dataTable.ext.buttons.excelHtml5.action.call(self, e, dt, button, config);
+			}
+			else {
+				$.fn.dataTable.ext.buttons.excelFlash.action.call(self, e, dt, button, config);
+			}
+		} else if (button[0].className.indexOf('buttons-print') >= 0) {
+			$.fn.dataTable.ext.buttons.print.action(e, dt, button, config);
+		}
+	};
+
+	var newExportAction = function (e, dt, button, config) {
+		var self = this;
+		var oldStart = dt.settings()[0]._iDisplayStart;
+
+		dt.one('preXhr', function (e, s, data) {
+			// Just this once, load all data from the server...
+			data.start = 0;
+			data.length = 2147483647;
+
+			dt.one('preDraw', function (e, settings) {
+				// Call the original action function 
+				oldExportAction(self, e, dt, button, config);
+
+				dt.one('preXhr', function (e, s, data) {
+					// DataTables thinks the first item displayed is index 0, but we're not drawing that.
+					// Set the property to what it was before exporting.
+					settings._iDisplayStart = oldStart;
+					data.start = oldStart;
+				});
+
+				// Reload the grid with the original page. Otherwise, API functions like table.cell(this) don't work properly.
+				setTimeout(dt.ajax.reload, 0);
+
+				// Prevent rendering of the full data to the DOM
+				return false;
+			});
+		});
+
+		// Requery the server with the new one-time export settings
+		dt.ajax.reload();
+	};
+
+	var activateOrDeactivate = function (id, isDeleted) {		
+		if (id == null || id == "")
+		{
+			toastr["error"]("Problemas ao obter o id do registro para ativação/desativação. Tente mais tarde, caso persista o problema, informe o suporte do sistema.");
+		}
+		
+		var action = isDeleted == "SIM" ? "DEVOLVER": "RETIRAR";
+
+		Swal.fire({
+			customClass: {
+				container: 'my-swal'
+			},
+			title: "Confirmação de ação",
+			text: "Realmente deseja " + action + " o registro?",
+			icon: "warning",
+			showCancelButton: true,
+			confirmButtonColor: "#ffc241",
+			confirmButtonText: "Sim, quero "+ action +" o registro!",
+			cancelButtonText: "Desistir",   
+		}).then(function (result) {
+			if (result.value) {
+				$.ajax({
+					url: "/api/lista-amarela/enable-disable",
+					type: 'POST',
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(id, null, 4),
+					success: function(success) {
+						var dataRet = success.data ? "Ativado" : "Desativado";
+						
+						Swal.fire({
+							customClass: {
+								container: 'my-swal'
+							},
+							title: dataRet + "!",
+							text: "Operação realizada com sucesso!",
+							icon: "success",
+							confirmButtonColor: "#1dc9b7"
+						});
+
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						toastr["error"](error);
+					}
+				});
+			}
+		});
+	};
+
+	var getAllLivros = function (isEdicao, livro) {
+		$.ajax({ 
+			url: "/api/livros/get-all-with-vr",
+			type: 'POST',
+			contentType: "application/json;charset=utf-8",
+			success: function(success) {
+				$("#livro").prop('disabled', false);
+				$('#livro').select2();
+
+				livros = success;
+				livros.forEach(function (item) {
+					$("#livro").append("<option value='"+item.id+"' selected>"+item.localizacao+" - "+item.titulo+"</option>");
+				});
+
+				$('#livro').trigger('change');
+
+				if (isEdicao)
+				{
+					$('#livro').select2().val(livro.id);
+				}
+				else
+				{
+					const randon = Math.floor(Math.random() * livros.length);
+
+					$('#livro').select2().val(livros[randon].id);
+					getLivroLocalizacao(livros[randon].id);
+				}
+				
+				$('#livro').select2();
+				$('#livro').select2('focus');
+				$("#livro").on('change', function(elm) {
+					var idLivro = $(elm.currentTarget).val();
+					getLivroLocalizacao(idLivro);
+				});
+			},
+			error: function (error, jqXHR, textStatus, errorThrown) {
+				clearSelect2Livros("Informe um aluno para obter os livros");
+				clearDadosAlunoLeitor();
+
+				$("#alunoLeitorNome").select2().val(null);
+				$("#alunoLeitorNome").select2();
+				$('#alunoLeitorNome').select2({ 
+					placeholder: "Informe um leitor",
+				});
+
+				const returnObj = Object.entries(error.responseJSON.errors);
+
+				returnObj.forEach(function(err) {
+					err[1].forEach(function (int) {
+						toastr["error"](err[0], int);
+					})
+				});
+			}
+		});
+	};
+
+	var getAlunoLeitorByDetentoIpen = function (ipen) {
+		var ipen = $("#alunoLeitorIpen").val();
+
+		if (ipen.length < 6 || ipen.length > 6)
+		{
+			$("#alunoLeitorIpen").focus();
+			$("#alunoLeitorNome").select2().val(null);
+
+			$("#alunoLeitorIpen").focus();
+			$("#alunoLeitorNome").select2().val(null);
+			
+			clearSelect2Livros("Informe um aluno para obter os livros");
+			clearDadosAlunoLeitor();
+			toastr["error"]("Ipen inválido!");
+
+			$("#exception-livro-nao-encontrado").remove();
+		}
+		else
+		{
+			$.ajax({ 
+				url: "/api/alunos-leitores/get-by-detento-ipen",
+				type: 'POST',
+				contentType: "application/json;charset=utf-8",
+				data: JSON.stringify(ipen, null, 4),
+				success: function(success) {
+					if (typeof success == 'undefined')
+					{
+						clearDadosAlunoLeitor();
+						$("#alunoLeitorIpen").val("");
+						$("#alunoLeitorNome").select2().val(null);
+						$("#alunoLeitorNome").select2({
+							placeholder: "Informe um leitor"
+						});
+						$("#alunoLeitorIpen").focus();
+						toastr["error"]("Nenhum detento encontrado com o IPEN informado.");
+					}
+					else
+					{
+						$('#exceptionMultiplesAlunosLeitores').remove();
+						
+						$('#alunoLeitorIpen').val(success.detentoIpen);
+
+						$('#alunoLeitorNome').select2().val(success.id);
+						$('#alunoLeitorNome').select2();
+
+						$('#alunoLeitorGaleria').val(success.aluno.detento.galeria);
+						$('#alunoLeitorCela').val(success.aluno.detento.cela);
+
+						getAllLivros(false, null);
+					}
+				},
+				error: function (error, jqXHR, textStatus, errorThrown) {
+					clearSelect2Livros("Informe um aluno para obter os livros");
+					clearDadosAlunoLeitor();
+
+					$("#alunoLeitorNome").select2().val(null);
+					$("#alunoLeitorNome").select2();
+					$('#alunoLeitorNome').select2({ 
+						placeholder: "Informe um leitor",
+					});
+
+					const returnObj = Object.entries(error.responseJSON.errors);
+
+					returnObj.forEach(function(err) {
+						err[1].forEach(function (int) {
+							toastr["error"](err[0], int);
+						})
+					});
+				}
+			});
+		}
+	};
+
+	var getAlunoLeitorByIpenForExceptionMultiplesAlunosLeitores = function (ipen) {
+		
+		if (ipen.length < 6)
+		{
+			clearSelect2Livros("Informe um aluno para obter os livros");
+			toastr["error"]("Ipen inválido!");
+		}
+		else
+		{
+			$.ajax({ 
+				url: "/api/alunos-leitores/get-by-detento-ipen", 
+				type: 'POST',
+				contentType: "application/json;charset=utf-8",
+				data: JSON.stringify(ipen, null, 4),
+				success: function(success) {
+					$('#exceptionMultiplesAlunosLeitores').remove();
+					
+					$('#alunoLeitorIpen').val(success.detentoIpen);
+
+					$('#alunoLeitorNome').select2().val(success.detentoNome);
+					$('#alunoLeitorNome').select2();
+
+					$('#alunoLeitorGaleria').val(success.aluno.detento.galeria);
+					$('#alunoLeitorCela').val(success.aluno.detento.cela);
+
+					@* getAllDisponiveisNaoLidosByIpen(); *@
+				},
+				error: function (error, jqXHR, textStatus, errorThrown) {
+					const returnObj = Object.entries(error.responseJSON.errors);
+
+					returnObj.forEach(function(err) {
+						err[1].forEach(function (int) {
+							toastr["error"](err[0], int);
+						})
+					});
+				}
+			});
+		}
+	};
+
+	var exceptionMultiplesAlunosLeitores = function (detentos) {
+		$("#exception-cronograma-nao-encontrado").remove();
+		$("#exception-livro-nao-encontrado").remove();
+
+		var divPrincipal = 	'<div id="exceptionMultiplesAlunosLeitores">'+
+								'<hr class="mt-4 mb-g">'+
+								'<div class="form-group row">'+ 
+									'<div class="col-xl-3"></div>'+
+									'<div class="col-xl-9">'+
+										'<div class="alert alert-warning p-1 pt-3 mb-0" id="emd-before-table">'+
+											'<p><strong>Encontramos mais de um aluno leitor para o mesmo nome, portanto, escolha uma das opções abaixo.'+
+										'</div>' +
+										'<table class="table table-striped w-100">'+
+											'<thead>'+
+												'<tr>'+
+													'<th>Ipen</th>'+
+													'<th>Nome</th>'+                 
+													'<th>Ação</th>'+
+												'</tr>'+
+											'</thead>'+
+											'<tbody id="tbody-core">'+										
+											'</tbody>'+
+										'</table>'+
+									'</div>'+
+								'</div>'+
+								'<hr class="mt-4 mb-g">'
+							'</div>';
+
+		$("#row_alunoLeitorNome").after(divPrincipal);
+
+		detentos.forEach(function(detento) {
+			var detentosInTable = '<tr>'+
+									  '<td>'+detento.detentoIpen+'</td>'+
+									  '<td>'+detento.detentoNome+'</td></a>'+
+									  '<td>'+
+									  '<div class="d-flex demo">'+
+										  '<a onclick=getAlunoLeitorByIpenForExceptionMultiplesAlunosLeitores("'+detento.detentoIpen+'") class="text-white btn btn-sm btn-info btn-icon btn-inline-block mr-1" title="Escolher este detento"><i class="fal fa-level-up"></i></a>'+
+									  '</div>'+
+								      '</td>'+
+							      '</tr>';
+
+			$("#tbody-core").append(detentosInTable);
+		});
+	};
+
+	var cleanModalNovas = function() {
+		$("#img-loading").hide();
+		$(".text-gerar-leituras").html("Gerar");
+
+		$('#tiposLeitura').select2().val(null);
+		$('#galerias').select2().val(null);
+		$('#celas').select2().val(null);
+		$('#modal-cronograma').select2().val(null);
+	};
+
+	var cleanModalRelAvaliacao = function() {
+		$("#btn-gerar-rel-avaliacao").remove();
+
+		var htmlBtnGerar = '<button type="button" id="btn-gerar-rel-avaliacao" onclick="gerarRelAvaliacao(true)" class="btn btn-primary"><span class="modal-rel-avaliacao-text-btn-gerar">Gerar</span>'+
+						   		'<img src="/img/spinner.gif" id="modal-rel-avaliacao-img-loading" style="display: none;" height ="20" width="20" />'+
+						   '</button>';
+
+		$("#btn-modal-rel-avaliacao-fechar").after(htmlBtnGerar);
+
+		$('#modal-rel-avaliacao-galerias').select2().val(null);
+		$('#modal-rel-avaliacao-cronograma').select2().val(null);
+	};
+
+	var cleanModalFormsLeituras = function() {
+		$("#btn-gerar-forms-leituras").remove();
+
+		var htmlBtnGerar = '<button type="button" id="btn-gerar-forms-leituras" onclick="gerarFormsLeituras()" class="btn btn-primary"><span class="modal-forms-leituras-text-btn-gerar">Gerar</span>'+
+						   		'<img src="/img/spinner.gif" id="modal-forms-leituras-img-loading" style="display: none;" height ="20" width="20" />'+
+						   '</button>';
+
+		$("#btn-modal-forms-leituras-fechar").after(htmlBtnGerar);
+
+		$('#modal-forms-leituras-galerias').select2().val(null);
+		$('#modal-forms-leituras-celas').select2().val(null);
+		$('#modal-forms-leituras-cronograma').select2().val(null);
+	};
+
+	var clearDadosAlunoLeitor = function () {
+		$("#alunoLeitorGaleria").val(null);
+		$("#alunoLeitorCela").val(null);
+
+		$('#alunoLeitorNome').select2({ 
+			placeholder: "Informe um leitor",
+		});
+	};	
+
+	var getDatasByPeriodoReferencia = function () {
+		var periodoReferencia = $("#periodoReferencia").val();
+		var anoReferencia = $("#anoReferencia").val();
+
+		if (isNullOrEmpty(anoReferencia) &&
+			isNullOrEmpty(periodoReferencia))
+		{
+			$("#anoReferencia").val("");
+			$("#periodoReferencia").val("");
+
+			toastr["error"]("Ano e Período referência requerido!");
+		}
+		else
+		{
+			var params = {
+				periodoReferencia: periodoReferencia,
+				anoReferencia: anoReferencia
+			};
+
+			$.ajax({
+				url: "/api/alunos-leituras/cronogramas/get-datas-by-periodo-referencia",
+				type: 'POST',
+				contentType: "application/json;charset=utf-8",
+				data: JSON.stringify(params, null, 4),
+				success: function(success) {
+					if (typeof success === "undefined")
+					{
+						$('#anoReferencia').focus();
+						$('#anoReferencia').val("");
+						toastr["error"]("Período referência não encontrado para o ano informado!");
+					}
+					else
+					{
+						$('#exceptionMultiplesAlunosLeitores').remove();
+					
+						$('#dataInicio').val(success.periodoInicio);
+						$('#dataFim').val(success.periodoFim);
+					}
+				},
+				error: function (error, jqXHR, textStatus, errorThrown) {
+					$("#img-loading").hide();
+					$(".text-gerar-leituras").html("Gerar");
+
+					const returnObj = Object.entries(error.responseJSON.errors);
+
+					returnObj.forEach(function(err) {
+						err[1].forEach(function (int) {
+							toastr["error"](err[0], int);
+						})
+					});
+				}
+			});
+		}	
+	};
+
+	var getDicasEscrita = function () {
+		$.ajax({
+			url: "/api/formularios-leituras/dicas-escrita/lista-to-select",
+			type: 'GET',
+			contentType: "application/json;charset=utf-8",
+			success: function(success) {
+				setDataInSelect2DicaEscrita(success);
+			},
+			error: function (error, jqXHR, textStatus, errorThrown) {
+				const returnObj = Object.entries(error.responseJSON.errors);
+
+				returnObj.forEach(function(err) {
+					err[1].forEach(function (int) {
+						toastr["error"](err[0], int);
+					})
+				});
+			}
+		});	
+	};
+
+	var getGruposPergunta = function () {
+		$.ajax({
+			url: "/api/formularios-leituras/grupos-perguntas/lista",
+			type: 'GET',
+			contentType: "application/json;charset=utf-8",
+			success: function(success) {
+				setDataInSelect2GrupoPergunta(success);
+			},
+			error: function (error, jqXHR, textStatus, errorThrown) {
+				const returnObj = Object.entries(error.responseJSON.errors);
+
+				returnObj.forEach(function(err) {
+					err[1].forEach(function (int) {
+						toastr["error"](err[0], int);
+					})
+				});
+			}
+		});	
+	};
+
+	var setDataInSelect2DicaEscrita = function (data) {
+		data.forEach(function (item) {
+			$("#modal-forms-leituras-dica-escrita").append("<option value='"+item.id+"' selected>"+item.nome+"</option>");
+		});
+
+		$("#modal-forms-leituras-dica-escrita").select2().val(null);
+		$("#modal-forms-leituras-dica-escrita").select2();
+	};
+
+	var setDataInSelect2GrupoPergunta = function (data) {
+		data.forEach(function (item) {
+			$("#modal-forms-leituras-grupo-pergunta").append("<option value='"+item.id+"' selected>"+item.nome+"</option>");
+		});
+		$("#modal-forms-leituras-grupo-pergunta").select2().val(null);
+		$("#modal-forms-leituras-grupo-pergunta").select2();
+	};
+
+	var clearSelect2Livros = function (placeholderDinamic) {
+		$('#livro').select2().empty();
+		$('#livro').select2({ 
+			placeholder: placeholderDinamic,
+			language: {
+				noResults: function (params) {
+					return "Nenhum registro encontrado";
+				}
+			}
+		});
+		$('#livroLocalizacao').val(null);
+		$("#livro").unbind("change");
+		$("#livro").prop('disabled', true);
+	};
+
+	var clearDadosGerais = function () {
+		$('input[name=modal-chaveLeitura]').val(null);
+		$('#modal-avaliacao-ipen').val(null);
+		$('#modal-avaliacao-nome').val(null);
+		$('#modal-avaliacao-galeria').val(null);
+		$('#modal-avaliacao-cela').val(null);
+		$('#modal-avaliacao-livroTitulo').val(null);
+		$('#modal-avaliacao-cronograma').val(null);
+	};
+
+	var clearDadosAvaliacao = function () {
+		$('#avaliacaoCriterio1').select2().val(null);
+		$('#avaliacaoCriterio2').select2().val(null);
+		$('#avaliacaoCriterio3').select2().val(null);
+		$('#avaliacaoCriterio4').select2().val(null);
+		$('#avaliacaoCriterio5').select2().val(null);
+		$('#avaliacaoCriterio6').select2().val(null);
+		$('#avaliacaoCriterio7').select2().val(null);
+		$('#avaliacaoConceito').select2().val(null);
+
+		$('#avaliacaoConceitoJustificativa').val(null);
+		$('#avaliacaoObservacao').val(null);
+
+		//re-init select2
+		$('.select2').select2();		
+		$('.select2').each(function () {
+			var select = $(this);
+
+			select.select2({
+				width: '100%',
+				allowClear: true,
+				language: {
+					noResults: function () {
+						return "Nenhum registro encontrado";
+					}
+				}
+			});
+		});
+	};
+
+	var closeModalAvaliacaoLeitura = function () {
+		$('#dt-basic-example').dataTable().api().ajax.reload();
+		clearDadosGerais();
+		clearDadosAvaliacao();
+		$('input[name=modal-chaveLeitura]').unbind("change");
+	};
+
+	var emptySelect2Avaliacao = function () {
+		$('#avaliacaoCriterio1').select2().empty();
+		$('#avaliacaoCriterio2').select2().empty();
+		$('#avaliacaoCriterio3').select2().empty();
+		$('#avaliacaoCriterio4').select2().empty();
+		$('#avaliacaoCriterio5').select2().empty();
+		$('#avaliacaoCriterio6').select2().empty();
+		$('#avaliacaoCriterio7').select2().empty();
+		$('#avaliacaoConceito').select2().empty();
+	};
+
+	var getLivroLocalizacao = function (idLivro) {
+		if (isNullOrEmpty(idLivro))
+		{
+			$("#livro").select2().val(null);
+			toastr["error"]("Id livro requerido");
+		}
+		else
+		{
+			$.ajax({
+				url: "/api/livros/get-localizacao",
+				type: 'POST',
+				contentType: "application/json;charset=utf-8",
+				data: JSON.stringify(idLivro, null, 4),
+				success: function(success) {
+					if (typeof success === "undefined")
+					{
+						$('#anoReferencia').focus();
+						$('#anoReferencia').val("");
+						toastr["error"]("Localização não encontrada para o id do livro informado!");
+					}
+					else
+					{
+						$('#livroLocalizacao').val(success);
+					}
+				},
+				error: function (error, jqXHR, textStatus, errorThrown) {
+					const returnObj = Object.entries(error.responseJSON.errors);
+
+					returnObj.forEach(function(err) {
+						err[1].forEach(function (int) {
+							toastr["error"](err[0], int);
+						})
+					});
+				}
+			});
+		}	
+	};
+
+	var getAllDisponiveisNaoLidosByIpen = function () {
+		clearSelect2Livros("Informe um aluno para obter os livros");
+
+		var ipen = $("input[name=Ipen]").val();
+		if (ipen.length < 6 || ipen.length > 6)
+		{
+			clearSelect2Livros("Informe um aluno para obter os livros");
+			toastr["error"]("Ipen inválido!");
+		}	
+		else
+		{
+			$("#alunoLeitorIpen").prop('disabled', true);
+			$("#alunoLeitorNome").prop('disabled', true);
+			$("#livro").prop('disabled', true);
+			$('#livro').select2();
+
+			setTimeout(function () {
+				$('#livro').select2(
+					{
+						containerCssClass : "select2-loading-results",
+						placeholder: "Procurando uma sugestão de livro..." 
+					}
+				);
+
+				$.ajax({
+					url: "/api/livros/get-all-disponiveis-nao-lidos",
+					type: 'POST',
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(ipen, null, 4),
+					success: function(success) {
+						if (success.length > 0)
+						{
+							$("#alunoLeitorIpen").prop('disabled', false);
+							$("#alunoLeitorNome").prop('disabled', false);						
+							$("#aluno").removeClass("select2-loading-results");
+							$("#livro").prop('disabled', false);
+							$("#exception-livro-nao-encontrado").remove();
+
+							livros = success;
+							livros.forEach(function (item) {
+								$("#livro").append("<option value='"+item.id+"' selected>"+item.titulo+"</option>");
+							});						
+
+							$('#livro').trigger('change');
+							const randon = Math.floor(Math.random() * livros.length);
+							$('#livro').select2().val(livros[randon].id);
+							$('#livro').select2();
+
+							$('#livro').select2('focus');
+
+							$("#livro").on('change', function(elm) {
+								var idLivro = $(elm.currentTarget).val();
+								getLivroLocalizacao(idLivro);
+							});
+
+							getLivroLocalizacao(livros[randon].id);
+						}
+						else
+						{
+							var divPrincipal = 	'<div id="exception-livro-nao-encontrado">'+
+												'<hr class="mt-4 mb-g">'+
+												'<div class="form-group row">'+ 
+														'<div class="col-xl-12">'+
+															'<div class="text-center alert alert-danger p-1 pt-3 mb-0" id="emd-before-table">'+
+																'<p><strong>Nenhum título de livro encontrado para o aluno informado.'+
+															'</div>' +
+														'</div>'+
+													'</div>'+
+													'<hr class="mt-4 mb-g">'
+												'</div>';
+
+							$("#row_livro").after(divPrincipal);
+							clearSelect2Livros();
+						}
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						const returnObj = Object.entries(error.responseJSON.errors);
+
+						returnObj.forEach(function(err) {
+							err[1].forEach(function (int) {
+								toastr["error"](err[0], int);
+							})
+						});
+					}
+				});
+			}, 500);
+		}
+	};
+
+	var getModalNovas = function () {
+		//abrir modal
+		$('#modal-leituras-novas').modal('toggle');
+		$("#modal-titulo-leituras-novas")
+			.text("GERAÇÃO DE LEITURAS EM LOTE");
+
+		setTimeout(function () {	
+			$('#tiposLeitura').select2().empty();
+			$('#galerias').select2().empty();
+			$('#celas').select2().empty();
+			$('#modal-cronograma').select2().empty();
+
+			//tipos leitura
+			alunoLeituraTipos.forEach(function (item) {
+				var newOption = new Option(item, item, false, false);
+				$('#tiposLeitura').append(newOption).trigger('change');
+			});
+
+			setTimeout(function () {
+				$('#tiposLeitura').select2().val(null);				
+				$('#tiposLeitura').select2({ placeholder: "Escolha um tipo leitura" });
+			}, 500);
+
+			//galeria
+			$.ajax({
+				url: 'api/galerias/get-all',
+				type: 'POST',
+				contentType: "application/json;charset=utf-8",
+				success: function(success) {
+					if (success.length > 0)
+					{
+						success.forEach(function (item) {
+							var newOption = new Option(item, item, false, false);
+							$('#galerias').append(newOption).trigger('change');
+						});
+
+						$('#galerias').select2().val(null);
+						$('#galerias').select2();
+					}
+				},
+				error: function (error, jqXHR, textStatus, errorThrown) {
+					const returnObj = Object.entries(error.responseJSON.errors);
+
+					returnObj.forEach(function(err) {
+						err[1].forEach(function (int) {
+							toastr["error"](err[0], int);
+						})
+					});
+				}
+			});	
+
+			//cela
+			$.ajax({
+				url: 'api/galerias/get-all-celas',
+				type: 'POST',
+				contentType: "application/json;charset=utf-8",
+				success: function(success) {
+					if (success.length > 0)
+					{
+						success.forEach(function (item) {
+							var newOption = new Option(item, item, false, false);
+							$('#celas').append(newOption).trigger('change');
+						});
+
+						$('#celas').select2().val(null);
+						$('#celas').select2();					
+					}
+				},
+				error: function (error, jqXHR, textStatus, errorThrown) {
+					const returnObj = Object.entries(error.responseJSON.errors);
+
+					returnObj.forEach(function(err) {
+						err[1].forEach(function (int) {
+							toastr["error"](err[0], int);
+						})
+					});
+				}
+			});		
+
+			//cronograma
+			setTimeout(function () {
+				getCronogramas("modal-cronograma", null);
+			}, 500);
+
+			$('#modal-cronograma').select2().val(null);
+			$('#modal-cronograma').select2();
+
+			//set focus
+			$('#tiposLeitura').select2('focus');
+			
+			//init select2
+			$('.select2').select2();		
+			$('.select2').each(function () {
+				var select = $(this);
+
+				select.select2({
+					width: '100%',
+					allowClear: true,
+					language: {
+						noResults: function () {
+							return "Nenhum registro encontrado";
+						}
+					}
+				});
+			});
+		}, 500)
+
+		$('#galerias').select2().val(null);
+		$('#galerias').select2();
+
+		$('#celas').select2().val(null);
+		$('#celas').select2();
+
+		$('#tiposLeitura').select2().val(null);
+		$('#tiposLeitura').select2();
+
+		$('#modal-cronograma').select2().val(null);
+		$('#modal-cronograma').select2();
+	};
+
+	var populateDataModalLeituraAvaliacao = function (data) {
+		if (data == null)
+		{
+			toastr["error"]("Dados requeridos para popular os campos da modal AVALIAÇÃO DE LEITURA");
+		}
+		else
+		{
+			$("#modal-avaliacao-id").val(data.id);
+			$("input[name=modal-chaveLeitura]").val(data.chaveLeitura);
+			$("#modal-avaliacao-ipen").val(data.alunoLeitorIpen);
+			$("#modal-avaliacao-nome").val(data.alunoLeitorNome);
+			$("#modal-avaliacao-galeria").val(data.alunoLeitorGaleria);
+			$("#modal-avaliacao-cela").val(data.alunoLeitorCela);
+			$("#modal-avaliacao-livroTitulo").val(data.livroTitulo);
+			$("#modal-avaliacao-cronograma").val(data.alunoLeituraCronogramaNome);
+						
+			$("#avaliacaoCriterio1").select2().val(data.avaliacaoCriterio1);
+			$("#avaliacaoCriterio1").select2();
+
+			$("#avaliacaoCriterio2").select2().val(data.avaliacaoCriterio2);
+			$("#avaliacaoCriterio2").select2();
+
+			$("#avaliacaoCriterio3").select2().val(data.avaliacaoCriterio3);
+			$("#avaliacaoCriterio3").select2();
+
+			$("#avaliacaoCriterio4").select2().val(data.avaliacaoCriterio4);
+			$("#avaliacaoCriterio4").select2();
+
+			$("#avaliacaoCriterio5").select2().val(data.avaliacaoCriterio5);
+			$("#avaliacaoCriterio5").select2();
+
+			$("#avaliacaoCriterio6").select2().val(data.avaliacaoCriterio6);
+			$("#avaliacaoCriterio6").select2();
+
+			$("#avaliacaoCriterio7").select2().val(data.avaliacaoCriterio7);
+			$("#avaliacaoCriterio7").select2();
+
+			$("#avaliacaoConceito").select2().val(data.avaliacaoConceito);
+			$("#avaliacaoConceito").select2();
+
+			$("#avaliacaoConceitoJustificativa").val(data.avaliacaoConceitoJustificativa);
+			$("#avaliacaoObservacao").val(data.avaliacaoObservacao);
+
+			$("#avaliacaoCriterio1").select2('focus');
+		}
+	};
+
+	var populateDataSelect2CriteriosConceitos = function (criterios, conceitos) {
+		criterios.forEach(function (item) {
+			$("#avaliacaoCriterio1").append("<option value='"+item+"' selected>"+item+"</option>");
+			$("#avaliacaoCriterio2").append("<option value='"+item+"' selected>"+item+"</option>");
+			$("#avaliacaoCriterio3").append("<option value='"+item+"' selected>"+item+"</option>");
+			$("#avaliacaoCriterio4").append("<option value='"+item+"' selected>"+item+"</option>");
+			$("#avaliacaoCriterio5").append("<option value='"+item+"' selected>"+item+"</option>");
+			$("#avaliacaoCriterio6").append("<option value='"+item+"' selected>"+item+"</option>");
+			$("#avaliacaoCriterio7").append("<option value='"+item+"' selected>"+item+"</option>");
+		});
+
+		conceitos.forEach(function (item) {
+			$("#avaliacaoConceito").append("<option value='"+item+"' selected>"+item+"</option>");
+		});
+	};
+
+	var populateDataSelect2AlunoLeitorNome = function (data, param, alunoForEdit) {
+		if (data != null &&
+		   typeof data != 'undefined' && 
+		   data.length > 0)
+		{
+			data.forEach(function (item) {
+				$("#alunoLeitorNome").append("<option value='"+item.id+"' selected>"+item.detentoNome+"</option>");
+			});
+
+			if (param == "edit")
+			{
+				var ipen = $("#alunoLeitorIpen").val();
+				var val = data.find(x => x.detentoIpen == ipen);
+
+				if (bobcatJS.GeneralExtensions.isNullOrEmptyOrUndefined(val))
+				{
+					$("#alunoLeitorNome").append("<option value='"+alunoForEdit+"' selected>"+alunoForEdit+"</option>");
+				}
+				else
+				{
+					$('#alunoLeitorNome').select2().val(val.id);
+				}
+				
+				$('#alunoLeitorNome').select2();
+			} else {
+				$('#alunoLeitorNome').select2().val(null);
+				$('#alunoLeitorNome').select2({
+					placeholder: "Informe um aluno",
+				});
+			}
+
+			// atualizo estado do objeto, afim de que caso aja necessidade, tenho
+			// disponível todos os alunos
+			alunosLeitoresForAdd = data;
+		}
+		else
+		{
+			$('#alunoLeitorNome').select2().val(null);
+			$('#alunoLeitorNome').select2({
+				placeholder: "Nenhum aluno encontrado",
+				allowClear: true,
+				language: {
+					noResults: function () {
+						return "Nenhum registro encontrado";
+					}
+				}
+			});
+		}
+	};
+
+	var avaliarLeitura = function () {
+		var rowdata = $("#form-avaliacao").serializeJSON();
+		rowdata.id = $("#modal-avaliacao-id").val();
+
+		if (isNullOrEmpty(rowdata.id))
+		{
+			setTimeout(function() {
+				clearDadosGerais();
+				clearDadosAvaliacao();
+			});
+			
+			toastr["error"]("Id requerido para avaliar a leitura. </br>Feche a janela, abra e tente novamente. Caso o problema persista, informe a equipe técnica do sistema.");
+		}
+		else
+		{
+			//Verificar se o usuário que está tentando avaliar a leitura é o professor responsável
+			//pela galeria do detento
+
+			
+			$.ajax({ 
+				url: apiAlunosLeiturasAvaliacao, 
+				type: 'PUT',
+				contentType: "application/json;charset=utf-8",
+				data: JSON.stringify(rowdata, null, 4),
+				success: function (data) {
+					clearDadosGerais();
+					clearDadosAvaliacao();
+					$('input[name=modal-chaveLeitura]').prop('disabled', false);
+					$('input[name=modal-chaveLeitura]').focus();
+
+					toastr["success"]("Leitura avaliada com sucesso!");
+
+					@* Swal.fire({
+						text: "Leitura avaliada com sucesso!",
+						icon: "success",
+						timer: 2000,
+						showCancelButton: false,
+						showConfirmButton: true,
+						confirmButtonColor: "#179c8e",
+						timerProgressBar: true,
+						buttons: false
+					}); *@
+				},
+				error: function (error, jqXHR, textStatus, errorThrown) {
+					$('#dt-basic-example').dataTable().api().ajax.reload();
+
+					if (error.status == 400) return toastr["error"](error.responseText);
+					if (error.status == 404) return toastr["error"](error.responseText);
+					if (error.status == 500) return  toastr["error"](error.responseJSON.title);
+
+					const returnObj = Object.entries(error.responseJSON.errors);
+
+					returnObj.forEach(function(err) {
+						err[1].forEach(function (int) {
+							toastr["error"](err[0], int);
+						})
+					});
+				}
+			});
+		}		
+	};
+
+	//Obtém a leitura com base na chave da leitura informada
+	var getAlunoLeitura = function(chaveLeitura) {
+		$('input[name=modal-chaveLeitura]').addClass('select2-loading-results-col-12');
+		$('input[name=modal-chaveLeitura]').val(null);
+		$('input[name=modal-chaveLeitura]').prop({ placeholder: "Procurando uma leitura para avalição, aguarde..." });
+		$('input[name=modal-chaveLeitura]').prop('disabled', true);
+
+		if (isNullOrEmpty(chaveLeitura))
+		{
+			setTimeout(function() {
+				clearDadosGerais();
+				clearDadosAvaliacao();
+			});
+			
+			$('input[name=modal-chaveLeitura]').prop({ placeholder: "Informe a chave da leitura e tecle enter para localizá-la" });
+			$('input[name=modal-chaveLeitura]').removeClass("select2-loading-results-col-12");
+			$('input[name=modal-chaveLeitura]').prop('disabled', false);
+			$('input[name=modal-chaveLeitura]').focus();
+
+			toastr["error"]("Chave leitura requerida");
+			
+		}
+		else
+		{
+			$.ajax({ 
+				url: "/api/alunos-leituras/get-by-chave-leitura",
+				type: 'POST',
+				contentType: "application/json;charset=utf-8",
+				data: JSON.stringify(chaveLeitura, null, 4),
+				success: function(success) {
+					emptySelect2Avaliacao();
+					clearDadosGerais();
+					clearDadosAvaliacao();
+
+					$('input[name=modal-chaveLeitura]').prop({ placeholder: "Informe a chave da leitura e tecle enter para localizá-la" });
+					$('input[name=modal-chaveLeitura]').removeClass("select2-loading-results-col-12");
+					$('input[name=modal-chaveLeitura]').prop('disabled', false);
+					$('input[name=modal-chaveLeitura]').focus();
+
+					if (typeof success === 'undefined')
+					{
+						toastr["error"]("Nenhuma leitura encontrada com a chave da leitura informada");
+					}
+					else if (success == null || success.length == 0)
+					{
+						toastr["error"]("Nenhuma leitura encontrada com a chave da leitura informada");
+					} else if (success != null)
+					{
+						populateDataSelect2CriteriosConceitos(avaliacaoCriterios, avaliacaoConceitos);
+						populateDataModalLeituraAvaliacao(success);
+					}
+				},
+				error: function (error, jqXHR, textStatus, errorThrown) {
+					$('input[name=modal-chaveLeitura]').removeClass("select2-loading-results-col-12");
+					$('input[name=modal-chaveLeitura]').prop('disabled', false);
+
+					const returnObj = Object.entries(error.responseJSON.errors);
+
+					returnObj.forEach(function(err) {
+						err[1].forEach(function (int) {
+							toastr["error"](err[0], int);
+						})
+					});
+				}
+			});				
+		}
+	};
+
+	var getModalAvaliacao = function (alunoLeituraSelected) {
+		if (alunoLeituraSelected == null ||
+			alunoLeituraSelected === 'undefined' ||
+			alunoLeituraSelected.length > 1)
+		{
+			Swal.fire({
+					customClass: {
+					container: 'my-swal'
+				},
+				text: "Fora selecionado mais de uma leitura para avaliação!",
+				icon: "error",
+				timer: 4000,
+				showCancelButton: false,
+				showConfirmButton: true,
+				confirmButtonColor: "#fd3995",
+				timerProgressBar: true,
+				buttons: false
+			});
+		}
+		else
+		{
+			$('#modal-avaliacao').modal('toggle');
+			$("#modal-avaliacao-titulo")
+				.text("AVALIAÇÃO DE LEITURA");
+
+			if (alunoLeituraSelected.length == 0)
+			{
+				setTimeout(function () {
+					$("input[name=modal-chaveLeitura]").attr('disabled', false);
+					emptySelect2Avaliacao();
+					clearDadosGerais();
+					clearDadosAvaliacao();
+					
+					$("input[name=modal-chaveLeitura]").focus();					
+				}, 500)
+			}
+
+			if (alunoLeituraSelected.length == 1)
+			{
+				setTimeout(function () {
+					emptySelect2Avaliacao();
+					clearDadosGerais();
+					clearDadosAvaliacao();
+
+					populateDataSelect2CriteriosConceitos(avaliacaoCriterios, avaliacaoConceitos);
+					
+					populateDataModalLeituraAvaliacao(alunoLeituraSelected[0]);
+					$("#avaliacaoCriterio1").select2('focus');
+				}, 500)
+			}
+
+			$("input[name=modal-chaveLeitura]").on("change", function(e) {
+				var chaveLeitura = $("input[name=modal-chaveLeitura]").val();
+				getAlunoLeitura(chaveLeitura);
+			});
+		}
+	};
+
+	var getModalLeiturasResultado = function (success) {
+		$('#modal-leituras-novas-result').modal('toggle');
+		$("#modal-titulo-leituras-novas-result")
+			.text("RESUMO GERAÇÃO DAS LEITURAS");
+
+		$('.modal.printable').on('shown.bs.modal', function () {
+        	$('.modal-dialog', this).addClass('focused');
+        	$('body').addClass('modalprinter');
+
+			if ($(this).hasClass('autoprint')) {
+				window.print();
+			}
+
+			}).on('hidden.bs.modal', function () {
+				$('.modal-dialog', this).removeClass('focused');
+				$('body').removeClass('modalprinter');
+		});
+			
+  	    var rowIdx = 0;
+
+		//1º O retorno dos errors
+		const returnErrorsMessages = Object.entries(success.errorMessages);
+
+		if (returnErrorsMessages.length > 0)
+		{
+			returnErrorsMessages.forEach(function(err) {
+				$('#tbody').append(`<tr id="R${++rowIdx}">
+										<td class="row-index text-left fw-500">
+											${err[1]}
+										</td>
+									</tr>`);
+			});
+		}
+		else
+		{
+			$('#tbody').append(`<tr id="R1">
+										<td class="row-index text-left fw-500">
+											Nenhuma ocorrência gerada.
+										</td>
+									</tr>`);
+		}
+
+		//3º O retorno do total de leituras criadas
+		$("#modal-leituras-result-total-leituras-criadas").html(success.totalLeiturasCriadas);
+		$("#modal-leituras-result-tipo-leitura-criadas").html(success.leituraTipo);
+		$("#modal-leituras-result-galeria").html(success.galeria);
+
+		if (!isNullOrEmpty(success.celas))
+		{
+			$("#modal-leituras-result-celas").html(success.celas);
+		}
+		else
+		{
+			$("#modal-leituras-result-celas").html("Todas");
+		}
+
+		$("#modal-leituras-result-cronograma").html(success.cronograma);
+	};
+
+	var getModalFormsLeituras = function (alunoLeituraSelected) {
+		alunoLeituraSelectedGlobal = alunoLeituraSelected;
+
+		if (alunoLeituraSelected.length >= 1)
+		{
+			$("#modal-forms-leituras-galeria-container").hide();
+			$("#modal-forms-leituras-cela-container").hide();
+			$("#modal-forms-leituras-cronograma-container").hide();
+		}
+		else
+		{
+			$("#modal-forms-leituras-galeria-container").show();
+			$("#modal-forms-leituras-cela-container").show();
+			$("#modal-forms-leituras-cronograma-container").show();
+		}
+
+		//abrir modal
+		$('#modal-forms-leituras').modal('toggle');
+		$("#modal-forms-leituras-titulo")
+			.text("GERAÇÃO DE FORMULÁRIOS DE LEITURA EM LOTE");
+
+		setTimeout(function () {
+			$('#modal-forms-leituras-galerias').select2().empty();
+			$('#modal-forms-leituras-celas').select2().empty();
+			$('#modal-forms-leituras-dica-escrita').select2().empty();
+			$('#modal-forms-leituras-grupo-pergunta').select2().empty();
+			$('#modal-forms-leituras-cronograma').select2().empty();
+
+			//galeria
+			$.ajax({
+				url: 'api/galerias/get-all',
+				type: 'POST',
+				contentType: "application/json;charset=utf-8",
+				success: function(success) {
+					if (success.length > 0)
+					{
+						success.forEach(function (item) {
+							var newOption = new Option(item, item, false, false);
+							$('#modal-forms-leituras-galerias').append(newOption).trigger('change');
+						});
+
+						$('#modal-forms-leituras-galerias').select2().val(null);
+						$('#modal-forms-leituras-galerias').select2();
+					}
+				},
+				error: function (error, jqXHR, textStatus, errorThrown) {
+					const returnObj = Object.entries(error.responseJSON.errors);
+
+					returnObj.forEach(function(err) {
+						err[1].forEach(function (int) {
+							toastr["error"](err[0], int);
+						})
+					});
+				}
+			});	
+
+			//celas
+			$.ajax({
+				url: 'api/galerias/get-all-celas',
+				type: 'POST',
+				contentType: "application/json;charset=utf-8",
+				success: function(success) {
+					if (success.length > 0)
+					{
+						success.forEach(function (item) {
+							var newOption = new Option(item, item, false, false);
+							$('#modal-forms-leituras-celas').append(newOption).trigger('change');
+						});
+
+						$('#modal-forms-leituras-celas').select2().val(null);
+						$('#modal-forms-leituras-celas').select2();					
+					}
+				},
+				error: function (error, jqXHR, textStatus, errorThrown) {
+					const returnObj = Object.entries(error.responseJSON.errors);
+
+					returnObj.forEach(function(err) {
+						err[1].forEach(function (int) {
+							toastr["error"](err[0], int);
+						})
+					});
+				}
+			});		
+
+			//cronograma
+			setTimeout(function () {
+				getCronogramas("modal-forms-leituras-cronograma", null);
+			}, 500);
+
+			getDicasEscrita();
+			getGruposPergunta();
+			
+			//set focus
+			$('#modal-forms-leituras-galeria').select2('focus');
+			
+			//init select2
+			$('.select2').select2();		
+			$('.select2').each(function () {
+				var select = $(this);
+
+				select.select2({
+					width: '100%',
+					allowClear: true,
+					language: {
+						noResults: function () {
+							return "Nenhum registro encontrado";
+						}
+					}
+				});
+			});
+		}, 500)
+
+		$('#modal-forms-leituras-galerias').select2().val(null);
+		$('#modal-forms-leituras-galerias').select2();
+
+		$('#modal-forms-leituras-celas').select2().val(null);
+		$('#modal-forms-leituras-celas').select2();		
+
+		$('#modal-forms-leituras-cronograma').select2().val(null);
+		$('#modal-forms-leituras-cronograma').select2();
+	};
+
+	var getModalRelAvaliacao = function (alunoLeituraSelected) {
+		alunoLeituraSelectedGlobal = alunoLeituraSelected;
+
+		if (alunoLeituraSelected.length >= 1)
+		{
+			$("#modal-rel-avaliacao-galeria-container").hide();
+			$("#modal-rel-avaliacao-cronograma-container").hide();
+		}
+		else
+		{
+			$("#modal-rel-avaliacao-galeria-container").show();
+			$("#modal-rel-avaliacao-cronograma-container").show();
+		}
+
+		//abrir modal
+		$('#modal-rel-avaliacao').modal('toggle');
+		$("#modal-rel-avaliacao-titulo")
+			.text("GERAÇÃO DE RELATÓRIO (S) DE AVALIAÇÃO EM LOTE");
+
+		setTimeout(function () {
+			$('#modal-rel-avaliacao-galerias').select2().empty();
+			$('#modal-rel-avaliacao-cronograma').select2().empty();
+
+			//galeria
+			$.ajax({
+				url: 'api/galerias/get-all',
+				type: 'POST',
+				contentType: "application/json;charset=utf-8",
+				success: function(success) {
+					if (success.length > 0)
+					{
+						success.forEach(function (item) {
+							var newOption = new Option(item, item, false, false);
+							$('#modal-rel-avaliacao-galerias').append(newOption).trigger('change');
+						});
+
+						$('#modal-rel-avaliacao-galerias').select2().val(null);
+						$('#modal-rel-avaliacao-galerias').select2();
+					}
+				},
+				error: function (error, jqXHR, textStatus, errorThrown) {
+					const returnObj = Object.entries(error.responseJSON.errors);
+
+					returnObj.forEach(function(err) {
+						err[1].forEach(function (int) {
+							toastr["error"](err[0], int);
+						})
+					});
+				}
+			});	
+
+			//cronograma
+			setTimeout(function () {
+				getCronogramas("modal-rel-avaliacao-cronograma", null);
+			}, 500);
+
+			//set focus
+			$('#modal-rel-avaliacao-galeria').select2('focus');
+			
+			//init select2
+			$('.select2').select2();		
+			$('.select2').each(function () {
+				var select = $(this);
+
+				select.select2({
+					width: '100%',
+					allowClear: true,
+					language: {
+						noResults: function () {
+							return "Nenhum registro encontrado";
+						}
+					}
+				});
+			});
+		}, 500)
+
+		$('#modal-rel-avaliacao-galerias').select2().val(null);
+		$('#modal-rel-avaliacao-galerias').select2();
+
+		$('#modal-rel-avaliacao-cronograma').select2().val(null);
+		$('#modal-rel-avaliacao-cronograma').select2();
+	};
+
+	var gerarLeituras = function () {
+		$("#img-loading").show();
+		$(".text-gerar-leituras").html("Processando a geração das leituras...");
+
+		var timerId = 2000;
+
+		timerId = setInterval(function () {
+			$(".text-gerar-leituras").html("Continue aguardando, falta pouco...");
+
+			setInterval(function() {
+				$(".text-gerar-leituras").html("Não se desespere, ainda estamos trabalhando em seu favor...");
+				clearInterval(timerId);
+			}, 2000);
+		}, 2000);
+
+		var leituraTipo = $("#tiposLeitura").select2().val();
+		var galeria = $("#galerias").select2().val();
+		var celas = $("#celas").select2().val();
+		var cronograma = $("#modal-cronograma").select2().val();
+
+		var obj = {
+			leituraTipo: leituraTipo,
+			galeria: galeria,
+			celas: celas,
+			cronograma: cronograma
+		};
+
+		if (isNullOrEmpty(leituraTipo) ||
+			isNullOrEmpty(galeria) ||
+			isNullOrEmpty(cronograma))
+		{
+			toastr["error"]("Exceto campo celas, todos os demais são requeridos");
+			
+			$(".text-gerar-leituras").html("Gerar");
+			$("#img-loading").hide();
+		}
+		else
+		{
+			$.ajax({ 
+				url: "/api/alunos-leituras/novos",
+				type: 'POST',
+				contentType: "application/json;charset=utf-8",
+				data: JSON.stringify(obj, null, 4),
+				success: function(success) {
+					cleanModalNovas();
+					$('#modal-leituras-novas').modal('hide');
+
+					getModalLeiturasResultado(success);
+				},
+				error: function (error, jqXHR, textStatus, errorThrown) {
+					cleanModalNovas();
+					
+					const returnObj = Object.entries(error.responseJSON.errors);
+
+					returnObj.forEach(function(err) {
+						err[1].forEach(function (int) {
+							toastr["error"](err[0], int);
+						})
+					});
+				}
+			});
+		}
+	};
+
+	var getLivroForEdicao = function () {
+		var alunoLeituraId = $("#id").val();
+
+		$.ajax({
+			url: "/api/alunos-leituras/get-livro-for-edicao",
+			type: 'POST',
+			contentType: "application/json;charset=utf-8",
+			data: JSON.stringify(alunoLeituraId, null, 4),
+			success: function(success) {
+				if (success.length > 0)
+					getAllLivros(true, success[0]);
+			},
+			error: function (error, jqXHR, textStatus, errorThrown) {
+				const returnObj = Object.entries(error.responseJSON.errors);
+
+				returnObj.forEach(function(err) {
+					err[1].forEach(function (int) {
+						toastr["error"](err[0], int);
+					})
+				});
+			}
+		});
+	};
+
+	var getAlunosLeitoresForAddEdit = function (param, alunoForEdit) {
+		$.ajax({
+			url: "/api/alunos-leitores/get-all-for-add",
+			type: 'GET',
+			contentType: "application/json;charset=utf-8",
+			success: function(success) {
+				populateDataSelect2AlunoLeitorNome(success, param, alunoForEdit);
+			},
+			error: function (error, jqXHR, textStatus, errorThrown) {
+				const returnObj = Object.entries(error.responseJSON.errors);
+
+				returnObj.forEach(function(err) {
+					err[1].forEach(function (int) {
+						toastr["error"](err[0], int);
+					})
+				});
+			}
+		});
+	};
+
+	$("#modal-leituras-novas-btn-fechar").click(function (e) {
+		$("#tbody").empty();
+		$('#modal-leituras-novas-result').modal('toggle');
+		window.location.href = '/alunoleitura/todas';
+	});
+
+	var gerarFormsLeituras = function () {
+		var galeria = $("#modal-forms-leituras-galerias").select2().val();
+		var celas = $("#modal-forms-leituras-celas").select2().val();
+		var cronograma = $("#modal-forms-leituras-cronograma").select2().val();
+		var dicaEscrita = $("#modal-forms-leituras-dica-escrita").select2().val();
+		var perguntaGrupo = $("#modal-forms-leituras-grupo-pergunta").select2().val();
+		
+		var leiturasIds = [];
+		var obj = {
+			galeria: galeria,
+			celas: celas,
+			cronogramaId: cronograma,
+			leiturasIds: leiturasIds,
+			dicaEscritaId: dicaEscrita,
+			perguntaGrupoId: perguntaGrupo
+		};
+
+		$("#modal-forms-leituras-img-loading").show();
+		$(".modal-forms-leituras-text-btn-gerar").html("Processando a geração dos FORMULÁRIOS de LEITURAS...");
+		
+		const myTimeout1 = setTimeout(function () {
+								$(".modal-forms-leituras-text-btn-gerar").html("Continue aguardando, falta pouco...");
+						   }, 10000);
+
+		const myTimeout2 = setTimeout(function() {
+								$(".modal-forms-leituras-text-btn-gerar").html("Não se desespere, ainda estamos trabalhando em seu favor...");
+						   }, 20000);
+
+		var id = "alunoLeituraSelected";
+		var fileName = "formularios-leituras.zip";
+
+		if (alunoLeituraSelectedGlobal != null &&
+			alunoLeituraSelectedGlobal !== 'undefined' &&
+			alunoLeituraSelectedGlobal.length >= 1)
+		{
+			if (typeof alunoLeituraSelectedGlobal != 'undefined')
+			{
+				alunoLeituraSelectedGlobal.map(x => leiturasIds.push(x.id));
+			}
+			
+			$.ajax({
+				url: "/api/alunos-leituras/get-all-form-leituras",
+				cache: false,
+				type: "POST",
+				contentType: "application/json;charset=utf-8",
+				data: JSON.stringify(obj, null, 4),
+				xhr: function () {
+					var xhr = new XMLHttpRequest();
+					xhr.onreadystatechange = function () {
+						if (xhr.readyState == 2) {
+							if (xhr.status == 200) {
+								xhr.responseType = "blob";
+							} else {
+								xhr.responseType = "text";
+							}
+						}
+					};
+					return xhr;
+				},
+				success: function (data) {
+					//Convert the Byte Data to BLOB object.
+					var blob = new Blob([data], { type: "application/octetstream" });
+
+					var isIE = false || !!document.documentMode;
+					if (isIE) {
+						window.navigator.msSaveBlob(blob, fileName);
+					} else {
+						var url = window.URL || window.webkitURL;
+						link = url.createObjectURL(blob);
+						var a = $("<a />");
+						a.attr("download", fileName);
+						a.attr("href", link);
+						$("body").append(a);
+						a[0].click();
+						$("body").remove(a);
+					}
+
+					cleanModalFormsLeituras();
+					clearTimeout(myTimeout1);
+					clearTimeout(myTimeout2);
+					$('#modal-forms-leituras').modal('toggle');
+				},
+				error: function (error, jqXHR, textStatus, errorThrown) {	
+					cleanModalFormsLeituras();
+					clearTimeout(myTimeout1);
+					clearTimeout(myTimeout2);
+					$('#modal-forms-leituras').modal('toggle');
+
+					if (error.responseJSON != null &&
+						error.responseJSON.title != null &&
+						error.responseJSON.errors.length == null)
+					{
+						toastr["error"](error.responseJSON.title);
+					}
+					else
+					{
+						const returnObj = Object.entries(error.responseJSON.errors);
+
+						returnObj.forEach(function(err) {
+							err[1].forEach(function (int) {
+								toastr["error"](err[0], int);
+							})
+						});
+					}
+				}
+			});
+		}
+		else
+		{
+			if ((isNullOrEmpty(galeria) ||
+				isNullOrEmpty(cronograma)) && (alunoLeituraSelectedGlobal.length <= 0))
+			{
+				toastr["error"]("Exceto campo celas, todos os demais são requeridos.");
+				
+				cleanModalFormsLeituras();
+				clearTimeout(myTimeout1);
+				clearTimeout(myTimeout2);
+				$('#modal-forms-leituras').modal('toggle');
+			}
+			else
+			{
+				$.ajax({
+					url: "/api/alunos-leituras/get-all-form-leituras",
+					cache: false,
+					type: "POST",
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(obj, null, 4),
+					xhr: function () {
+						var xhr = new XMLHttpRequest();
+						xhr.onreadystatechange = function () {
+							if (xhr.readyState == 2) {
+								if (xhr.status == 200) {
+									xhr.responseType = "blob";
+								} else {
+									xhr.responseType = "text";
+								}
+							}
+						};
+						return xhr;
+					},
+					success: function (data) {						
+						//Convert the Byte Data to BLOB object.
+						var blob = new Blob([data], { type: "application/octetstream" });
+
+						var isIE = false || !!document.documentMode;
+						if (isIE) {
+							window.navigator.msSaveBlob(blob, fileName);
+						} else {
+							var url = window.URL || window.webkitURL;
+							link = url.createObjectURL(blob);
+							var a = $("<a />");
+							a.attr("download", fileName);
+							a.attr("href", link);
+							$("body").append(a);
+							a[0].click();
+							$("body").remove(a);
+						}
+
+						cleanModalFormsLeituras();
+						clearTimeout(myTimeout1);
+						clearTimeout(myTimeout2);
+						$('#modal-forms-leituras').modal('toggle');
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						cleanModalFormsLeituras();
+						clearTimeout(myTimeout1);
+						clearTimeout(myTimeout2);
+						$('#modal-forms-leituras').modal('toggle');
+
+						if (error.responseJSON != null &&
+							error.responseJSON.title != null)
+						{
+							toastr["error"](error.responseJSON.title);
+						}
+						else
+						{
+							const returnObj = Object.entries(error.responseJSON.errors);
+
+							returnObj.forEach(function(err) {
+								err[1].forEach(function (int) {
+									toastr["error"](err[0], int);
+								})
+							});
+						}
+					}
+				});
+			}
+		}	
+	};
+
+	var gerarRelAvaliacao = function (isCallFromModal, leiturasIds) {
+		var id = "alunoLeituraSelected";
+		var fileName = "relatorio(s)_avaliacao.zip";
+
+		if (!isCallFromModal)
+		{
+			try {
+				var ids = [];
+				var obj = {
+					leiturasIds: ids,
+				};
+
+				if (typeof leiturasIds != 'undefined')
+				{
+					leiturasIds.map(x => ids.push(x.id));
+				}
+			} catch (e) { toastr["error"](e) };
+
+			$.ajax({
+				url: "/api/alunos-leituras/get-rel-avaliacao",
+				cache: false,
+				type: "POST",
+				contentType: "application/json;charset=utf-8",
+				data: JSON.stringify(obj, null, 4),
+				xhr: function () {
+					var xhr = new XMLHttpRequest();
+					xhr.onreadystatechange = function () {
+						if (xhr.readyState == 2) {
+							if (xhr.status == 200) {
+								xhr.responseType = "blob";
+							} else {
+								xhr.responseType = "text";
+							}
+						}
+					};
+					return xhr;
+				},
+				success: function (data) {
+					//Convert the Byte Data to BLOB object.
+					var blob = new Blob([data], { type: "application/octetstream" });
+
+					var isIE = false || !!document.documentMode;
+					if (isIE) {
+						window.navigator.msSaveBlob(blob, fileName);
+					} else {
+						var url = window.URL || window.webkitURL;
+						link = url.createObjectURL(blob);
+						var a = $("<a />");
+						a.attr("download", fileName);
+						a.attr("href", link);
+						$("body").append(a);
+						a[0].click();
+						$("body").remove(a);
+					}
+
+					cleanModalRelAvaliacao();
+					clearTimeout(myTimeout1);
+					clearTimeout(myTimeout2);
+					$('#modal-rel-avaliacao').modal('toggle');
+				},
+				error: function (error, jqXHR, textStatus, errorThrown) {
+					if (error.status == 404 || error.status == 400)
+						toastr['error'](error.responseText);
+
+					cleanModalRelAvaliacao();
+					clearTimeout(myTimeout1);
+					clearTimeout(myTimeout2);
+					$('#modal-rel-avaliacao').modal('toggle');
+
+					if (error.responseJSON != null &&
+						error.responseJSON.title != null &&
+						error.responseJSON.errors.length == null)
+					{
+						toastr["error"](error.responseJSON.title);
+					}
+					else
+					{
+						const returnObj = Object.entries(error.responseJSON.errors);
+
+						returnObj.forEach(function(err) {
+							err[1].forEach(function (int) {
+								toastr["error"](err[0], int);
+							})
+						});
+					}
+				}
+			});
+		}
+		else
+		{
+			var galeria = $("#modal-rel-avaliacao-galerias").select2().val();
+			var cronograma = $("#modal-rel-avaliacao-cronograma").select2().val();
+			var periodoAvaliacao = $("#datepicker-modal-3").val();
+			
+			var leiturasIds = [];
+			var obj = {
+				galeria: galeria,
+				cronogramaId: cronograma,
+				leiturasIds: leiturasIds,
+				periodoAvaliacao: periodoAvaliacao
+			};
+
+			$("#modal-rel-avaliacao-img-loading").show();
+			$(".modal-rel-avaliacao-text-btn-gerar").html("Processando a geração do (s) RELATÓRIO (S) de AVALIAÇÃO...");
+			
+			const myTimeout1 = setTimeout(function () {
+									$(".modal-rel-avaliacao-text-btn-gerar").html("Continue aguardando, falta pouco...");
+							}, 10000);
+
+			const myTimeout2 = setTimeout(function() {
+									$(".modal-rel-avaliacao-text-btn-gerar").html("Não se desespere, ainda estamos trabalhando em seu favor...");
+							}, 20000);
+			
+			if (isNullOrEmpty(cronograma))
+			{
+				toastr["error"]("Todos os campos são requeridos.");
+				
+				cleanModalRelAvaliacao();
+				clearTimeout(myTimeout1);
+				clearTimeout(myTimeout2);
+				$('#modal-rel-avaliacao').modal('toggle');
+			}
+			else
+			{
+				$.ajax({
+					url: "/api/alunos-leituras/get-rel-avaliacao",
+					cache: false,
+					type: "POST",
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(obj, null, 4),
+					xhr: function () {
+						var xhr = new XMLHttpRequest();
+						xhr.onreadystatechange = function () {
+							if (xhr.readyState == 2) {
+								if (xhr.status == 200) {
+									xhr.responseType = "blob";
+								} else {
+									xhr.responseType = "text";
+								}
+							}
+						};
+						return xhr;
+					},
+					success: function (data) {						
+						//Convert the Byte Data to BLOB object.
+						var blob = new Blob([data], { type: "application/octetstream" });
+
+						var isIE = false || !!document.documentMode;
+						if (isIE) {
+							window.navigator.msSaveBlob(blob, fileName);
+						} else {
+							var url = window.URL || window.webkitURL;
+							link = url.createObjectURL(blob);
+							var a = $("<a />");
+							a.attr("download", fileName);
+							a.attr("href", link);
+							$("body").append(a);
+							a[0].click();
+							$("body").remove(a);
+						}
+
+						cleanModalRelAvaliacao();
+						clearTimeout(myTimeout1);
+						clearTimeout(myTimeout2);
+						$('#modal-rel-avaliacao').modal('toggle');
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						if (error.status == 404 || error.status == 400)
+							toastr['error'](error.responseText);
+
+						cleanModalRelAvaliacao();
+						clearTimeout(myTimeout1);
+						clearTimeout(myTimeout2);
+						$('#modal-rel-avaliacao').modal('toggle');
+
+						if (error.responseJSON != null &&
+							error.responseJSON.title != null)
+						{
+							toastr["error"](error.responseJSON.title);
+						}
+						else
+						{
+							const returnObj = Object.entries(error.responseJSON.errors);
+
+							returnObj.forEach(function(err) {
+								err[1].forEach(function (int) {
+									toastr["error"](err[0], int);
+								})
+							});
+						}
+					}
+				});
+			}
+		}
+	};
+
+	var gerarOficio = function (rowSelected) {
+		if (typeof rowSelected  == 'undefined' || rowSelected.length <= 0)
+		{
+			toastr["error"]("Leitura requerida.");
+		}
+		else
+		{
+			var fileName = "oficio(s)_leitura(s).zip";
+
+			try {
+				var ids = [];
+				var obj = {
+					leiturasIds: ids,
+				};
+				rowSelected.map(x => ids.push(x.id));
+			} catch (e) { toastr["error"](e) };
+
+			// implementar modal com gif de loading antes da request
+			// desativar no retorno de success ou error
+
+			$.ajax({
+				url: "/api/oficios/educacao/leituras/create",
+				cache: false,
+				type: "POST",
+				contentType: "application/json;charset=utf-8",
+				data: JSON.stringify(obj, null, 4),
+				xhr: function () {
+					var xhr = new XMLHttpRequest();
+					xhr.onreadystatechange = function () {
+						if (xhr.readyState == 2) {
+							if (xhr.status == 200) {
+								xhr.responseType = "blob";
+							} else {
+								xhr.responseType = "text";
+							}
+						}
+					};
+					return xhr;
+				},
+				success: function (data) {
+					//Convert the Byte Data to BLOB object.
+					var blob = new Blob([data], { type: "application/octetstream" });
+
+					var isIE = false || !!document.documentMode;
+					if (isIE) {
+						window.navigator.msSaveBlob(blob, fileName);
+					} else {
+						var url = window.URL || window.webkitURL;
+						link = url.createObjectURL(blob);
+						var a = $("<a />");
+						a.attr("download", fileName);
+						a.attr("href", link);
+						$("body").append(a);
+						a[0].click();
+						$("body").remove(a);
+					}
+				},
+				error: function (error, jqXHR, textStatus, errorThrown) {
+					debugger;
+					if (error.status == 404 || error.status == 400 || error.status == 500)
+						toastr['error'](error.responseText);
+
+					if (error.responseJSON != null &&
+						error.responseJSON.title != null &&
+						error.responseJSON.errors.length == null)
+					{
+						toastr["error"](error.responseJSON.title);
+					}
+					else
+					{
+						const returnObj = Object.entries(error.responseJSON.errors);
+
+						returnObj.forEach(function(err) {
+							err[1].forEach(function (int) {
+								toastr["error"](err[0], int);
+							})
+						});
+					}
+				}
+			});
+		}
+	};
+
+	var getCronogramas = function (select2Id, param) {
+		$.ajax({
+			url: "/api/alunos-leituras/cronogramas/get-all-for-select2",
+			type: 'POST',
+			contentType: "application/json;charset=utf-8",
+			success: function(success) {
+				if (success != null &&
+					typeof success !== "undefined" &&
+					success.length > 0)
+				{
+					success.forEach(function (item) {
+						$('#'+select2Id).append("<option value='"+item.id+"' selected>"+item.nome+"</option>");
+					});
+
+					cronogramas = success;
+					if (param == "edit")
+					{
+						var alunoLeituraId = $("#id").val();
+						$.ajax({
+							url: "/api/alunos-leituras/get-cronograma-id",
+							type: 'POST',
+							contentType: "application/json;charset=utf-8",
+							data: JSON.stringify(alunoLeituraId, null, 4),
+							success: function(success) {
+								if (success != null &&
+									typeof success !== "undefined" &&
+									success.length > 0)
+								{
+									var val = cronogramas.find(x => x.id == success);
+									$('#'+select2Id).select2().val(val.id);
+									$('#'+select2Id).select2();
+								}
+							},
+							error: function (error, jqXHR, textStatus, errorThrown) {
+								if (error.responseJSON != null &&
+									error.responseJSON.errors == null)
+								{
+									toastr["error"](error.responseJSON.title);
+								}	
+								else
+								{
+									const returnObj = Object.entries(error.responseJSON.errors);
+
+									returnObj.forEach(function(err) {
+										err[1].forEach(function (int) {
+											toastr["error"](err[0], int);
+										})
+									});
+								}
+							}
+						});						
+					} else {
+						$('#'+select2Id).select2().val(null);
+						$('#'+select2Id).select2();
+						$('#'+select2Id).select2({
+							placeholder: "Informe um cronograma",
+						});
+					}
+				}
+			},
+			error: function (error, jqXHR, textStatus, errorThrown) {
+				if (error.responseJSON != null &&
+					error.responseJSON.errors == null)
+				{
+					toastr["error"](error.responseJSON.title);
+				}	
+				else
+				{
+					const returnObj = Object.entries(error.responseJSON.errors);
+
+					returnObj.forEach(function(err) {
+						err[1].forEach(function (int) {
+							toastr["error"](err[0], int);
+						})
+					});
+				}
+			}
+		});
+	};
+
+	var changeDataAluno = function (data) {
+		$("#alunoLeitorIpen").val(data.detentoIpen);
+		$("#alunoLeitorGaleria").val(data.detentoGaleria);
+		$("#alunoLeitorCela").val(data.detentoCela);
+	};
+
+	var changeDataCronograma = function (data) {
+		$("#periodoReferencia").val(data.periodoReferencia);
+		$("#anoReferencia").val(data.anoReferencia);
+		$("#dataInicio").val(moment(data.periodoInicio).format('DD/MM/YYYY'));
+		$("#dataFim").val(moment(data.periodoFim).format('DD/MM/YYYY'));
+	};
+
+	const cancelarOficio = (oficio) => {
+		if (bobcatJS.GeneralExtensions.isNullOrEmptyOrUndefined(oficio)) return toastr['error']("Número ofício requerido.")
+
+		bobcatJS
+			.OficioEducacaoStoreService
+			.leituraCancelarAsync(oficio)
+			.then((response) => {
+				if (response.status === 204)
+				{
+					$('#dt-basic-example').dataTable().api().ajax.reload();
+
+					Swal.fire({
+						customClass: {
+							container: 'my-swal'
+						},
+						text: "Ofício excluído com sucesso!",
+						icon: "success",
+						timer: 2000,
+						showCancelButton: false,
+						showConfirmButton: true,
+						confirmButtonColor: "#179c8e",
+						timerProgressBar: true,
+						buttons: false
+					});
+				}
+			})
+			.catch((e) => {
+				const returnObj = Object.entries(e.response.data.errors.Messages);
+
+				returnObj.forEach(function(err) {
+					toastr["error"](err[1]);
+				});
+			})
+	}
+
+	const reimprimirOficio = (oficio) => {
+		if (bobcatJS.GeneralExtensions.isNullOrEmptyOrUndefined(oficio)) return toastr['error']("Número ofício requerido.")
+
+		bobcatJS
+			.OficioEducacaoStoreService
+			.leituraReimprimirAsync(oficio)
+			.then((response) => {
+				const fileName = "oficio(s)_leitura(s).zip";
+				const type = response.headers['content-type']
+				const blob = new Blob([response.data], { type: type, encoding: 'UTF-8' })
+				const link = document.createElement('a')
+				link.href = window.URL.createObjectURL(blob)
+				link.download = fileName
+				link.click()
+				link.remove();
+
+				@* const url = window.URL.createObjectURL(new Blob([response]));
+				const link = document.createElement('a');
+				link.href = url;
+				const fileName = `${+ new Date()}.csv`// whatever your file name .
+				link.setAttribute('download', fileName);
+				document.body.appendChild(link);
+				link.click();
+				link.remove(); *@
+			})
+			.catch((e) => {
+				const returnObj = Object.entries(e.response.data.errors.Messages);
+
+				returnObj.forEach(function(err) {
+					toastr["error"](err[1]);
+				});
+			})
+	}
+
+	$(document).ready( function () {
+		$('#datepicker-2, #datepicker-modal-3').daterangepicker({
+			timePicker: true,
+        	timePicker24Hour: true,
+        	timePickerIncrement: 30,
+			startDate: moment().startOf('hour'),
+			endDate: moment().startOf('hour'),
+			locale: {
+				format: 'DD/MM/YYYY HH:mm',
+				separator: " - ",
+				applyLabel: "Aplicar",
+				cancelLabel: "Cancelar",
+				fromLabel: "De",
+				toLabel: "Até",
+				customRangeLabel: "Custom",
+				daysOfWeek: [
+					"Dom",
+					"Seg",
+					"Ter",
+					"Qua",
+					"Qui",
+					"Sex",
+					"Sáb"
+				],
+				monthNames: [
+					"Janeiro",
+					"Fevereiro",
+					"Março",
+					"Abril",
+					"Maio",
+					"Junho",
+					"Julho",
+					"Agosto",
+					"Setembro",
+					"Outubro",
+					"Novembro",
+					"Dezembro"
+				],
+				firstDay: 0
+			}
+		});
+
+		//Tecla atalho CTRL + Z - Novo registro - Geração individual de leitura
+		$(document).keydown(function(e) {
+			if (e.ctrlKey && e.which === 90) $(".btn-add").click();
+		});
+
+		//Tecla atalho CTRL + X - Novos registros - Geração em lote de leitura
+		$(document).keydown(function(e) {
+			if (e.ctrlKey && e.which === 88) $(".btn-novos").click();
+		});
+
+		//Tecla atalho CTRL + Y - Avaliacao - Tela para avaliação de leitura
+		$(document).keydown(function(e) {
+			if (e.ctrlKey && e.which === 89) $(".btn-avaliar").click();
+		});
+
+		$(document).on("click", ".btn-actions", function () {
+			$("#row_id").hide();
+			$("#row_isDeleted").hide();
+			$("#row_acoes").hide();
+			$("#row_avaliacaoCriterio1").hide();
+			$("#row_avaliacaoCriterio2").hide();
+			$("#row_avaliacaoCriterio3").hide();
+			$("#row_avaliacaoCriterio4").hide();
+			$("#row_avaliacaoCriterio5").hide();
+			$("#row_avaliacaoCriterio6").hide();
+			$("#row_avaliacaoCriterio7").hide();
+			$("#row_avaliacaoConceito").hide();
+			$("#row_avaliacaoConceitoJustificativa").hide();
+			$("#row_avaliacaoObservacao").hide();
+
+			$(".select2").select2({
+				language: {
+					noResults: function (params) {
+						return "Nenhum registro encontrado";
+					}
+				}
+			});
+		});
+
+		//No evento de click do botão add, set focus no campo nome depois abre a select2
+		$(document).on("click", ".btn-add", function () {
+			setTimeout(function() {
+				getCronogramas("alunoLeituraCronograma", null);
+
+				$("#alunoLeituraCronogramaId").select2().val(null);
+				$("#alunoLeituraCronogramaId").select2();
+				$("#alunoLeituraCronogramaId").select2({
+					placeholder: "Informe um cronograma"
+				});
+
+				$('#alunoLeitorIpen').focus();
+
+				$("#livro").prop('disabled', true);
+				clearSelect2Livros("Informe primeiro o leitor para obter os livros");
+
+				getAlunosLeitoresForAddEdit("add", null);
+
+			}, 500);
+		});
+
+		$(document).on("click", ".btn-edit", function (event) {
+			setTimeout(function () {
+				var idsFields = ['alunoLeitorIpen'];
+				disabledEnabledFieldsForEdit(true, idsFields);
+
+				getCronogramas("alunoLeituraCronograma", "edit");
+				getLivroForEdicao();
+
+				//begin - mapear datas
+				var dataInicio = $("#dataInicio").val().substring(8, 10) + "/" +
+									$("#dataInicio").val().substring(5, 7) + "/" +
+									$("#dataInicio").val().substring(0, 4);
+				var dataFim = $("#dataFim").val().substring(8, 10) + "/" +
+									$("#dataFim").val().substring(5, 7) + "/" +
+									$("#dataFim").val().substring(0, 4);
+
+				$("#dataInicio").val(dataInicio); 
+				$("#dataFim").val(dataFim);
+				//end - mapear datas
+
+				var tableToQuery = $("#dt-basic-example").DataTable();
+				var selectedRow = $("#dt-basic-example tr.selected");
+				var row = tableToQuery.row(selectedRow).data();
+
+				const alunoForEdit = row.alunoLeitorNome
+				getAlunosLeitoresForAddEdit("edit", alunoForEdit);
+			}, 500);
+		});
+
+		// Event Lot
+		var events = $("#app-eventlog");
+		
+		// Column Definitions
+		var columnSet = [
+			{
+				title: "Id",
+				id: "id",
+				data: "id",
+				placeholderMsg: "Automático",
+				type: "readonly",
+				visible: false,
+				searchable: false,
+				name: "Id"
+			},
+			{
+				title: "Chave leitura",
+				id: "chaveLeitura",
+				data: "chaveLeitura",
+				placeholderMsg: "Automático",
+				type: "readonly",
+				visible: false,
+				searchable: false,
+				name: "ChaveLeitura"
+			},
+			{
+				title: "Ipen",
+				id: "alunoLeitorIpen",
+				data: "alunoLeitorIpen",
+				type: "text",
+				placeholderMsg: "Informe o IPEN",
+				required: true,
+				searchable: true,
+				orderable: true,
+				visible: true,
+				name: "AlunoLeitor.Aluno.Detento.Ipen",
+				editorOnChange: function(event, altEditor) {
+					getAlunoLeitorByDetentoIpen();
+				},
+				render: function(data, type, row, meta) {
+					return data;
+				}
+			},
+			{
+				title: "Nome",
+				id: "alunoLeitorNome",
+				data: "alunoLeitorNome",
+				type: "select",
+				multiple : false,				
+				visible: true,
+				select2 : {
+					width: "100%",
+					allowClear: true,
+					minimumInputLength: 3,
+					language: {
+						inputTooShort: function() {
+							return 'Digite 3 ou mais caracteres para iniciar a busca';
+						}
+					},
+					noResults: function (params) {
+						return "Nenhum registro encontrado";
+					}
+				},
+				editorOnChange : function(event, altEditor) {
+					var alunoLeitorId = $(event.currentTarget).val();
+					
+					if (alunoLeitorId != null)
+					{
+						clearSelect2Livros();
+						getAllLivros(false, null);
+						
+						if (alunosLeitoresForAdd != null &&
+							typeof alunosLeitoresForAdd != 'undefined' &&
+							alunosLeitoresForAdd.length > 0)
+						{
+							var dataAluno = alunosLeitoresForAdd.find(x => x.id == alunoLeitorId);
+							changeDataAluno(dataAluno);
+						}
+					}
+					else
+					{
+						$("input[name=Ipen]").val('');
+						$("#detentoRegime").select2(null);
+						$("#detentoRegime").select2();
+					}
+				},
+				render : function (data, type, row, meta) {
+					return data;
+				},
+				searchable: true,
+				orderable: true,
+				required: true,				
+				name: "AlunoLeitor.Aluno.Detento.Nome"
+			},
+			{
+				title: "Galeria",
+				id: "alunoLeitorGaleria",	
+				data: "alunoLeitorGaleria",
+				type: "readonly",
+				placeholderMsg: "Automático",
+				required: false,
+				searchable: false,
+				visible: true,
+				name: "AlunoLeitor.Aluno.Detento.Galeria"
+			},
+			{
+				title: "Cela",
+				id: "alunoLeitorCela",	
+				data: "alunoLeitorCela",
+				placeholderMsg: "Automático",
+				type: "readonly",
+				required: false,
+				searchable: false,
+				visible: true,
+				name: "AlunoLeitor.Aluno.Detento.Cela"
+			},
+			{
+				title: "Título",
+				id: "livro",
+				data: "livro",
+				type: "select",
+				multiple : false,
+				select2 : {
+					placeholder: "Informe primeiro o leitor para obter os livros",
+					width	: "100%",
+					allowClear: true,
+					minimumInputLength: 3,
+					language: {
+						inputTooShort: function() {
+							return 'Digite 3 ou mais caracteres para iniciar a busca';
+						}
+					}
+				},
+				searchable: false,
+				orderable: true,
+				visible: true,
+				required: false,
+				render: function (data) {
+					return data.titulo;
+				},
+				name: "Livro.Titulo"
+			},
+			{
+				title: "Localização",
+				id: "livroLocalizacao",	
+				data: "livroLocalizacao",
+				placeholderMsg: "Automático",
+				type: "readonly",
+				required: false,
+				searchable: false,
+				visible: false,
+				name: "Livro.Localizacao"
+			},
+			{
+				title: "Tipo leitura",
+				id: "leituraTipo",
+				data: "leituraTipo",
+				type: "select",
+				multiple : false,
+				options: alunoLeituraTipos,
+				visible: true,
+				select2 : {
+					placeholder: "Selecione um tipo leitura",
+					width: "100%",
+					allowClear: true,
+					minimumInputLength: 3,
+					language: {
+						inputTooShort: function() {
+							return 'Digite 3 ou mais caracteres para iniciar a busca';
+						}
+					}
+				},
+				searchable: false,
+				orderable: true,
+				visible: true,
+				name: "LeituraTipo"
+			},
+			{
+				title: "Conceito",
+				id: "avaliacaoConceito",
+				data: "avaliacaoConceito",
+				placeholderMsg: "Automático",
+				type: "readonly",
+				visible: true,
+				searchable: false,
+				orderable: true,
+				name: "AvaliacaoConceito"
+			},
+			{
+				title: "Cronograma",
+				id: "alunoLeituraCronograma",
+				data: "alunoLeituraCronograma",
+				type: "select",
+				multiple : false,
+				options: cronogramas,
+				visible: true,
+				select2 : {
+					width: "100%",
+					allowClear: true,
+					minimumInputLength: 1,
+					language: {
+						inputTooShort: function() {
+							return 'Digite 1 ou mais caracteres para iniciar a busca.';
+						},
+						noResults: function() {
+							return 'Nenhum registro encontrado.'
+						}
+					}
+				},
+				searchable: false,
+				orderable: false,
+				name: "AlunoLeituraCronograma",
+				render: function(data) {
+					return data.nome;
+				},
+				editorOnChange: function(event, altEditor) {
+					var cronogramaId = event.currentTarget.value;
+
+					if (cronogramaId != null)
+					{
+						if (cronogramas != null &&
+							typeof cronogramas != 'undefined' &&
+							cronogramas.length > 0)
+						{
+							var dataCronograma = cronogramas.find(x => x.id == cronogramaId);
+							changeDataCronograma(dataCronograma);
+						}
+					}
+					else
+					{
+						$("#periodoReferencia").val(null);
+						$("#anoReferencia").val(null);
+						$("#dataInicio").val(null);
+						$("#dataFim").val(null);
+					}
+				}
+			},
+			{
+				data: "hasOficio",
+				title: "Possui ofício?",
+				type: "readonly",
+				searchable: false,
+				visible: true,
+				orderable: true,
+				required: true,
+				name: "HasOficio"
+			},
+			{
+				title: "Ofício número",
+				id: "oficioNumero",
+				data: "oficioNumero",
+				placeholderMsg: "Automático",
+				type: "readonly",
+				visible: true,
+				searchable: false,
+				name: "OficioNumero"
+			},
+			{
+				title: "Criterio 1",
+				id: "avaliacaoCriterio1",
+				data: "avaliacaoCriterio1",
+				placeholderMsg: "Automático",
+				type: "readonly",
+				visible: false,
+				searchable: false,
+				name: "AvaliacaoCriterio1"
+			},
+			{
+				title: "Criterio 2",
+				id: "avaliacaoCriterio2",
+				data: "avaliacaoCriterio2",
+				placeholderMsg: "Automático",
+				type: "readonly",
+				visible: false,
+				searchable: false,
+				name: "AvaliacaoCriterio2"
+			},
+			{
+				title: "Criterio 3",
+				id: "avaliacaoCriterio3",
+				data: "avaliacaoCriterio3",
+				placeholderMsg: "Automático",
+				type: "readonly",
+				visible: false,
+				searchable: false,
+				name: "AvaliacaoCriterio3"
+			},
+			{
+				title: "Criterio 4",
+				id: "avaliacaoCriterio4",
+				data: "avaliacaoCriterio4",
+				placeholderMsg: "Automático",
+				type: "readonly",
+				visible: false,
+				searchable: false,
+				name: "AvaliacaoCriterio4"
+			},
+			{
+				title: "Criterio 5",
+				id: "avaliacaoCriterio5",
+				data: "avaliacaoCriterio5",
+				placeholderMsg: "Automático",
+				type: "readonly",
+				visible: false,
+				searchable: false,
+				name: "AvaliacaoCriterio5"
+			},
+			{
+				title: "Criterio 6",
+				id: "avaliacaoCriterio6",
+				data: "avaliacaoCriterio6",
+				placeholderMsg: "Automático",
+				type: "readonly",
+				visible: false,
+				searchable: false,
+				name: "AvaliacaoCriterio6"
+			},
+			{
+				title: "Criterio 7",
+				id: "avaliacaoCriterio7",
+				data: "avaliacaoCriterio7",
+				placeholderMsg: "Automático",
+				type: "readonly",
+				visible: false,
+				searchable: false,
+				name: "AvaliacaoCriterio7"
+			},			
+			{
+				title: "Período referência",
+				id: "periodoReferencia",	
+				data: "periodoReferencia",
+				type: "readonly",
+				placeholderMsg: "Automático",
+				required: false,
+				searchable: false,
+				visible: false,
+				name: "AlunoLeituraCronograma.PeriodoReferencia"
+			},
+			{
+				title: "Ano referência",
+				id: "anoReferencia",	
+				data: "anoReferencia",
+				type: "readonly",
+				placeholderMsg: "Automático",
+				required: false,
+				searchable: false,
+				visible: false,
+				name: "AlunoLeituraCronograma.AnoReferencia"
+			},
+			{
+				title: "Data início",
+				id: "dataInicio",	
+				data: "dataInicio",
+				type: "readonly",
+				placeholderMsg: "Automático",
+				required: false,
+				searchable: false,
+				visible: true,
+				render: function (data) {
+					return moment(data).format('DD/MM/YYYY');
+				},
+				name: "DataInicio"
+			},
+			{
+				title: "Data fim",
+				id: "dataFim",	
+				data: "dataFim",
+				type: "readonly",
+				placeholderMsg: "Automático",
+				required: false,
+				searchable: false,
+				visible: true,
+				render: function (data) {
+					return moment(data).format('DD/MM/YYYY');
+				},
+				name: "DataFim"
+			},
+			{
+				title: "Conceito justificativa",
+				id: "avaliacaoConceitoJustificativa",
+				data: "avaliacaoConceitoJustificativa",
+				placeholderMsg: "Automático",
+				type: "readonly",
+				visible: false,
+				searchable: false,
+				name: "AvaliacaoConceitoJustificativa"
+			},
+			{
+				title: "Avaliacao observação",
+				id: "avaliacaoObservacao",
+				data: "avaliacaoObservacao",
+				placeholderMsg: "Automático",
+				type: "readonly",
+				visible: false,
+				searchable: false,
+				name: "AvaliacaoObservacao"
+			}
+		];
+
+		/* start data table */
+		var myTable = $('#dt-basic-example')
+			.dataTable({
+			/* check datatable buttons page for more info on how this DOM structure works */
+			dom: "<'row mb-3'<'col-sm-12 col-md-3 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-9 d-flex align-items-center justify-content-end'B>>" +
+				 "<'row'<'col-sm-12'tr>>" +
+				 "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+			ajax: {
+				url : apiAlunosLeiturasLista,
+				type: 'POST',
+				dataSrc: function (json) {
+					return transformObjArrayFieldBoolBackToFront(json.data);
+				}
+        	},
+			lengthMenu: [
+				[50, 100, -1],
+				["50", "100", "Todos"],
+			],
+			aaSorting: [ [20,'desc'], [19,'asc'] ],
+			scrollY:        400,
+			scrollX:        true,
+			scrollCollapse: true,
+			serverSide: true,
+			processing: true,
+			altEditor: true,
+			pagingType: "full_numbers",
+			language: {
+            	decimal: ",",
+            	thousands: ".",
+        		searchPlaceholder: "Busque pelo IPEN ou NOME",
+				sProcessing: '<span id=\"loading-image\" "class="fa fa-spinner fa-spin fa-2x spinner-border spinner-border-sm text-primary mr-2""><img class="manImg" src="img/loading_alt_3.gif" width="50" height="50"></img></span>',
+				sZeroRecords: "Nenhum registro encontrado.",
+				oPaginate: {
+                    "sFirst": "Primeiro",
+                    "sPrevious": "Anterior",
+                    "sNext": "Próximo",
+                    "sLast": "Último"
+                },
+				sInfo: "Mostrando _START_ de _END_ de um total de _TOTAL_",
+                sInfoEmpty: "Nenhuma registro encontrado.",
+                sInfoFiltered: " (filtrado a partir de um total de _MAX_ registros)",
+                sInfoPostFix: "",
+				select: {
+					rows: "%d linhas selecionadas"
+				}
+        	},
+			columns: columnSet,
+			select: 'multiple',
+			fixedColumns: {
+				leftColumns: 4
+			},
+			buttons: [
+				{
+					extend: 'collection',
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-rocket mr-1"></i> Utilidades',
+					className: 'btn-primary btn-sm mr-1 btn-uteis mr-2 mb-2',
+					buttons: [
+						{
+							text: 'Visibilidade colunas',
+							popoverTitle: 'Visibilidade colunas',
+							extend: 'colvis',
+							collectionLayout: 'two-column'
+						}
+					]
+				},
+				{
+					extend: 'collection',
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-file-word mr-1"></i> Ofício',
+					className: 'btn-default btn-sm mr-1 btn-oficios mr-2 mb-2',
+					buttons: [
+						{
+							text: '<i class="@(Settings.Theme.IconPrefix) fa-file-word mr-1"></i> Criar ofício(s)',
+							name: '',
+							action: function (e, dt, node, config) {
+								var rowSelected = dt.rows(".selected").data();
+								gerarOficio(rowSelected);
+							}
+						},
+						{
+							text: '<i class="@(Settings.Theme.IconPrefix) fa-print mr-1"></i> Reimprimir ofício',
+							name: '',
+							action: function (e, dt, node, config) {
+								debugger
+								var rowSelected = dt.rows(".selected").data();
+								if (rowSelected.length === 0)
+								{
+									Swal.fire({
+										customClass: {
+											container: 'my-swal'
+										},
+										text: "Selecione uma leitura como referência para reimprimir o ofício!",
+										icon: "error",
+										timer: 5000,
+										showCancelButton: false,
+										showConfirmButton: true,
+										confirmButtonColor: "#fd1381",
+										timerProgressBar: true,
+										buttons: false
+									});
+								} else if (rowSelected.length > 1)
+								{
+									Swal.fire({
+										customClass: {
+											container: 'my-swal'
+										},
+										text: "Selecione apenas um único registro de leitura como referência para a reimpressão do ofício!",
+										icon: "error",
+										timer: 5000,
+										showCancelButton: false,
+										showConfirmButton: true,
+										confirmButtonColor: "#fd1381",
+										timerProgressBar: true,
+										buttons: false
+									});
+								} else
+								{
+									reimprimirOficio(rowSelected[0].oficioNumero);
+								}
+							}
+						},
+						{
+							text: '<i class="@(Settings.Theme.IconPrefix) fa-file-times mr-1"></i> Cancelar ofício',
+							name: '',
+							action: function (e, dt, node, config) {
+								var rowSelected = dt.rows(".selected").data();
+								if (rowSelected.length === 0)
+								{
+									Swal.fire({
+										customClass: {
+											container: 'my-swal'
+										},
+										text: "Selecione uma leitura como referência para o cancelamento do ofício!",
+										icon: "error",
+										timer: 5000,
+										showCancelButton: false,
+										showConfirmButton: true,
+										confirmButtonColor: "#fd1381",
+										timerProgressBar: true,
+										buttons: false
+									});
+								} else if (rowSelected.length > 1)
+								{
+									Swal.fire({
+										customClass: {
+											container: 'my-swal'
+										},
+										text: "Selecione apenas um único registro de leitura como referência para o cancelamento do ofício!",
+										icon: "error",
+										timer: 5000,
+										showCancelButton: false,
+										showConfirmButton: true,
+										confirmButtonColor: "#fd1381",
+										timerProgressBar: true,
+										buttons: false
+									});
+								} else
+								{
+									cancelarOficio(rowSelected[0].oficioNumero);
+								}
+							}
+						},
+					]
+				},
+
+				{
+					extend: 'collection',
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-file-signature mr-1"></i> Avaliação',
+					className: 'btn-dark btn-sm mr-1 btn-avaliacao mr-2 mb-2',
+					buttons: [
+						{
+							text: '<i class="@(Settings.Theme.IconPrefix) fa-file-signature mr-1"></i> Avaliar',
+							name: '',
+							action: function (e, dt, node, config) {
+								var rowSelected = dt.rows(".selected").data();
+								getModalAvaliacao(rowSelected);
+							}
+						},
+						{
+							text: '<i class="@(Settings.Theme.IconPrefix) fa-file-pdf mr-1"></i> Relatório Avaliação',
+							name: '',
+							action: function (e, dt, node, config) {
+								var rowSelected = dt.rows(".selected").data();
+								if (rowSelected != null &&
+									rowSelected.length >= 1)
+								{
+									gerarRelAvaliacao(false, rowSelected)
+								}
+								else
+								{
+									getModalRelAvaliacao(rowSelected);
+								}
+							}
+						},
+					]
+				},
+
+				
+				{
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-file-pdf mr-1"></i> Formulários Leituras',
+					name: '',
+					className: 'btn-success btn-sm mr-1 btn-form-leituras mr-2 mb-2',
+					action: function (e, dt, node, config) {
+						var rowSelected = dt.rows(".selected").data();
+						getModalFormsLeituras(rowSelected);
+                	}
+				},				
+				{
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-layer-group mr-1"></i> Novas',
+					name: '',
+					className: 'btn-info btn-sm mr-1 btn-novos mr-2 mb-2',
+					action: function (e, dt, node, config) {
+						getModalNovas();
+                	}
+				},
+				{	
+					extend: 'selected',
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-times mr-1"></i> Delete',
+					name: 'delete',
+					className: 'btn-danger btn-sm mr-2 mb-2'
+				},
+				{
+					extend: 'selected',
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-edit mr-1"></i> Editar',
+					name: 'edit',
+					className: 'btn-warning btn-sm mr-1 btn-actions btn-edit mr-2 mb-2'
+				},
+				{
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-plus mr-1"></i> Nova',
+					name: 'add',
+					className: 'btn-info btn-sm mr-1 btn-actions btn-add mr-2 mb-2'
+				}
+			],
+			columnDefs: [
+				{
+					targets: 8,
+					render: function(data, type, full, meta) {
+
+						var badge = {
+							'LEITURA_REMICAO': {'title': 'LEITURA REMIÇÃO', 'class': 'badge-info'},
+							'LEITURA_SOCIAL': {'title': 'LEITURA SOCIAL', 'class': 'badge-warning'}
+						};
+						if (typeof badge[data] === 'undefined') {
+							return data;
+						}
+						return '<span class="badge ' + badge[data].class + ' badge-pill">' + badge[data].title + '</span>';
+					}
+				},
+				{
+					targets: 9,
+					render: function(data, type, full, meta) {
+						var badge = {
+							'PENDENTE': {'title': 'PENDENTE', 'class': 'badge-primary'},
+							'APROVADO': {'title': 'APROVADO', 'class': 'badge-success'},
+							'INSUFICIENTE': {'title': 'INSUFICIENTE', 'class': 'badge-danger'},
+							'DESISTENCIA': {'title': 'DESISTÊNCIA', 'class': 'badge-danger'},
+							'NAO_CUMPRIMENTO': {'title': 'NÃO CUMPRIMENTO', 'class': 'badge-danger'}
+						};
+						if (typeof badge[data] === 'undefined') {
+							return data;
+						}
+						return '<span class="badge ' + badge[data].class + ' badge-pill">' + badge[data].title + '</span>';
+					}
+				},
+			],
+			onAddRow: function(dt, rowdata, success, error) {
+				rowdata.hasOficio = false;
+
+				rowdata.alunoLeituraCronogramaId = rowdata.alunoLeituraCronograma;
+				delete rowdata.alunoLeituraCronograma
+
+				rowdata.livroId = rowdata.livro;
+				delete rowdata.livro;
+
+				$.ajax({ 
+					url: apiAlunosLeiturasNovo, 
+					type: 'POST',
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(transformObjFieldBoolFrontToBack(rowdata), null, 4),
+					success: function (data) {
+						$(".modal").modal('hide');
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						Swal.fire({
+							customClass: {
+								container: 'my-swal'
+							},
+							text: "Registro criado com sucesso!",
+							icon: "success",
+							timer: 2000,
+							showCancelButton: false,
+							showConfirmButton: true,
+							confirmButtonColor: "#179c8e",
+							timerProgressBar: true,
+							buttons: false
+						});
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {						
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+						
+						if (error.status === 500) return toastr['error'](JSON.stringify(error.responseText, null, 4))
+
+						const returnObj = Object.entries(error.responseJSON.errors);
+						returnObj.forEach(function(err) {
+							err[1].forEach(function (int) {
+								toastr["error"](err[0], int);
+							})
+						});
+					}
+				});
+			},
+			onEditRow: function(dt, rowdata, success, error) {
+				rowdata.alunoLeituraCronogramaId = rowdata.alunoLeituraCronograma;
+				delete rowdata.alunoLeituraCronograma
+
+				rowdata.livroId = rowdata.livro;
+				delete rowdata.livro;
+
+				$.ajax({ 
+					url: apiAlunosLeiturasEdicao, 
+					type: 'PUT',
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(transformObjFieldBoolFrontToBack(rowdata), null, 4),
+					success: function (data) {
+						$(".modal").modal('hide');
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						Swal.fire({
+							customClass: {
+								container: 'my-swal'
+							},
+							text: "Registro atualizado com sucesso!",
+							icon: "success",
+							timer: 2000,
+							showCancelButton: false,
+							showConfirmButton: true,
+							confirmButtonColor: "#179c8e",
+							timerProgressBar: true,
+							buttons: false
+						});
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						const returnObj = Object.entries(error.responseJSON.errors);
+
+						returnObj.forEach(function(err) {
+							err[1].forEach(function (int) {
+								toastr["error"](err[0], int);
+							})
+						});
+					}
+				});
+			},
+			onDeleteRow: function(dt, rowdata, success, error) {
+				rowdata.alunoLeituraCronogramaId = rowdata.alunoLeituraCronograma;
+				delete rowdata.alunoLeituraCronograma
+
+				rowdata.livroId = rowdata.livro;
+				delete rowdata.livro;
+
+				$.ajax({ 
+					url: apiAlunosLeiturasDelete, 
+					type: 'DELETE', 
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(transformObjFieldBoolFrontToBack(rowdata), null, 4),
+					success: function (data) {
+						$(".modal").modal('hide');
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						Swal.fire({
+							customClass: {
+								container: 'my-swal'
+							},
+							text: "Registro deletado com sucesso!",
+							icon: "success",
+							timer: 2000,
+							showCancelButton: false,
+							showConfirmButton: true,
+							confirmButtonColor: "#179c8e",
+							timerProgressBar: true,
+							buttons: false
+						});
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						const returnObj = Object.entries(error.responseJSON.errors);
+
+						returnObj.forEach(function(err) {
+							err[1].forEach(function (int) {
+								toastr["error"](err[0], int);
+							})
+						});
+					}
+				});
+			},		
+		});
+
+		$('#dt-basic-example_filter input').bind('keyup', function(e) {
+			$('#dt-basic-example_filter input').val($('#dt-basic-example_filter input').val().toUpperCase());
+		});
+	});
+</script>
+}

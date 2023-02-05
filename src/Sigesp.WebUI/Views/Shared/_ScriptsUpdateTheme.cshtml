@@ -1,0 +1,21 @@
+<script>
+	bobcatJS
+		.AccountStoreService
+		.temaAsync()
+		.then((response) => {
+			switch (response.data.result) {
+				case '1':
+					layouts.mode("dark");
+					break;
+				case '2': 
+					layouts.mode("default");
+					break;
+				default: 
+					layouts.mode("light");
+					break;
+			}
+		})
+		.catch((e) => {
+			console.log(`Atenção! Problemas ao obter o tema do usuário logado. ${e}`);
+		})
+</script>

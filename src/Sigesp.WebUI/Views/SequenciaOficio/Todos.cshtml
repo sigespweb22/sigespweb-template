@@ -1,0 +1,202 @@
+@model Sigesp.Application.ViewModels.SequenciaOficioViewModel
+
+@{
+	ViewData["Title"] = "Sequências ofícios";
+	ViewData["PageName"] = "sequencia-oficio_todos";
+	ViewData["Category0"] = @Settings.App;
+	ViewData["Category1"] = "Multisetor";
+	ViewData["Heading"] = "<i class='subheader-icon fal fa-file-word'></i> Sequências ofícios - Setor "+@Model.UserSetor+"<span class='fw-300'></span> <sup class='badge badge-primary fw-500'>NOVO</sup>";
+	ViewData["PageDescription"] = "Geração de sequência numérica para criação de ofícios";
+}
+@section HeadBlock {
+	<link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/formplugins/select2/select2.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/theme-demo.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/notifications/toastr/toastr.css">
+}
+
+<div class="row">
+	<div class="col-sm-12 col-xl-12">
+		<div class="p-3 bg-warning rounded overflow-hidden position-relative text-white mb-g">
+			<div id="meta-card">
+				<h3 class="display-4 d-block l-h-n m-0 fw-500 mb-2">
+					<small class="m-0 l-h-n">Quem gerou a última sequência: </small>
+					<i class="text-white">@Model.UsuarioNomeUltimaSequencia</i>
+				</h3>
+				<h3 class="display-4 d-block l-h-n m-0 fw-500">
+                    <small class="m-0 l-h-n">Ultima sequência gerada no setor: </small>
+					<i class="text-white">@Model.UltimaSequencia</i>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-file-word position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-sm-12 col-xl-12">
+		<div id="panel-1" class="panel">
+			<div class="panel-hdr">	
+				<h2>
+					Obter <span class="fw-300"><i>Nova sequência para o meu setor atual @Model.UserSetor</i></span> 
+				</h2>
+				<div class="panel-toolbar">
+					<button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Abrir/Fechar"></button>
+				</div>
+			</div>
+			<div class="panel-container show">
+				<div class="panel-content">									
+					<form id="sequenciaOficio-form" method="post">
+						<div class="form-group">
+							<div class="row text-left mb-3 mr-5">
+								<div class="col-lg-12">
+									<div class="form-group">
+										<button type="button" name="sequenciaOficio_gerar" id="sequenciaOficio_gerar"
+											class="btn btn-sm btn-primary waves-effect waves-themed" value="false">
+											<span class="fal fa-plus mr-2"></span>Gerar nova sequência
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</form>					
+				</div>
+				<div class="col-sm-12 col-xl-12" id="sequenciaGeradaDiv">
+					<div class="p-3 bg-primary rounded overflow-hidden position-relative text-white mb-g">
+						<div class="">
+							<h3 class="display-4 d-block l-h-n m-0 fw-500 mb-2">
+								<small class="m-0 l-h-n">Sequência gerada: </small>
+								<i class="text-warning" id="sequenciaGerada">
+									
+								</i>
+							</h3>
+						</div>
+						<i class="@(Settings.Theme.IconPrefix) fa-file-word position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-sm-12 col-xl-12">
+		<div id="panel-1" class="panel">
+			<div class="panel-hdr">	
+				<h2>
+					Listagem das <span class="fw-300"><i>Minhas sequências em todos os setores</i></span> 
+				</h2>
+				<div class="panel-toolbar">
+					<button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Abrir/Fechar"></button>
+				</div>
+			</div>
+			<div class="panel-container show">
+				<div class="panel-content">									
+					<form id="minhasSequenciasOficios-form" method="post">
+						<div class="form-group">
+							<div class="row text-left mb-3 mr-5">
+								<div class="col-lg-12">
+									<div class="form-group">
+										<button type="button" name="minhasSequenciasOficios_obter" id="minhasSequenciasOficios_obter"
+											class="btn btn-sm btn-primary waves-effect waves-themed" value="false">
+											<span class="fal fa-plus mr-2"></span>Atualizar minhas sequências
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</form>					
+				</div>
+				<div class="col-sm-12 col-xl-12 mb-3" id="minhasSequenciaList">
+					<h5 class="frame-heading">
+						Minhas sequências
+					</h5>
+					<div class="frame-wrap">
+						<table class="table m-0">
+							<thead>
+								<tr>
+									<th>Número</th>
+									<th>Data geração</th>
+									<th>Setor</th>
+									<th>Unidade</th>
+								</tr>
+							</thead>							
+							<tbody>
+								@foreach (var item in Model.MinhasSequencias)
+								{
+									<tr>
+										<td>@item.SequenciaGerada</td>
+										<td>@item.CreatedAt</td>
+										<td>@item.UserSetor</td>
+										<td>@item.TenantNomeExibicao</td>
+									</tr>	
+								}	
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section ScriptsBlock {
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/formplugins/select2/select2.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+    <script src="~/js/notifications/toastr/toastr.js"></script>
+    <script src="~/js/extensions/automapper-extensions.js"></script>
+
+    <script type="text/javascript">
+        const endpointSequenciasOficiosGerar = "/api/sequencias-oficios/gerar";
+
+        toastr.options = {
+            "closeButton": false,
+            "debug": false,
+            "newestOnTop": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "preventDuplicates": true,
+            "onclick": null,
+            "showDuration": 500,
+            "hideDuration": 100,
+            "timeOut": 10000,
+            "extendedTimeOut": 1000,
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        }
+
+		// button Atualizar minhas sequências
+		$('#minhasSequenciasOficios_obter').on('click', function() {
+			window.location.href = '/sequenciaoficio/todos';
+		});
+
+		// button Gerar nova sequência
+		$('#sequenciaOficio_gerar').on('click', function() {
+			$.ajax({
+				url: endpointSequenciasOficiosGerar,
+				type: 'POST',
+				processData: false,
+				contentType: false,
+				success: function(success) {
+					if (success.success)
+					{
+						$("#sequenciaGeradaDiv").css("display", "block");
+						var divOficioNumero = document.getElementById('sequenciaGerada');
+						divOficioNumero.innerHTML = success.data.toString();
+					}
+				},
+				error: function(error) {
+					if (error.status == 400 || error.status == 404 || error.status == 500)
+						toastr["error"](error.statusText);
+				}
+			});
+		});
+
+        $(document).ready( function () {
+            $("#sequenciaGeradaDiv").css("display", "none");
+        });
+    </script>
+}

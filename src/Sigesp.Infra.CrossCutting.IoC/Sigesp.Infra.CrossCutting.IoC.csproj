@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Sigesp.Application\Sigesp.Application.csproj" />
+    <ProjectReference Include="..\Sigesp.Domain\Sigesp.Domain.csproj" />
+    <ProjectReference Include="..\Sigesp.Infra.Data\Sigesp.Infra.Data.csproj" />
+    <ProjectReference Include="..\Sigesp.Infra.CrossCutting.Identity\Sigesp.Infra.CrossCutting.Identity.csproj" />
+  </ItemGroup>
+
+</Project>

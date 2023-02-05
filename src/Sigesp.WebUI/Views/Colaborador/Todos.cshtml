@@ -1,0 +1,1003 @@
+@model Sigesp.Application.ViewModels.Cards.ColaboradorCardViewModel
+
+@{
+	ViewData["Title"] = "Colaboradores";
+	ViewData["PageName"] = "colaborador_todos";
+	ViewData["Category0"] = @Settings.App;
+	ViewData["Category1"] = "Laboral";
+	ViewData["Heading"] = "<i class='subheader-icon fal fa-users'></i> Colaboradores<span class='fw-300'></span> <sup class='badge badge-primary fw-500'>NOVO</sup>";
+	ViewData["PageDescription"] = "Listagem de todos os colaboradores";
+}
+@section HeadBlock {
+	<link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/formplugins/select2/select2.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/theme-demo.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/notifications/toastr/toastr.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/notifications/sweetalert2/sweetalert2.bundle.css">
+}
+
+<div class="row">
+	<div class="col-sm-6 col-xl-3">
+		<div class="p-3 bg-primary-300 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="display-4 d-block l-h-n m-0 fw-500">
+					@Model.Ativos
+					<small class="m-0 l-h-n">Ativos</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-user-hard-hat position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>
+	<div class="col-sm-6 col-xl-3">
+		<div class="p-3 bg-warning-400 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="display-4 d-block l-h-n m-0 fw-500">
+				    @Model.Admitidos
+					<small class="m-0 l-h-n">Admitidos</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-user-check position-absolute pos-right pos-bottom opacity-15  mb-n1 mr-n1" style="font-size: 6rem;"></i>
+		</div>
+	</div>
+	<div class="col-sm-6 col-xl-3">
+		<div class="p-3 bg-success-200 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="display-4 d-block l-h-n m-0 fw-500">
+					@Model.Demitidos	
+					<small class="m-0 l-h-n">Demitidos</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-user-times position-absolute pos-right pos-bottom opacity-15  mb-n1 mr-n1" style="font-size: 6rem;"></i>
+		</div>
+	</div>
+	<div class="col-sm-6 col-xl-3">
+		<div class="p-3 bg-info-200 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="display-4 d-block l-h-n m-0 fw-500">
+				    @Model.EmProcessoAdmissao
+					<small class="m-0 l-h-n">Em processo de admissão</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-running position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size: 6rem;"></i>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xl-12">
+		<div id="panel-1" class="panel">
+			<div class="panel-hdr">	
+				<h2>
+					Gerenciamento dos <span class="fw-300"><i>Colaboradores</i></span> 
+				</h2>
+				<div class="panel-toolbar">
+					<button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Abrir/Fechar"></button>
+				</div>
+			</div>
+			<div class="panel-container show">
+				<div class="panel-content">									
+					<div class="tab-content pt-4">
+						<div class="tab-pane fade show active" id="tab_default-1" role="tabpanel">
+							<div class="row">
+								<div class="col-xl-12">
+									<table id="dt-basic-example" class="table table-bordered table-hover table-striped w-100"></table>
+								</div>
+							</div>	
+						</div>
+					</div>					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section ScriptsBlock {
+<script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+@* <script src="~/js/datagrid/datatables/dataTables.altEditor.free.js"></script> *@
+<script src="~/js/dependency/moment/moment.js"></script>
+<script src="~/js/formplugins/select2/select2.bundle.js"></script>
+<script src="~/js/datagrid/datatables/datatables.export.js"></script>
+<script src="~/js/notifications/toastr/toastr.js"></script>
+<script src="~/js/extensions/automapper-extensions.js"></script>
+<script src="~/js/notifications/sweetalert2/sweetalert2.bundle.js"></script>
+
+<script type="text/javascript">
+	const endpointColaboradores = "/api/colaboradores";
+	const urlList = `@Url.Action("List", "Colaborador")`;
+	const urlSearchDetento = `@Url.Action("GetByDetentoIpenOrDetentoNome", "Detento")`;
+
+	var empresasConvenios = [];
+	var situacoes = [];
+	var detentos = [];
+	var tiposPagamento = [];
+	var tiposConta = [];
+	var boolOptions = ["SIM", "NÃO"];
+	var demissaoOcorrencias = [];
+	var funcoes = [];
+	
+	toastr.options = {
+		"closeButton": false,
+		"debug": false,
+		"newestOnTop": true,
+		"progressBar": true,
+		"positionClass": "toast-top-right",
+		"preventDuplicates": true,
+		"onclick": null,
+		"showDuration": 500,
+		"hideDuration": 100,
+		"timeOut": 10000,
+		"extendedTimeOut": 1000,
+		"showEasing": "swing",
+		"hideEasing": "linear",
+		"showMethod": "fadeIn",
+		"hideMethod": "fadeOut"
+	}
+
+	var hideOrShowDemissaoDependency = function(param) {
+		if (param == "DEMITIDO")
+		{
+			$("#row_demissaoData").show();
+			$("#row_demissaoOcorrencia").show();
+			$("#row_demissaoObservacao").show();
+		}
+		else
+		{
+			$("#row_demissaoData").hide();
+			$("#row_demissaoOcorrencia").hide();
+			$("#row_demissaoObservacao").hide();
+		}
+
+		@* $('label[for="demissaoOcorrencia"]').hide();
+		$("#demissaoOcorrencia").select2().next().hide();
+
+		$('label[for="demissaoObservacao"]').hide();
+		$("#demissaoObservacao").select2().next().hide();
+
+		$('label[for="demissaoData"]').hide();
+		$("#demissaoData").select2().next().hide();*@
+	};
+
+	var setHasContaCorrente = function(situacao, isRemunerado) {
+		console.log(situacao, isRemunerado); 
+
+		if (situacao == 'ADMITIDO' && isRemunerado == "SIM")
+		{
+			$("#hasContaCorrente").val("SIM");
+		}
+		else
+		{
+			$("#hasContaCorrente").val("NÃO");
+		}
+	};
+
+	var oldExportAction = function (self, e, dt, button, config) {
+		if (button[0].className.indexOf('buttons-excel') >= 0) {
+			if ($.fn.dataTable.ext.buttons.excelHtml5.available(dt, config)) {
+				$.fn.dataTable.ext.buttons.excelHtml5.action.call(self, e, dt, button, config);
+			}
+			else {
+				$.fn.dataTable.ext.buttons.excelFlash.action.call(self, e, dt, button, config);
+			}
+		} else if (button[0].className.indexOf('buttons-print') >= 0) {
+			$.fn.dataTable.ext.buttons.print.action(e, dt, button, config);
+		}
+	};
+
+	var newExportAction = function (e, dt, button, config) {
+		var self = this;
+		var oldStart = dt.settings()[0]._iDisplayStart;
+
+		dt.one('preXhr', function (e, s, data) {
+			// Just this once, load all data from the server...
+			data.start = 0;
+			data.length = 2147483647;
+
+			dt.one('preDraw', function (e, settings) {
+				// Call the original action function 
+				oldExportAction(self, e, dt, button, config);
+
+				dt.one('preXhr', function (e, s, data) {
+					// DataTables thinks the first item displayed is index 0, but we're not drawing that.
+					// Set the property to what it was before exporting.
+					settings._iDisplayStart = oldStart;
+					data.start = oldStart;
+				});
+
+				// Reload the grid with the original page. Otherwise, API functions like table.cell(this) don't work properly.
+				setTimeout(dt.ajax.reload, 0);
+
+				// Prevent rendering of the full data to the DOM
+				return false;
+			});
+		});
+
+		// Requery the server with the new one-time export settings
+		dt.ajax.reload();
+	};
+
+	@foreach (var empresaConvenio in @Model.EmpresasConvenios)
+	{
+		@:empresasConvenios.push('@empresaConvenio');
+	}
+
+	@foreach (var situacao in @Model.Situacoes)
+	{
+		@:situacoes.push('@situacao');
+	}
+
+	@foreach (var tipoPagamento in @Model.TiposPagamento)
+	{
+		@:tiposPagamento.push('@tipoPagamento');
+	}
+
+	@foreach (var detento in @Model.Detentos)
+	{
+		@:detentos.push('@detento');
+	}
+
+	@foreach (var tipoConta in @Model.TiposConta)
+	{
+		@:tiposConta.push('@tipoConta');
+	}
+
+	@foreach (var demissaoOcorrencia in @Model.DemissaoOcorrencias)
+	{
+		@:demissaoOcorrencias.push('@demissaoOcorrencia');
+	}
+
+	@foreach (var funcao in @Model.Funcoes)
+	{
+		@:funcoes.push('@funcao');
+	}
+
+	var toUpperCaseFormFields = function () {
+		$('#folga').val($('#folga').val().toUpperCase());
+		$('#jornadaInicio').val($('#jornadaInicio').val().toUpperCase());
+		$('#jornadaFim').val($('#jornadaFim').val().toUpperCase());
+		$('#familiarAutorizadoRetirada').val($('#familiarAutorizadoRetirada').val().toUpperCase());
+		$('#bancoAgencia').val($('#bancoAgencia').val().toUpperCase());
+		$('#bancoConta').val($('#bancoConta').val().toUpperCase());
+		$('#localTrabalho').val($('#localTrabalho').val().toUpperCase());
+		$('#observacao').val($('#observacao').val().toUpperCase());
+	};
+
+	$(document).ready( function () {	
+
+		//No evento de click do botão add, set focus no campo nome depois abre a select2
+		@* $(document).on("click", ".btn-add", function () {
+			$(".modal-body #detentoNome").select2('focus');
+		}); *@
+
+		//Evento click nos botões primary para chamar método para mostrar ou esconder
+		//rows de acordo com as pré definições
+		$(document).on("click", ".btn-actions", function () {
+			var demissaoSituacao = $(".modal-body #situacao").val();
+			hideOrShowDemissaoDependency(demissaoSituacao);
+		});
+
+		//Tecla de atalho para criar um novo registro (Teclado 'S + N')			
+		$(document).keydown(function(e) {
+			if (e.ctrlKey && e.which === 90)
+			{
+				$(".btn-add").click();				
+			}
+
+			toUpperCaseFormFields();
+		});
+
+		//No evento de click do botão add, set focus no campo nome depois abre a select2
+		$(document).on("click", ".btn-add", function () {
+			setTimeout(function() {
+				$('#detentoNome').select2('focus');
+				
+				//set default value fields
+				var situacao = $("#situacao").val();
+				var isRemunerado = $("#isRemunerado").val();
+
+				setHasContaCorrente(situacao, isRemunerado);
+			}, 500);
+		});
+
+		/* 
+		NOTES:
+			Column id
+			---------------------------------------------------
+			Please always keep in mind that DataTable framework allows two different kinds of "rows": Arrays and Objects. In first case columns are indexed through integers; in second case columns are indexed by their attribute name. Usually JSON's use the Object approach, but we cannot be sure.
+			Row key
+			---------------------------------------------------
+			There is no default key in the table. Inside your callback functions, probably you will need a row key to build URL's, in that case you can get them from the rowdata parameter.
+		COLUMN DEFINITIONS:
+			title = "string" - title name on table header th and on form labels
+			---------------------------------------------------
+			id = "string" - id assigned to imput element when editing/adding in modal
+			---------------------------------------------------
+			data = "string"  - data name from the dataset
+			---------------------------------------------------
+			type = "text" | "select" | "hidden" | "readonly"  - Type of HTML input to be shown.
+			---------------------------------------------------
+			hoverMsg = "some msg" - The message will appear as a tooltip over the input field.
+			---------------------------------------------------
+			pattern = r.e.  - If type is "input", the typed text will be matched against given regular expression, before submit.
+			---------------------------------------------------
+			msg = "some string" - An error message that is displayed in case pattern is not matched. Set HTML "data-errorMsg" attribute.
+			---------------------------------------------------
+			maxLength = integer - If type is "input", set HTML "maxlength" attribute.
+			---------------------------------------------------
+			options = ["a", "b", "c"] - If type is "select", the options that shall be presented.
+			---------------------------------------------------
+			select2 = {} - If type is "select", enable a select2 component. Select2 jQuery plugin must be linked. More select2 configuration options may be passed within the array.
+			---------------------------------------------------
+			datepicker = {} - If type is "text", enable a datepicker component. jQuery-UI plugin must be linked. More datepicker configuration options may be passed within the array.
+			---------------------------------------------------
+			multiple = true | false - Set HTML "multiple" attribute (for use with select2).
+			---------------------------------------------------
+			unique = true | false - Ensure that no two rows have the same value. The check is performed client side, not server side. Set HTML "data-unique" attribute. (Probably there's some issue with this).
+			---------------------------------------------------
+			uniqueMsg = "some string" - An error message that is displayed when the unique constraint is not respected. Set HTML "data-uniqueMsg" attribute.
+			---------------------------------------------------
+			special = "any string" - Set HTML "data-special" attribute (don't know what's that needed for).
+			---------------------------------------------------
+			defaultValue = "any string" - Adds a default value when adding a row
+			---------------------------------------------------
+		*/
+
+		// Event Lot
+		var events = $("#app-eventlog");
+		// Column Definitions
+		var columnSet = [{
+			title: "Id",
+			id: "id",
+			data: "id",
+			placeholderMsg: "Automático",
+			visible: false,
+			type: "readonly",
+			required: false
+		},
+		{
+			title: "Ipen",
+			id: "ipen",
+			data: "detentoIpen",
+			type: "readonly",
+			visible: true,
+			searchable: true,
+			orderable: true,
+			required: false,
+			name: "Detento.Ipen"
+        },
+		{
+			title: "Nome",
+			data: "detentoNome",
+			type: "select",
+			multiple : false,
+			options: detentos,
+			visible: true,
+            select2 : {
+				placeholder: "Selecione um reeducando",
+				width: "100%",
+				allowClear: true,
+				minimumInputLength: 3,
+				language: {
+					inputTooShort: function() {
+						return 'Digite 3 ou mais caracteres para iniciar a busca';
+					}
+				}
+				@* ajax: {
+					url: urlSearchDetento,
+					type: 'GET',
+					contentType: "application/json; charset=utf-8",
+					data: function (params) {
+						var query =
+						{
+							term: params.term,
+						};
+						return query;
+					},
+					processResults: function (result) {
+						return {
+							results: $.map(result, function (item) {
+								return {
+									id: item.id,
+									text: item.nome
+								};
+							}),
+						};
+					}
+				} *@
+			},
+			editorOnChange : function(event, altEditor) {
+				var detentoNome = $(event.currentTarget).val();
+
+				$.ajax({
+					url: "/Detento/GetIpenAndGaleriaByNome",
+					type: 'POST',
+					contentType: "application/json; charset=utf-8",
+					data: JSON.stringify(detentoNome, null, 4),
+					success: function(success) {
+						console.log(success);
+						$("input[name=Ipen]").val(success.detentoIpenAndGaleria.ipen);
+						$("input[name=Galeria]").val(success.detentoIpenAndGaleria.galeria);
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						const returnObj = Object.entries(error.responseJSON.errors);
+
+						returnObj.forEach(function(err) {
+							err[1].forEach(function (int) {
+								toastr["error"](err[0], int);
+							})
+						});
+					}
+				});					
+			},
+			render : function (data, type, row, meta) {
+				return row.detentoNome;
+            },
+			searchable: true,
+			orderable: true,
+			required: true,
+			name: "Detento.Nome"
+		},
+		{
+			title: "Empresa convênio",
+			data: "empresaConvenioNome",
+			type: "select",
+			options: empresasConvenios,
+			multiple : false,
+			visible: true,
+            select2 : {
+				placeholder: "Selecione um convênio",
+				width: "100%",
+				allowClear: true,
+				minimumInputLength: 3,
+				language: {
+					inputTooShort: function() {
+						return 'Digite 3 ou mais caracteres para iniciar a busca';
+					}
+				}
+			},
+			render : function (data, type, row, meta) {
+				return data;
+            },
+			searchable: false,
+			orderable: true,
+			required: true,
+			name: "EmpresaConvenio.Nome"
+		},
+		{
+			title: "Galeria",
+			id: "detentoGaleria",
+			data: "detentoGaleria",
+			type: "readonly",
+			visible: true,
+			searchable: false,
+			orderable: true,
+			required: false,
+			render: function(data) {
+				return data;
+			},
+			name: "Detento.Galeria"
+        },
+		{
+			title: "Situação",
+			data: "situacao",
+			type: "select",
+			options: situacoes,
+			multiple : false,
+			visible: true,
+            select2 : { width: "100%" },
+			editorOnChange : function(event, altEditor) {
+				var situacao = $("#situacao").val();
+				var isRemunerado = $("#isRemunerado").val();
+
+				hideOrShowDemissaoDependency(situacao);
+				setHasContaCorrente(situacao, isRemunerado);
+
+				@* $(altEditor.modal_selector).find("#alteditor-row-town").show(); *@
+			},
+			render : function (data, type, row, meta) {
+				return data;
+            },
+			searchable: false,
+			orderable: true,
+			required: true,
+			name: "Situacao"
+		},
+		{
+			title: "Data demissão",
+			data: "demissaoData",
+			type: "date",
+			render: function (data) {
+				return data;
+			},
+			visible: false,
+			searchable: false,
+			orderable: true,
+			name: "DemissaoData"
+		},
+		{
+			title: "Demissão ocorrência",
+			data: "demissaoOcorrencia",
+			id: "demissaoOcorrencia",
+			type: "select",
+			options: demissaoOcorrencias,
+			multiple : false,
+			visible: false,
+            select2 : {
+				placeholder: "Selecione uma ocorrência para a demissão",
+				width: "100%",
+				allowClear: true,
+				minimumInputLength: 3,
+				language: {
+					inputTooShort: function() {
+						return 'Digite 3 ou mais caracteres para iniciar a busca';
+					}
+				}
+			},
+			render : function (data, type, row, meta) {
+				return data;
+            },
+			searchable: false,
+			orderable: true,
+			required: false,
+			name: "DemissaoOcorrencia"
+		},
+		{
+			title: "Demissão observação",
+			id: "demissaoObservacao",
+			data: "demissaoObservacao",
+			type: "text",
+			visible: false,
+			searchable: false,
+			orderable: false,
+			required: false,
+			name: "DemissaoOcorrencia"
+        },
+		{
+			title: "Função",
+			data: "funcao",
+			type: "select",
+			options: funcoes,
+			multiple : false,
+			visible: true,
+            select2 : {
+				placeholder: "Selecione uma função",
+				width: "100%",
+				allowClear: true,
+				minimumInputLength: 3,
+				language: {
+					inputTooShort: function() {
+						return 'Digite 3 ou mais caracteres para iniciar a busca';
+					}
+				}
+			},
+			render : function (data, type, row, meta) {
+				return data;
+            },
+			searchable: false,
+			orderable: true,
+			required: false,
+			name: "Funcao"
+		},
+		{
+			title: "Data início",
+			data: "dataInicio",
+			type: "date",
+			render: function (data) {
+				return data;
+			},
+			visible: false,
+			searchable: false,
+			orderable: true,
+			name: "DataInicio"
+		},
+		{
+			title: "Folga",
+			data: "folga",
+			type: "text",
+			visible: false,
+			render : function (data, type, row, meta) {
+				return row.detentoNome;
+            },
+			searchable: false,
+			orderable: false,
+			required: false,
+			name: "Folga"
+		},
+		{
+            data: "isTrabalhoInterno",
+            title: "Trabalho interno",
+            type: "select",
+            options: boolOptions,
+			searchable: false,
+            multiple : false,
+			visible: false,
+            select2 : { width: "100%"}
+        },
+		{
+			title: "Remunerado",
+			id: "isRemunerado",	
+			data: "isRemunerado",
+			type: "select",
+			options: boolOptions,
+			multiple : false,
+            select2 : { width: "100%"},
+			visible: true,
+			searchable: false,
+			orderable: true,
+			required: true,
+			editorOnChange : function(event, altEditor) {
+				var situacao = $("#situacao").val();
+				var isRemunerado = $("#isRemunerado").val();
+
+				setHasContaCorrente(situacao, isRemunerado);
+			},
+			name: "IsRemunerado"
+        },
+		{
+			title: "Remuneração",
+			id: "remuneracao",
+			data: "remuneracao",
+			type: "number",
+			visible: false,
+			searchable: false,
+			required: true
+        },
+		{
+			title: "Familiar autorizado retirada",
+			id: "familiarAutorizadoRetirada",	
+			data: "familiarAutorizadoRetirada",
+			type: "text",
+			placeholderMsg: "Informe o familiar autorizado para retirada de dinheiro",
+			visible: false,
+			searchable: false,
+			required: false
+        },
+		{
+			title: "Desconto (%)",
+			id: "desconto",
+			data: "desconto",
+			type: "number",
+			visible: false,
+			searchable: false,
+			orderable: false,
+			required: true
+        },
+		{
+			title: "Desconto outros (%)",
+			id: "descontoOutro",
+			data: "descontoOutro",
+			type: "number",
+			visible: false,
+			searchable: false,
+			required: true
+        },
+		{
+			title: "Dia pagamento",
+			id: "diaPagamento",
+			data: "diaPagamento",
+			type: "number",
+			visible: false,
+			searchable: false,
+			required: false,
+        },
+		{
+			title: "Tipo pagamento",
+			data: "tipoPagamento",
+			type: "select",
+			options: tiposPagamento,
+			multiple : false,
+			visible: false,
+            select2 : { width: "100%" },
+			render : function (data, type, row, meta) {
+				return data;
+            },
+			searchable: false,
+			required: false
+		},
+		{
+			title: "Jornada início",
+			id: "jornadaInicio",
+			data: "jornadaInicio",
+			type: "text",
+			visible: false,
+			searchable: false,
+			required: false
+        },
+		{
+			title: "Jornada fim",
+			id: "jornadaFim",
+			data: "jornadaFim",
+			type: "text",
+			visible: false,
+			searchable: false,
+			required: false
+        },
+		{
+			title: "Banco número",
+			id: "bancoNumero",
+			data: "bancoNumero",
+			type: "number",
+			visible: false,
+			searchable: false,
+			required: false
+        },
+		{
+			title: "Banco agência",
+			id: "bancoAgencia",
+			data: "bancoAgencia",
+			type: "text",
+			visible: false,
+			searchable: false,
+			required: false
+        },
+		{
+			title: "Banco conta",
+			id: "bancoConta",
+			data: "bancoConta",
+			type: "text",
+			visible: false,
+			searchable: false,
+			required: false
+        },
+		{
+			title: "Tipo conta",
+			data: "tipoConta",
+			type: "select",
+			options: tiposConta,
+			multiple : false,
+			visible: false,
+            select2 : { width: "100%" },
+			render : function (data, type, row, meta) {
+				return data;
+            },
+			searchable: false,
+			required: false
+		},
+		{
+			title: "Local trabalho",
+			id: "localTrabalho",	
+			data: "localTrabalho",
+			type: "text",
+			placeholderMsg: "Informe o local trabalho",
+			visible: false,
+			searchable: false,
+			required: false
+        },
+		{
+			title: "Tem conta corrente?",
+			id: "hasContaCorrente",	
+			data: "hasContaCorrente",
+			type: "readonly",
+			visible: true,
+			searchable: false,
+			required: true,
+			orderable: false
+        },
+		{
+			title: "Observação",
+			id: "observacao",	
+			data: "observacao",
+			type: "text",
+			placeholderMsg: "Informe uma observação",
+			visible: false,
+			searchable: false,
+			required: false,
+        }
+		]
+
+		/* start data table */
+		var myTable = $('#dt-basic-example').dataTable({
+			/* check datatable buttons page for more info on how this DOM structure works */
+			dom: "<'row mb-3'<'col-sm-12 col-md-6 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-6 d-flex align-items-center justify-content-end'B>>" +
+				"<'row'<'col-sm-12'tr>>" +
+				"<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",			
+			ajax: {
+				url : urlList,
+				type: 'POST',
+				dataSrc: function (json) {
+					return transformObjArrayFieldBoolBackToFront(json.data.data);
+				}
+        	},
+			columns: columnSet,
+			/* selecting multiple rows will not work */
+			select: 'single',
+			/* altEditor at work */
+			altEditor: true,
+			responsive: true,
+			/* buttons uses classes from bootstrap, see buttons page for more details */
+			buttons: [
+				{
+					extend: 'selected',
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-times mr-1"></i> Delete',
+					name: 'delete',
+					className: 'btn-danger btn-sm mr-1 btn-actions'
+				},
+				{
+					extend: 'selected',
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-edit mr-1"></i> Editar',
+					name: 'edit',
+					className: 'btn-warning btn-sm mr-1 btn-actions'
+				},
+				{
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-plus mr-1"></i> Novo',
+					name: 'add',
+					className: 'btn-primary btn-sm mr-1 btn-actions btn-add'
+				},
+				{
+					extend: 'excelHtml5',
+					text: 'Excel',
+					exportOptions: {
+						columns: [0,1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,15,16,17,18,19,20,21,22,23]
+					},
+					className: 'btn-outline-success btn-sm',
+					action: newExportAction
+				}							
+			],
+			@* preDrawCallback: function(){
+				//way to pass the 'start' and 'len' value to the server
+				dataTableFilter.start = this.api().page.info().start;
+				dataTableFilter.length = this.api().page.len();
+			}, *@
+			serverSide: true,
+			processing: true,
+			pagingType: "full_numbers",
+			language: {
+				select: {
+					rows: "%d linhas selecionadas"
+				},
+            	decimal: ",",
+            	thousands: ".",
+				@* search: "_INPUT_", *@
+        		searchPlaceholder: "Busque pelo IPEN ou NOME",
+				sProcessing: '<span id=\"loading-image\" "class="fa fa-spinner fa-spin fa-2x spinner-border spinner-border-sm text-primary mr-2""><img class="manImg" src="img/loading_alt_3.gif" width="50" height="50"></img></span>',
+				sZeroRecords: "Nenhum registro encontrado.",
+				oPaginate: {
+                    "sFirst": "Primeiro",
+                    "sPrevious": "Anterior",
+                    "sNext": "Próximo",
+                    "sLast": "Último"
+                },
+				sInfo: "Mostrando _START_ de _END_ de um total de _TOTAL_",
+                sInfoEmpty: "Nenhuma registro encontrado.",
+                sInfoFiltered: " (filtrado a partir de um total de _MAX_ registros)",
+                sInfoPostFix: "",
+				@* sInfo: "_TOTAL_ Encontrados / Motrando _START_ De _END_ Total", *@
+				@* "sProcessing": "<span id=\"loading-image\" class=\"fa fa-spinner fa-spin fa-2x\" ></span>"
+                "sSearch": "অনুসন্ধান:",
+                "sUrl": "" *@
+        	},
+			columnDefs: [],
+			/* default callback for insertion: mock webservice, always success */
+			onAddRow: function(dt, rowdata, success, error) {
+				$.ajax({ 
+					url: endpointColaboradores, 
+					type: 'POST',
+					contentType: "application/json;charset=utf-8",
+					@* headers:{
+            			"Authorization": "Basic " + ""
+        			}, *@
+					data: JSON.stringify(transformObjFieldBoolFrontToBack(rowdata), null, 4),
+					beforeSend: function (xhr, settings) {
+    				},
+					success: function (data) {
+						$(".modal").modal('hide');
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						Swal.fire({
+							text: "Registro criado com sucesso!",
+							icon: "success",
+							timer: 2000,
+							showCancelButton: false,
+							showConfirmButton: true,
+							confirmButtonColor: "#179c8e",
+							timerProgressBar: true,
+							buttons: false
+						});
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						const returnObj = Object.entries(error.responseJSON.errors);
+
+						returnObj.forEach(function(err) {
+							err[1].forEach(function (int) {
+								toastr["error"](err[0], int);
+							})
+						});
+					}
+				});
+			},
+			onEditRow: function(dt, rowdata, success, error) {
+				$.ajax({
+					url: endpointColaboradores, 
+					type: 'PUT',
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(transformObjFieldBoolFrontToBack(rowdata), null, 4),
+					success: function (data) {
+						$(".modal").modal('hide');
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						Swal.fire({
+							text: "Registro atualizado com sucesso!",
+							icon: "success",
+							timer: 2000,
+							showCancelButton: false,
+							showConfirmButton: true,
+							confirmButtonColor: "#179c8e",
+							timerProgressBar: true,
+							buttons: false
+						});
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						const returnObj = Object.entries(error.responseJSON.errors);
+
+						returnObj.forEach(function(err) {
+							err[1].forEach(function (int) {
+								toastr["error"](err[0], int);
+							})
+						});
+					}
+				});
+			},
+			onDeleteRow: function(dt, rowdata, success, error) {
+				$.ajax({ 
+					url: endpointColaboradores, 
+					type: 'DELETE', 
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(transformObjFieldBoolFrontToBack(rowdata), null, 4), 
+					success: function (data) {
+						$(".modal").modal('hide');
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						Swal.fire({
+							text: "Registro deletado com sucesso!",
+							icon: "success",
+							timer: 2000,
+							showCancelButton: false,
+							showConfirmButton: true,
+							confirmButtonColor: "#179c8e",
+							timerProgressBar: true,
+							buttons: false
+						});
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						const returnObj = Object.entries(error.responseJSON.errors);
+
+						returnObj.forEach(function(err) {
+							err[1].forEach(function (int) {
+								toastr["error"](err[0], int);
+							})
+						});
+					}
+				});
+			}		
+		});
+	});
+
+	@* var datatable = $('table').DataTable({
+            order: [1, "asc"],
+            processing: true,
+            paging: true,
+            serverSide: true,
+            ajax: {
+                url: '/Cidades/PesquisarAjax',
+                type: 'POST'
+            },
+            columns: [
+                {
+                    "name": "Estado",
+                    "title": "Estado",
+                    "render": function (data, type, full, meta) {
+                        return full.Estado.Nome;
+                    }
+                },
+               { "name": "Nome", "data": "Nome", "title": "Nome" },
+               { "name": "CodigoIbge", "data": "CodigoIbge", "title": "Código no IBGE" },
+               { "name": "CodigoSiafi", "data": "CodigoSiafi", "title": "Código no SIAFI" }
+            ],
+        }); *@
+</script>
+}

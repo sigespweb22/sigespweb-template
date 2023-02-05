@@ -1,0 +1,557 @@
+@{ 
+	ViewData["Title"] = "Agenda";
+	ViewData["PageName"] = "servidor-estado-reforco_schedule";
+	ViewData["Category0"] = @Settings.App;
+	ViewData["Category1"] = "Meu Reforço";
+	ViewData["Heading"] = "<i class='subheader-icon fal fa-calendar-star'></i> Minha Agenda de Reforços<sup class='badge badge-primary fw-500'>NOVO</sup>";
+	ViewData["PageDescription"] = "Tela principal para gerencimento dos reforços do mês";
+}
+@section HeadBlock {
+	<link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/notifications/toastr/toastr.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/miscellaneous/fullcalendar/fullcalendar.bundle.css">
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/start/jquery-ui.css"/>
+	<style>
+		.swal2-overflow {
+			overflow-x: visible;
+			overflow-y: visible;
+		}
+	</style>
+}
+
+<div class="row">
+	<div class="col-xl-12">
+		<div id="panel-1" class="panel">
+			<div class="panel-hdr">	
+				<h2>
+					Gerenciamento dos <span class="fw-300"><i>Meus reforços</i></span> 
+				</h2>
+				<div class="panel-toolbar">
+					<button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Abrir/Fechar"></button>
+				</div>
+			</div>
+			<div class="panel-container show">
+				<div class="col-xl-12 mt-3">
+					<div class="alert alert-primary">
+						<div class="d-flex flex-start w-100">
+							<div class="d-flex align-center mr-2 hidden-sm-down">
+								<span class="icon-stack icon-stack-lg">
+									<i class="base-7 icon-stack-3x color-primary-400"></i>
+									<i class="base-7 icon-stack-2x color-primary-600 opacity-70"></i>
+									<i class="@(Settings.Theme.IconPrefix) fa-tag icon-stack-1x text-white opacity-90"></i>
+								</span>
+							</div>
+							<div class="d-flex flex-fill">
+								<div class="flex-fill">
+									<span class="h5">Legendas </span>
+									<hr class="mt-2 mb-2">
+									<span class='fw-700 text-warning mb-1'><i>BOTÕES CALENDÁRIO</i></span>
+									<p class="mt-2"><strong>Botão</strong> <code>-|#|</code> : Excluir qualquer reforço marcado para o mês informando a data.</p>
+									<p class="mt-2"><strong>Botão</strong> <code>-|1|</code> : Excluir último reforço marcado para o mês.</p>
+									<p><strong>Botão</strong> <code>-|*|</code> : Excluir todos os reforços marcados do mês. Inclusive os já realizados.</p>
+									<hr class="mt-2 mb-2">
+									<span class='fw-700 text-warning mb-1'><i>DATA CALENDÁRIO</i></span>
+									<p class="mt-2"><code>MR</code> : É uma data <strong><i>AGENDADA</i></strong> do usuário logado.</p>
+									<p class="mt-2"><code>IND</code> : É uma data <strong><i>INDISPONÍVEL</i></strong> para marcação de reforço.</p>
+									<hr class="mt-2 mb-2">
+									@* <span class='fw-700 text-warning mb-1'><i>PLANTÕES</i></span>
+									<p class="text-left"><code>&nbsp;&nbsp;ALPHA</code>   : Fundo <span class="text-info">Azul</span> </p>
+									<p class="text-left"><code>&nbsp;&nbsp;BRAVO</code>   : Fundo <span class="text-success">Verde</span> </p>
+									<p class="text-left"><code>CHARLIE</code> : Fundo <span class="text-warning">Amarelo</span> </p>
+									<p class="text-left"><code>&nbsp;&nbsp;DELTA</code>   : Fundo <span class="text-danger">Vermelho</span> </p>
+									<hr class="mt-2 mb-2"> *@
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="alert alert-primary">
+						<div class="d-flex flex-start w-100">
+							<div class="d-flex align-center mr-2 hidden-sm-down">
+								<span class="icon-stack icon-stack-lg">
+									<i class="base-7 icon-stack-3x color-success-400"></i>
+									<i class="base-7 icon-stack-2x color-success-600 opacity-70"></i>
+									<i class="@(Settings.Theme.IconPrefix) fa-window-frame-open icon-stack-1x text-white opacity-90"></i>
+								</span>
+							</div>
+							<div class="d-flex flex-fill">
+								<div class="flex-fill">
+									<span class="h5">Você poderá marcar seus reforços para o <span class='fw-700 text-warning mb-1'><i class="mes-janela"></i> </span>a partir da data da 1ª janela, conforme abaixo </span>
+									<hr class="mt-2 mb-2">
+									<p><code>Dia abertura da 1º janela</code> : <span class="dia-primeira-janela"></span></p>
+									<p><code>Dia abertura da 2º janela</code> : <span class="dia-segunda-janela"></span></p>
+									<p><code>Dia abertura da 3º janela</code> : <span class="dia-terceira-janela"></span></p>
+									<hr class="mt-2 mb-2">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="alert alert-danger" style="display: none;" id="error-calendar"></div>
+				</div>
+				<div class="row">
+					<div class="col-xl-12">
+						<div class="panel-content">									
+							<div id="calendar"></div>
+						</div>
+					</div>					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section ScriptsBlock {
+	<script src="~/js/dependency/moment/moment.js"></script>
+	<script src="~/js/miscellaneous/fullcalendar/fullcalendar.bundle.js"></script>
+	<script src="~/js/notifications/toastr/toastr.js"></script>
+	<script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/locales/pt-br.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+	<script src="https://npmcdn.com/flatpickr/dist/l10n/pt.js"></script>
+	<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	
+	<script>
+		const apiServidorEstadoReforcoCreate = 'api/servidores-estado-reforcos/create';
+		const apiServidorEstadoReforcoDelete = 'api/servidores-estado-reforcos/delete';
+		const apiServidorEstadoReforcoGetMy = 'api/servidores-estado-reforcos/get-my-and-unavailable-dates';
+		const apiServidorEstadoReforcoRegraListOneCurrentMonth = 'api/servidores-estado-reforcos-regras/list-one-current-month';
+
+		toastr.options = {
+			"closeButton": false,
+			"debug": false,
+			"newestOnTop": true,
+			"progressBar": true,
+			"positionClass": "toast-top-right",
+			"preventDuplicates": true,
+			"onclick": null,
+			"showDuration": 300,
+			"hideDuration": 100,
+			"timeOut": 10000,
+			"extendedTimeOut": 1000,
+			"showEasing": "swing",
+			"hideEasing": "linear",
+			"showMethod": "fadeIn",
+			"hideMethod": "fadeOut"
+		};
+
+		var defaultMonthNumber = new Date().getMonth() + 1
+		var defaultMonthFull = bobcatJS.GeneralExtensions.getMonthFullByNumber(defaultMonthNumber)
+		var currentYear = new Date().getFullYear()
+		var defaultDate = new Date(currentYear, defaultMonthNumber, 1)
+
+		var createOrEditReforco = function (infos, crud) {
+			if (infos == null ||
+				infos === 'undefined')
+			{
+				Swal.fire({
+					title: "Problemas ao obter uma data para marcação de reforço",
+					text: " Atualize a página e tente novamente. Persistindo o problema, informe a equipe técnica do sistema.",
+					icon: "error",
+					timer: 4000,
+					showCancelButton: false,
+					showConfirmButton: true,
+					confirmButtonColor: "#fd3995",
+					timerProgressBar: true,
+					buttons: false
+				});
+			}
+			else
+			{
+				/** validations generals **/
+
+				/** check availability **/
+				if (infos.event != null)
+				{
+					if (infos.event.title == 'IND')
+					{
+						return Swal.fire({
+									title: "INDISPONÍVEL",
+									text: "Não foi possível marcar seu reforço. \nData INDISPONÍVEL",
+									icon: "error",
+									timer: 5000,
+									timerProgressBar: true,
+									showCancelButton: false,
+									showConfirmButton: false,
+									buttons: false
+								});
+					}
+				}
+
+				/** markup confirmation**/
+				var semana = ["Domingo", "Segunda-Feira", "Terça-Feira", "Quarta-Feira", "Quinta-Feira", "Sexta-Feira", "Sábado"];
+				var weekday = semana[infos.date.getDay()];
+				var dataReforco = infos.dateStr.substring(8,10) + "/" + infos.dateStr.substring(5,7) + "/" + infos.dateStr.substring(0,4);
+
+				Swal.fire({
+					title: "Confirmação de agendamento",
+					text: "Deseja realmente agendar um de seus reforços para "+ weekday + " - " + dataReforco + "?",
+					icon: "question",
+					showDenyButton: false,
+					showCancelButton: true,
+					confirmButtonText: 'Sim',
+					confirmButtonColor: "#87adbd",
+					cancelButtonColor: "#c9dae1",
+					cancelButtonText: 'Desistir',
+				}).then((result) => {
+					if (result.isConfirmed) {
+						const servidorEstadoReforcoViewModel = {
+							dataPrevistaInicio: infos.dateStr
+						};
+
+						$.ajax({
+							url: apiServidorEstadoReforcoCreate, 
+							type: 'POST',
+							contentType: "application/json;charset=utf-8",
+							data: JSON.stringify(servidorEstadoReforcoViewModel, null, 4),
+							success: function (data) {
+								if(data == 1)
+								{
+									Swal.fire({
+										text: "Reforço agendado com sucesso!",
+										icon: "success",
+										timer: 3000,
+										showCancelButton: false,
+										showConfirmButton: false,
+										confirmButtonColor: "#179c8e",
+										timerProgressBar: true,
+										buttons: false
+									});
+
+									setTimeout(() => {
+										window.location.href = "servidorestadoreforco/schedule";
+									}, 500)
+								}
+							},
+							error: function (error, jqXHR, textStatus, errorThrown) {
+								if (error.status == 400)
+								{
+									Swal.fire({
+										title: "Marcação inválida!",
+										text: error.responseText,
+										icon: "error",
+										timer: 10000,
+										timerProgressBar: true,
+										showCancelButton: false,
+										showConfirmButton: false,
+										buttons: false
+									});
+								} else if (error.status == 500) {
+									Swal.fire({
+										title: "Marcação inválida!",
+										text: error.responseText.title,
+										icon: "error",
+										timer: 10000,
+										timerProgressBar: true,
+										showCancelButton: false,
+										showConfirmButton: false,
+										buttons: false
+									});
+								} else if (error.status == 401) {
+									Swal.fire({
+										title: "Não autorizado!",
+										text: "Você não tem permissão para marcação de reforço. Solicite acesso ao gestor do sistema em sua unidade e tente novamente.",
+										icon: "error",
+										timer: 10000,
+										timerProgressBar: true,
+										showCancelButton: false,
+										showConfirmButton: false,
+										buttons: false
+									});
+								} else {
+									const returnObj = Object.entries(error.responseJSON.errors);
+									returnObj.forEach(function(err) {
+										err[1].forEach(function (int) {
+											toastr["error"](err[0], int);
+										})
+									});
+								}
+							}
+						});
+					}
+				});
+			}
+		};
+		
+		$(document).ready(function () {
+			$(".mes-janela").text("Mês de "+defaultMonthFull.description);
+
+			// ** get reforços data
+			bobcatJS
+				.ServidorEstadoReforcoStoreService
+				.listWithUnavailableDatesAsync(defaultMonthFull.description)
+				.then((success) => {
+					var eventos = success.data.eventos;
+
+					var calendarEl = document.getElementById('calendar');
+					var calendar = new FullCalendar.Calendar(calendarEl, {
+						defaultDate: defaultDate,
+						plugins: ['dayGrid', 'list', 'interaction', 'bootstrap'],
+						eventStartEditable: false,
+						themeSystem: 'bootstrap',
+						locale: 'pt-br',
+						timeZone: 'UTC',
+						monthNames: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+						monthNamesShort: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+						dayNames: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sabado'],
+						dayNamesShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'],
+						dateAlignment: "month", //week, month
+						buttonText: {
+							today:    'hoje',
+							month:    'mês',
+							day:      'dia',
+							list:     'semana'
+						},
+						eventTimeFormat: {
+							hour: 'numeric',
+							minute: '2-digit',
+							meridiem: 'short'
+						},
+						navLinks: true,			
+						header: {
+							left: 'excluirUltimoReforco excluirTodosReforcosMes excluirQualquerReforcoMes',
+							center: 'title',
+							right: 'dayGridMonth,listWeek'
+						},
+						footer: {
+							left:   '',
+							center: '',
+							right:  ''
+						},
+						customButtons: {
+							excluirUltimoReforco: {
+								text: '- |1|',
+								click: function() {
+									var deleteType = "last"
+
+									$.ajax({
+										url: apiServidorEstadoReforcoDelete, 
+										type: 'POST',
+										contentType: "application/json;charset=utf-8",
+										data: JSON.stringify(deleteType, null, 4),
+										success: function (data) {
+											Swal.fire({
+												title: "Último reforço deste mês deletado com sucesso!",
+												icon: 'success',
+												confirmButtonColor: "#179c8e",
+												timer: 3000,
+												showCancelButton: false,
+												showConfirmButton: false,
+												confirmButtonColor: "#179c8e",
+												timerProgressBar: true,
+												buttons: false
+											})
+
+											setTimeout(() => {
+												window.location.href = "servidorestadoreforco/schedule";
+											}, 500)
+										},
+										error: function (error, jqXHR, textStatus, errorThrown) {
+											if (error.status == 400 || error.status == 500)
+											{
+												Swal.fire({
+													title: "Exclusão inválida!",
+													text: error.responseText,
+													icon: "error",
+													timer: 10000,
+													timerProgressBar: true,
+													showCancelButton: false,
+													showConfirmButton: false,
+													buttons: false
+												})
+
+											} else if (error.status == 401) {
+												Swal.fire({
+													title: "Não autorizado!",
+													text: "Você não tem permissão para marcação de reforço. Solicite acesso ao gestor do sistema em sua unidade e tente novamente.",
+													icon: "error",
+													timer: 10000,
+													timerProgressBar: true,
+													showCancelButton: false,
+													showConfirmButton: false,
+													buttons: false
+												})
+
+											} else {
+												const returnObj = Object.entries(error.responseJSON.errors);
+												returnObj.forEach(function(err) {
+													err[1].forEach(function (int) {
+														toastr["error"](err[0], int);
+													})
+												});
+											}
+										}
+									});
+								}
+							},
+							excluirTodosReforcosMes: {
+								text: '- |*|',
+								click: function() {
+									var deleteType = "all"
+
+									$.ajax({
+										url: apiServidorEstadoReforcoDelete, 
+										type: 'POST',
+										contentType: "application/json;charset=utf-8",
+										data: JSON.stringify(deleteType, null, 4),
+										success: function (data) {
+											Swal.fire({
+												text: "Todos os reforços do mês foram excluídos com sucesso!",
+												icon: "success",
+												timer: 3000,
+												showCancelButton: false,
+												showConfirmButton: false,
+												confirmButtonColor: "#179c8e",
+												timerProgressBar: true,
+												buttons: false
+											});
+
+											setTimeout(() => {
+												window.location.href = "servidorestadoreforco/schedule";
+											}, 500)
+										},
+										error: function (error, jqXHR, textStatus, errorThrown) {
+											if (error.status == 400 || error.status == 500)
+											{
+												Swal.fire({
+													title: "Exclusão inválida!",
+													text: error.responseText,
+													icon: "error",
+													timer: 10000,
+													timerProgressBar: true,
+													showCancelButton: false,
+													showConfirmButton: false,
+													buttons: false
+												});
+											} else if (error.status == 401) {
+												Swal.fire({
+													title: "Não autorizado!",
+													text: "Você não tem permissão para marcação de reforço. Solicite acesso ao gestor do sistema em sua unidade e tente novamente.",
+													icon: "error",
+													timer: 10000,
+													timerProgressBar: true,
+													showCancelButton: false,
+													showConfirmButton: false,
+													buttons: false
+												});
+											} else {
+												const returnObj = Object.entries(error.responseJSON.errors);
+												returnObj.forEach(function(err) {
+													err[1].forEach(function (int) {
+														toastr["error"](err[0], int);
+													})
+												});
+											}
+										}
+									});
+								}
+							},
+							excluirQualquerReforcoMes: {
+								text: '- |#|',
+								click: function() {
+									let flatpickrInstance
+
+									Swal.fire({
+										title: 'Informe a data do REFORÇO que deseja excluir.',
+										icon: "question",
+										confirmButtonColor: "#87adbd",
+										html: '<input id="expiry-date" class="swal2-input">',
+										stopKeydownPropagation: false,
+										preConfirm: () => {
+											if (flatpickrInstance.selectedDates[0] < new Date()) {
+												Swal.showValidationMessage(`Por favor informe uma data para prosseguir.`)
+											}
+										},
+										willOpen: () => {
+											flatpickrInstance = flatpickr(Swal.getPopup().querySelector('#expiry-date'), {
+												"locale": "pt",
+												dateFormat: "d/m/Y",
+												defaultDate: defaultDate
+											})
+										}
+									}).then(function(result) {
+											if(result.value){
+												var date = $('#expiry-date').val();
+												
+												if (bobcatJS.GeneralExtensions.isNullOrEmptyOrUndefined(date)) return toastr['error']('Informe a data do reforço para exclusão.')
+												var dateConverted = moment(date, 'DD/MM/YYYY').format("YYYY-MM-DD");
+
+												bobcatJS
+													.ServidorEstadoReforcoStoreService
+													.deleteByDataAsync(dateConverted)
+														.then((success) => {
+															if (success.status === 204 || success.status === 200) toastr['success']("Reforço deletado com sucesso.")
+
+															setTimeout(() => {
+																window.location.href = "servidorestadoreforco/schedule";
+															}, 2000)
+														}).catch((e) => { 
+															if (e.response.status === 400 || e.response.status === 404 || e.response.status === 500) return toastr['error'](e.response.data)
+															return toastr['error'](e)
+														})
+											}
+										});
+								}
+							}
+						},
+						editable: true,
+						eventLimit: true, // allow "more" link when too many events
+						views: {
+							sevenDays: {
+								type: 'agenda',
+								buttonText: '7 Days',
+								visibleRange: function(currentDate) {
+										return {
+											start: currentDate.clone().subtract(2, 'days'),
+											end: currentDate.clone().add(5, 'days'),
+										};
+									},
+									duration: {days: 7},
+									dateIncrement: { days: 1 },
+								},
+						},
+						events: eventos,
+						dateClick: function(info) {
+							createOrEditReforco(info, 'create')
+						},
+						eventClick: function(info) {
+							createOrEditReforco(info, 'edit')
+						}
+					});
+
+					calendar.render()
+				}).catch((e) => {
+					if (err.response.status == 400 || err.response == 500) return toastr["error"](err.response.data);
+				})
+
+			// ** get rules data
+			bobcatJS
+				.ServidorEstadoReforcoRegraStoreService
+				.listOneByMonthAsync(defaultMonthFull.description)
+				.then((success) => {
+					$(".dia-primeira-janela").text(success.data.dataPrimeiraJanela.substring(8, 10));
+					$(".dia-segunda-janela").text(success.data.dataSegundaJanela.substring(8, 10));
+					$(".dia-terceira-janela").text(success.data.dataTerceiraJanela.substring(8, 10));
+				})
+				.catch((err) => {
+					var errElem = '<div class="d-flex flex-start w-100">'+
+										'<div class="d-flex align-center mr-2 hidden-sm-down">'+
+											'<span style="margin-top: 4px" class="icon-stack icon-stack-lg">'+
+												'<i class="base-7 icon-stack-3x color-danger-400"></i>'+
+												'<i class="base-7 icon-stack-2x color-danger-600 opacity-70"></i>'+
+												'<i class="fal fa-info icon-stack-1x text-white opacity-90"></i>'+
+											' </span>'+
+										'</div>'+
+										'<div class="d-flex flex-fill">'+
+											'<div class="flex-fill">'+
+												'<span class="h5">Nenhuma regra encontrada para marcação de seus reforços. <br>O calendário estará disponível somente para mostrar os reforços já agendados (Seus reforços e as datas indisponíveis).</span>'+
+											'</div>'+
+										'</div>'+
+								'</div>';
+
+					if (err.status == 400 || err.status == 500) return toastr["error"](err.responseText);
+					$("#error-calendar").show();
+					$("#error-calendar").html(errElem);
+				});
+		});
+	</script>
+}

@@ -1,0 +1,476 @@
+---------------------------------------------------------------------
+Olá!
+---------------------------------------------------------------------
+
+Os vídeos a seguir não contém audio.
+Iremos exibir apenas conteúdo visual e toda nossa
+comunicação quando necessária se dará por este documento, em interações 
+por escrito.
+
+O objetivo destes conteúdos é apresentar globalmente todas as funcionalidades
+do sistema SigespWeb.
+Nesta etapa não iremos adentrar o nível de detalhe adequado para 
+exploração mais detalhada das funcionalidades, bem como
+de todas as regras de negócio existentes aplicadas em cada frente de processo 
+que a ferramenta atua. 
+Passo este que iremos dar em uma próxima oportunidade,
+por meio de uma live ao vivo com demonstrações completas e detalhadas
+de todas as funcionalidades do SigespWeb.
+
+Abaixo temos o roteiro de todos os conteúdos que iremos abordar.
+Portanto, a divisão dos vídeos será de no mínimo um para cada tópico de assunto, podendo ser
+divido em mais vídeos, de acordo com o tamanho do tópico e seus sub-tópicos.
+Tudo isso afim de tornar as apresentações mais fáceis de serem assimiladas.
+
+Vamos lá?
+
+A primeira apresentação, portanto, será da tela de login e esqueceu sua senha, ok?
+Depois faremos login no sistema e vamos seguir com o roteiro.
+---------------------------------------------------------------------
+
+#Apresentação geral da ferramenta
+ ##Login
+   O SigespWeb como o nome já sugere,
+   é um sistema Web, sendo assim, você pode conectar-se a ele de qualquer
+   navegador com acesso a internet, de qualquer dispositivo inclusive, uma vez que
+   a ferramenta foi toda construída sob um paradigma web chamado
+   "Responsivo", ao qual as telas adaptam-se ao dispositivo em que as acessa: "Celular
+   Tablet, Computador, SmartTV [...]".
+ ###Esqueceu sua senha?
+    A partir desta tela é possível fazer uma solicitação para trocar sua senha, 
+    caso a tenha esquecido.
+    Após a solicitação, você receberá um link no e-mail cadastrado como 
+    login de acesso para efetuar a mudança de senha.
+    Portanto, é só clicar no link, seguir os passos e pronto!
+    Sua nova senha já estará apta a ser utilizada no acesso ao SigespWeb,
+    junto de seu nome de usuário.
+ ####Personalização de tela
+    Esta funcionalidade permite ao usuário a escolha de um tema (cores do sistema),
+    de acordo com o seu gosto.
+    Após fazer a troca do tema do sistema, suas definições serão salvas automaticamente,
+    ao passo que a partir de agora sempre que você fizer login
+    o tema escolhido será o tema de cores do seu SigespWeb.
+ #####Notificações do usuário
+    A realização de algumas tarefas no SigespWeb possui um sistema de eventos
+    preparado para gerar notificações aos usuários da plataforma.
+    Notificações estas que podem ser global, disparadas para todos os usuários,
+    ou notificações exclusivas para um usuário em específico.
+
+    Tudo isso afim de criar maior integração entre tecnologia e pessoas.
+    Um exemplo bacana desta funcionalidade é quando um servidor do estado
+    faz a marcação de um reforço (hora extra) em uma data específica,
+    contudo, surge algum imprevisto tempo depois onde o mesmo precisa fazer
+    a troca desta data já agendada.
+    Nesta condição, sem um sistema de notificação, tornaria-se impossível que 
+    outros usuários da plataforma soubessem que agora esta data após a
+    realização da troca está disponível novamente para a marcação de um novo 
+    reforço por um outro usuário da plafatorma.
+ ######Áreas de informações do usuário e atalhos no rodapé das telas
+    Estas áreas são áreas de informações gerais do usuário logado na plataforma, bem como
+    atalhos gerais úteis ao uso diário da ferramenta.
+ ########Perfil usuário
+    As funcionalidades de perfil, são parte de um conjunto de ferramentas que permite,
+    identificar o usuário dentro da plataforma. 
+    Esta área é composta por utilidades de segurança como troca segura de senha,
+    informações profissionais como função e setor em que trabalha, bem como uma foto
+    de identificação.
+ #########Padrão CRUD das telas (Novo registro; Edição registro; Inativação e 
+          deleção de registro;) e botões exportação EXCEL
+    O padrão de tela do SigespWeb segue um modelo baseado em ações que o usuário
+    pode executar no sistema.
+    Afim de facilitar o uso dos diversos controles da ferramenta por meio de sua
+    intuitividade o SigespWeb foi todo projetado seguindo uma mesma linha de raciocínio
+    criando um padrão simples de tela vinculado a ações que eu posso executar no sistema.
+    
+    É fácil de identificar por exemplo praticamente em todas as telas do SigespWeb
+    que o botão |+ Novo| significa a ação de criar um novo registro. E o mesmo
+    pode-se dizer para as ações de | Editar | Deletar | Excel (Exportar todos os registros
+    para uma planilha de excel).
+    A grande sacada deste modelo arquitetônico é que um usuário que souber operar
+    uma tela do sistema, o mesmo o fará com diversos outros controles e funcionalidades
+    da ferramenta, já que há um padrão e um modelo relacional em todas as telas
+    do SigespWeb.
+ ##########Área de VÍDEOs expressos (Exemplos > Alunos Leituras | Alunos)
+    Nesta área todo usuário que não souber como utilizar uma funcionalidade do SigespWeb
+    poderá encontrar diversos vídeos de no máximo 1 minuto, que apresentam visualmente
+    e de forma bastante dinâmica exemplos práticos de uso da própria ferramenta.
+    
+    Como se um usuário mais experiente estive ao seu lado, te ensinado em tela
+    e dentro da ferramenta como utilizá-la. 
+    
+    E tudo isso, espalhado por todos os lados do SigespWeb, 
+    contudo, sempre dentro das áreas de interesse.
+    O que por sua vez facilita encontrar ajuda para operar toda e qualquer funcionalidade, desde as mais simples até
+    desde as mais simples até as mais complexas;
+    Sem desprender tempo em ter que localizar em uma única e densa documentação, algo
+    ao qual ainda terá de desprender muito mais tempo ainda para ler, pelos
+    seus conteúdos gigantes e sem didática, promovendo mais dúvidas 
+    do que simplesmente as esclarecendo.
+
+#Apresentação global dos módulos
+---------------------------------------------------------------------
+ ##Edi - Integração com outros sistemas
+---------------------------------------------------------------------
+ O módulo EDI oferece diversos modelos de integração com outros sistemas já prontos
+ para uso!
+ Facilitando imensamente e a qualquer tempo
+ a carga em massa de dados importantes para o uso da ferramenta como: Detentos,
+ Regimes de Detentos, Datas já agendadas de Saída Temporária, Importação de dados de
+ livros, [...]
+
+ É possível integrar qualquer sistema neste modelo!
+ Para os modelos de importação ainda não conhecidos pelo SigespWeb, basta apenas
+ encaminhar para nossa equipe de desenvolvedores um documento simples de exemplo
+ e em no máximo 24hrs após o encaminhamento do padrão, disponibilizamos
+ o programa EDI para importação iniciar as importações.
+ Tempo este, apenas necessário para os devidos ajustes do modelo de dados informado
+ afim de que o SigespWeb possa importar correntamente os dados, adicionando-os
+ corretamente aos seus locais em nossa base de dados.
+ 
+ Este modelo faz do SigespWeb um sistema altamente modular e aderente a qualquer operação
+ em UNIDADES PRISIONAIS, uma vez que é possível trafegar em nossa plataforma
+ em tempo real, informações importantes produzidas em outros softwares 
+ ou planilhas que ainda se fazem necessário o uso.
+---------------------------------------------------------------------
+
+---------------------------------------------------------------------
+ ###ListaAmarela | Check-in Detentos
+---------------------------------------------------------------------
+ A Lista Amarela é a porta de entrada sistêmica do ingresso (Preso) na UNIDADE PRISIONAL.
+ É por meio desta funcionalidade que informações de grande importância para
+ gestão são capturadas e passam a trafegar no SigespWeb; fornecendo a partir de então
+ dados para inúmeros relatórios vitais para a gestão do agora recluso
+ durante o período de sua permanência na UNIDADE PRISIONAL.
+ São informações como o Artigo(s), Pena, Instrumento(s) de prisão,
+ Tipo de condenação, Dias de medida disciplinar, 
+ Se pertence ou não a gestão da comarca que efetuou a prisão e muitas outras informações
+ que irão nortear diariamente o trabalho dos servidores na gestão dos reclusos.
+ É por meio desta funcionalidade que será possível obter totalizadores importantes
+ em formato gráfico da quantidade de detentos na unidade, quantidade de detentos por Regime,
+ detentos que estão em internação hospitalar, em cumprimento de Medidas Disciplinares
+ -desde o que estão na unidade em cumprimento de tais medidas, como os que foram
+ enviados para outras unidades para o cumprimento das medidas-; bem como
+ irá permitir o total controle dos internos que não pertencem a sua unidade e estão
+ aguardando transferência para as comarcas de origem, até indicadores de condenados
+ por tipo de condenação.
+
+ Todos estes controles atendem aos modelos de pesquisa
+ carcerária que são realizados periodicamente pelos órgãos Ministério Público e 
+ CNJ, sendo assim, basta apenas manter estes dados sempre atualizados
+ que quando houver a necessidade da extração destas informações,
+ elas estarão a apenas poucos cliques de você.
+---------------------------------------------------------------------
+
+---------------------------------------------------------------------
+ ####Andamento Penal | Gestão e controle de execução de pena
+---------------------------------------------------------------------
+ Um dos grandes desafios de gestão dos setores JURÍDICOS nas UNIDADES PRISIONAIS
+ se inicia quando da condenação dos reclusos.
+ O SigespWeb oferece um modelo de controle bastante simples e efetivo baseado em
+ EVENTOS de EXECUÇÃO do apenado.
+ Basicamente o SigespWeb entende que todo apenado é detentor de um histórico
+ carcerárico atualizado sempre no DISPARO de um destes EVENTOS.
+ Portanto, a bordo deste conceito o SigespWeb é capaz de fornecer
+ rapidamente por meio de um clique um modelo de histórico de informações
+ capaz de subsidiar respostas rápidas para advogados, memorandos dos apenas,
+ e times dos setores JURÍDICOS das unidades afim de que possam dar sequência
+ nas informações de execução das penas.
+ 
+ Sempre será possível identificar por meio destes EVENTOS as diversas necessidades
+ deste perfil de recluso: desde as suas datas previstas e efetivas de progressão, 
+ quais são seus direitos de progressão previstos, passando pelo EXAME CRIMINOLÓGICO, 
+ até seus possíveis incidentes
+ (PAD - Processo Administrativo Disciplinar | FUGA/EVASÃO).
+ E após identificada estas necessidades o SigespWeb ainda oferece um escopo imenso
+ de ofícios que podem ser gerados de forma totalmente automatizada para que seja
+ dado sequência aos processos e o disparo de NOVOS EVENTOS.
+
+ O grande diferencial deste modelo é o seu ciclo virtuoso, estimulado pelos 
+ EVENTOS de EXECUÇÃO, que trazem sempre o foco para gestão direta do processo
+ gerenciado, agregando valor e eficiência a todas as operações JURÍDICAS
+ das UNIDADES PRISIONAIS.
+---------------------------------------------------------------------
+
+---------------------------------------------------------------------
+ #####Educação - EJA
+---------------------------------------------------------------------
+ O SigespWeb oferece um modelo de gestão bastante funcional e simples do estudo regular
+ nos ENSINOS FUNDAMENTAL I, II e MÉDIO dentro das UNIDADES PRISIONAIS.
+ Basicamente ao matricular um reeducando em uma destas modalidades de ensino, 
+ é possível a partir dai gerir informações básicas do curso, como: disciplinas que
+ está cursando de acordo com a fase, status da fase, o turno e
+ o grau de ensino em curso no momento. 
+
+ Portanto, com base neste simples modelo de dados é possível um panorama 
+ em tempo real de quantos reeducando estudam na unidade, em quais cursos, fases e turnos
+ o realizam, oferecendo uma gestão descomplicada e eficiente até mesmo de um grande
+ número de informações.
+ 
+ Neste contexto uma funcionalidade bastante interessante do SigespWeb é o controle
+ de DESISTÊNCIA do ESTUDO.
+ Gerenciado por motivos chamados de OCORRÊNCIAS, este modelo é 
+ capaz de fornecedor informações históricas importantíssimas para reingresso
+ do reeducando aos estudos.
+ Oferendo um controle de continuidade objetivo, 
+ focado totalmente na sequência e conclusão do seu grau de ensino.
+ Bem como também a indentificação dos motivos mais incidentes de evasão escolar,
+ subsidiando informações importantes para ações de correção de anomalias que estão 
+ impedindo o progresso educacional destes reeducandos.
+---------------------------------------------------------------------
+
+---------------------------------------------------------------------
+ #####Educação - PROJETO LEITURA (Professores, Leitores, Gêneros, Livros, Autores, Dicas de Escrita, Leituras (Formulário de Leitura (Perguntas dinâmicas), Relatório Avaliação, Ofícios de Remissão))
+---------------------------------------------------------------------
+ REMISSÃO PELA LEITURA é um projeto pilar e talvez o mais importante
+ existente hoje dentro das UNIDADES PRISIONAIS BRASILEIRAS
+ no que diz respeito ao processo de ressocialização dos reclusos.
+
+ Sendo assim, hoje este é um dos módulos que mais cresce em funcionalidades diariamente
+ dentro do SigespWeb.
+ 
+ Nosso modelo atua desde o ingresso do reeducando no projeto, até a confecção
+ automatizada dos ofícios de solicitação de remissão para as Varas de Execuções 
+ Penais.
+ 
+ No ingresso do reeducando ao projeto, chamamos ele de LEITOR, nos preocupamos com o 
+ seu gênero preferencial de leitura, focamos em não permitir que o título
+ desta leitura sugerida ou incluído pelo professor seja duplicada. 
+ Bem como também, automatizamos diversas das atividades relacionadas 
+ para um padrão que chamamos de GERAÇÃO em LOTE.
+ O que por sua vez tem viabilizado em curto prazo a realização de atividades
+ que antes levavam horas e até mesmo dias para serem desenvolvidas pelo ORIENTADORES
+ de LEITURA.
+ Portanto, agora os professores podem dedicar mais tempo de qualidade
+ na correção das resenhas, e na preparação das 
+ DICAS de ESCRITA e PERGUNTAS dinâmicas, que são também uma exclusividade
+ do SigespWeb e fornecidos aos LEITORES em seus FORMULÁRIOS DE LEITURA,
+ já que o trabalho pesado fica a cargo da ferramenta.
+ DICAS estas que tem aumentado significativamente o nível das resenhas, bem como 
+ sem ficar atrás a dinamicidade das PERGUNTAS tem provocado grande efeito na 
+ criatividade dos LEITORES.
+
+ Todas as leituras seguem um calendário dentro do SigespWeb, calendário
+ este chamado por nós de CRONOGRAMA. Podendo ser criado de acordo com a
+ necessidade de cada UNIDADE PRISIONAL, contudo, com regras concistentes 
+ de acordo com as normas da resolução 391 do CNJ.
+
+ Todos os livros são cadastrados na plataforma, bem como suas dependências 
+ como os gêneros e autores.
+ Esta condição permite ao SigespWeb aplicar um sistema de automatização
+ INÉDITO e EXCLUSIVO que agrega grande valor a OPERAÇÃO DE LEITURA.
+ Ao adicionar um novo livro no SigespWeb é item obrigatório neste cadastro
+ informar ao sistema qual a localização física do livro. Localização esta
+ composta por um número sequencial gerado automaticamente,
+ que identifica rapidamente a posição do livro na estante.
+ Neste modelo, é possível efetuar a GERAÇÃO em LOTE das leituras
+ de uma galeria toda. Onde após a sua conclusão, gera-se um relatório
+ de leituras com as informações de localização dos livros indicado
+ em cada leitura, facilitando portanto, a retirada física do título
+ da estante pelo professor orientador para posterior entrega aos LEITORES.
+
+ Ou seja, todo processo de leitura, desde o ingresso do leitor no projeto,
+ até a GERAÇÃO do OFÍCIO de solicitação de remissão é automatizado.
+ Nenhuma etapa do processo de remissão por leitura fica a cargo de qualquer
+ controle manual, individual e descentralizado.
+ Tudo é automatizado, gerando dados em tempo real para uma DASHBOARD (Painel de Controle)
+ exclusiva para gestão desta atividade.
+---------------------------------------------------------------------
+
+---------------------------------------------------------------------
+ ######Sequência ofícios
+---------------------------------------------------------------------
+ A numeração de ofício é hoje uma obrigação na confecção dos
+ diversos documentos em órgãos públicos no Brasil.
+ No sistema prisional, em especial em SANTA CATARINA, este modelo
+ ainda atende a uma sequência numeral individual por setor,
+ que deve ser informada no topo do documento de acordo com
+ os padrões pré-estabelecidos pela Secretaria de Administração Prisional.
+
+ Até então em sua maioria e talvez até em sua totalidade, as
+ UNIDADES PRISIONAIS no Brasil tem cuidado deste controle
+ de forma manual e descentralizada. 
+
+ Esta funcionalidade hoje dentro do SigespWeb permite a qualquer setor
+ de uma UNIDADE PRISIONAL, seja ADMINISTRATIVO ou OPERACIONAL,
+ centralizar a geração de numeração sequencial de seus ofícios
+ diretamente no sistema.
+ Individualizando as sequências por setor, respeitando o seu 
+ princípio de sequencialidade numérica.
+ Portanto, é possível que diversos técnicos de um setor possam
+ gerar dinâmicamente suas sequências de acordo com as suas necessidades,
+ sem preocupar-se com a confecção manual de tabelas numéricas de EXCEL ou WORD
+ e o controle de inutilização destes números. 
+ O SigespWeb faz isso pra você!
+---------------------------------------------------------------------
+
+---------------------------------------------------------------------
+ #######Meu Reforço
+---------------------------------------------------------------------
+ O Reforço é um termo que surgiu no estado de Santa Catarina para denotar
+ as horas extras realizadas pelos servidores dos setores ADMINISTRATIVO E 
+ OPERACIONAL.
+
+ Hoje neste mesmo estado, cada servidor pode realizar até 5 
+ reforços por mês.
+
+ Esta funcionalidade tem como objetivo atender toda dinamicidade e fluxo de informações
+ que os reforços trazem todos os meses nas UNIDADES PRISIONAIS DE SANTA CATARINA.
+
+ Todo processo inicia-se dentro do SigespWeb a partir da criação do ESCOPO de REGRAS
+ para marcação de reforço. Estas regras são por padrão criadas
+ exclusivamente para um mês específico (Mês em que será realizado o reforço),
+ e possue diversas configurações.
+ Basicamente cria-se um registro de regra por mês, definindo dentro de cada registro
+ o total de vagas por dia para marcação de reforço, bem como a data de 3 janelas 
+ para marcação de reforço.
+
+ Cada servidor ao ser cadastrado no SigespWeb pode ou não ser atribuído com
+ um diferencial em relação aos seus colegas, o que chamamos de prioridade informada.
+ Bem como também, neste mesmo cadastro é definido uma outra prioridade
+ para marcação de reforço que se trata de férias ou licença prêmio. Nesta condição
+ no mês em que o servidor tiver férias ou licença prêmio agendada, terá prioridade
+ para marcação sobre os outros servidores. Portanto, poderá agendar
+ um limite "x" de reforços antes da abertura das janelas de marcação, assim como
+ na prioridade informada.
+
+ Em linhas gerais, temos uma regra para o mês de marcação de reforço.
+ Esta regra limita o total de vagas de reforço por dia e 
+ deve-se informar 3 janelas, que são os dias em que os reforços poderão ser marcados.
+ Fora deles o SigespWeb só permite a marcação de reforço dos que possuem
+ as prioridades supracitadas.
+
+ * Prioridade informada pode marcar até 3 reforços fora das 3 janelas de marcação;
+ * Prioridade por férias ou licença prêmio pode marcar até 4 reforços fora das 3 janelas
+   de marcação;
+ * Os demais só podem marcar reforço dentro das 3 janelas de marcação,
+   dentro das regras abaixo:
+    * 2 reforços nas datas entre a 1ª e a 2ª janela;
+    * + 2 reforços nas datas entre a 2ª e a 3ª janela, totalizando no máximo 4 reforços até aqui;
+    * + 1 reforço nas datas entre a 3ª e última janela do mês e o último dia do mês,
+      compondo portanto, um limite de até 5 reforços mês;
+
+ Lembrando que, os que possuem uma das prioridades de marcação, podem marcar
+ o total de reforços permitidos para cada condição dentro do mês até a 2ª janela
+ de marcação, portanto, seu(s) último(s) reforço(s) poderá ser marcado
+ na 3ª e última janela, junto com os demais.
+---------------------------------------------------------------------
+
+---------------------------------------------------------------------
+ ########Laboral
+---------------------------------------------------------------------
+ O Setor laboral é o responsável por toda gestão do trabalho 
+ interno e externo dos reeducandos.
+ 
+ É a partir das informações geradas por aqui que temos o ponta pé
+ inicial nos controles do módulo de Pecúlio, ao qual vamos falar no próximo tópico.
+ 
+ A realização da gestão Laboral pelo SigespWeb é bastante simples, 
+ contudo, altamente eficaz.
+
+ Todo processo inicia-se pelo cadastro de uma empresa,
+ depois a criação de um convênio ou vários convênios para uma empresa.
+ Posteriomente um Detento sistemicamente falando é convertido em um Colaborador
+ por meio do Cadastro de Colaborador.
+ Sendo portnato, nesta etapa que ocorrem os vínculos admissionais de um 
+ colaborador a um convênio. Nesta etapa é informada data da admisssão, 
+ tipo de trabalho (interno/externo), valor da remuneração caso seja remunerado,
+ quais os descontos fixos, dados de local e jornada de trabalho.
+
+ Também é possível efetuar a demissão do colaborador de um convênio 
+ informando uma ocorrência para o fato, criando portanto, um histórico
+ trabalhista que irá subsidiar a tomada de decisão para concessão de 
+ futuras oportunidades.
+---------------------------------------------------------------------
+
+---------------------------------------------------------------------
+ ########Pecúlio
+---------------------------------------------------------------------
+ Pecúlio é o equivalente a um banco administrativo dentro das UNIDADES PRISIONAIS.
+ É por meio deste setor que tudo relacionado a dinheiro dos reeducandos é gerido.
+
+ Basicamente o SigespWeb possui hoje os mais importante controles
+ relacionados, que fornecem ao setor atuar como um banco
+ no controle dos depósitos que são recebidos das empresas
+ para pagamentos dos salários, até a movimentação por diversos eventos
+ pelos reeducandos.
+
+ Em suma, o SigespWeb atua no controle financeiro de fundos penitenciários, e 
+ centralizador financeiro das remunerações dos laborandos internos.
+ O controle passa desde a gestão de saldo das contas correntes 
+ (Conta Caixa e Conta Corrente Bancária) sistêmicas para fundos
+ penitenciários, o famoso fluxo de caixa, oferecendo um modelo de
+ conciliação de valores integrado com o sistema de lançamento
+ de créditos e débitos nas contas correntes sistêmicas dos laborandos. 
+ Assim temos centralizado em um único módulo, a gestão dos fundos, as entradas e saídas
+ e as entradas e saídas de dinheiro do reeducandos que trabalham internamente.
+
+ A partir deste escopo de gestão, conseguimos fornecedor diversos relatórios
+ gerências até extratos de contas correntes sistêmicas de laborandos e 
+ das contas de fundos.
+---------------------------------------------------------------------
+
+---------------------------------------------------------------------
+ #########Dashboards - Inforgráficos e indicadores de performance (Kpi's)
+---------------------------------------------------------------------
+ O SigespWeb possui o foco na gestão eficiente em seu DNA. Somos orientados a números
+ e resultados.
+ Portanto, embora este módulo seja um centralizador importante dos principais números
+ das operações de modo geral, nunca é demais lembrar que o SigespWeb também
+ apresenta na maioria de suas telas, infográficos magníficos, totalmente intuitivos
+ e de simples interpretação.
+
+ Este módulo é bastante novo, e desde o seu lançamento a alguns meses atrás
+ temos buscado acelerar o ritmo em que ele cresce, lançando semanalmente
+ novos indicadores e infográficos importantes para um panorama apurado de todas
+ as operações de uma UNIDADE PRISIONAL.
+
+ Atualmente temos 2 DASHBOARD principais: Educação e Laboral.
+ a) Educação: Este painel de controle apresenta os principais indicadores 
+    do projeto de leitura.
+    Apresentando em tempo real os índices de aprovação das resenhas, 
+    acerto literário ativo e inativo, indíce de escolaridade dos alunos
+    ativos em ao menos uma atividade educacional, bem como o índice de adesão ao projeto
+    de leitura em relação ao total de reclusos na UNIDADE PRISIONAL em questão.
+ b) Laboral: A dashboard do setor laboral apresenta por meio de um gráfico de barra
+    o total de reeducandos laborando por convênio ativo com a UNIDADE PRISIONAL em questão.
+---------------------------------------------------------------------
+
+---------------------------------------------------------------------
+ ##########Relatórios - Previsão benefício
+---------------------------------------------------------------------
+ O SigespWeb tem um sistema de relatórios bastante interessante. Nossos relatórios
+ são distribuídos na ferramenta e encontrados sempre em menus próximos ao dados
+ que eles representam.
+
+ Hoje temos os seguinte grupos de relatórios: Reforços, Colaboradores, Contas Correntes,
+ Lista Amarela
+
+ a) Reforços: O App Meu Reforço oferece um relatório em tempo real dos reforços marcados,
+    afim de que o gestor da área possa ir acompanhando as marcações e tomando 
+    as devidas ações sobre estes números sendo o caso.
+ 
+ b) Colaboradores: Esta área possui 2 importantes relatórios de colaboradores,
+    um consolidade por galeria e situação atual do laborando (admitido/demitido) e 
+    um consolidado por convênio e alocação interna (galeria) do reeducando.
+ 
+ c) Contas Correntes: Esta área possui 2 importantes relatórios 
+    relacionados as movimentações financeiras: o primeiro é um extrato consolidade
+    por colaborador e período de movimentação, e o outro é consolidado por saldo
+    de conta corrente dos colaboradores.
+
+ d) Lista Amarela: Esta é até aqui a maior área de relatórios do SigespWeb.
+    Ela agrupa um total de 7 relatórios chaves, que fornecem informações
+    vitais da operação de uma UNIDADE PRISIONAL: O primeiro deles é o
+    de transferidos consolidade por tipo de transferência, data de saída da transferência,
+    e a data de retorno previsto da transferência; outro bastante importante é o 
+    ingressos na unidade consolidado pela data do ingresso na UNIDADE PRISIONAL; temos
+    a seguir o Relatório de Previsão de Benefícios, muito usado para identificar
+    detentos com pena muito alta, ou seja, previsão de benefício distante, por assim,
+    podendo ser um potencial interno para transferência para penitenciárias quando
+    seu local de recolhimento atual for um presídio por exemplo; na sequência
+    temos um relatório totalizador de detentos consolidado por galeria e regime, depois
+    um Relatório de Saídas Temporárias previstas; e por penúltimo um Relatório dos
+    reclusos que aguardam transferência, consolidado por comarca; por fim temos um totalizador
+    de detentos por tipo de condenação, fornecendo um raio-x bastante interessante do
+    perfil de internos da unidade.
+ ---------------------------------------------------------------------

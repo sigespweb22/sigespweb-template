@@ -1,0 +1,52 @@
+{
+    "data": [
+        {
+            "applicationRole": {
+                "id": "2c5e174e-3b0e-446f-86af-483d56fd7210",
+                "normalizedName": "ADMINISTRATOR"
+            }
+        },
+        {
+            "applicationRole": {
+                "id": "b3a5b61d-7ff4-43cb-bad4-a945b150fc72",
+                "normalizedName": "USUARIOS"
+            }
+        },
+        {
+            "applicationRole":	{
+                "id": "ef60969b-dc27-44dc-b0a8-3c03a522ec64",
+                "normalizedName": "DASHBOARD_PRINCIPAL"
+            }
+        },
+        {
+            "applicationRole": {
+                "id": "b3bccdeb-e223-4ec3-a8cb-8cc6180d05c7",
+                "normalizedName": "SISTEMA"
+            }
+        },
+        {
+            "applicationRole": {
+                "id": "099e2b95-2c5c-4bdf-b1fb-f9db5bf4a5de",
+                "normalizedName": "IMPORTACOES"
+            }
+        },
+        {
+            "applicationRole": {
+                "id": "fb2cd290-92ae-4c2e-9e2b-3b8300b9bbee",
+                "normalizedName": "CARCERAGEM"
+            }
+        },
+        {
+            "applicationRole": {
+                "id": "3b97306c-1e35-4808-a44e-60b2d50ef325",
+                "normalizedName": "DETENTOS"
+            }
+        },
+        {
+            "applicationRole": {
+                "id": "99f6b971-2602-4afb-a9cb-1cec1e7d16fd",
+                "normalizedName": "DETENTOS_GERENCIAR"
+            }
+        }
+    ]
+}

@@ -1,0 +1,425 @@
+@model Sigesp.Application.ViewModels.Dashboards.Educacao.DashboardEducacaoViewModel
+
+@{
+	ViewData["Title"] = "Educação";
+	ViewData["PageName"] = "dashboard_educacao";
+	ViewData["Category0"] = @Settings.App;
+	ViewData["Category1"] = "Inteligência negócios";
+	ViewData["Category2"] = "Dashboard Principal";
+	ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i> Dashboard <span class='fw-300'>Educação</span>";
+}
+@section HeadBlock {
+<link rel="stylesheet" media="screen, print" href="~/css/miscellaneous/reactions/reactions.css">
+<link rel="stylesheet" media="screen, print" href="~/css/miscellaneous/fullcalendar/fullcalendar.bundle.css">
+<link rel="stylesheet" media="screen, print" href="~/css/miscellaneous/jqvmap/jqvmap.bundle.css">
+<link rel="stylesheet" media="screen, print" href="~/css/statistics/chartjs/chartjs.css">
+<link rel="stylesheet" media="screen, print" href="~/css/statistics/c3/c3.css">
+}
+
+@section SubheaderBlock {  
+
+}
+
+<div class="row" id="chart-start">
+	<div class="col-xl-12">
+		<div id="panel-12" class="panel">
+			<div class="panel-hdr">	
+				<h2>
+					ÍNDICE <span class="fw-300"><i>CONCEITOS DE LEITURAS</i></span> 
+				</h2>
+				<div class="panel-toolbar">
+					<button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Abrir/Fechar"></button>
+				</div>
+			</div>
+			<div class="panel-container show">
+				<div class="panel-content">
+					<div class="alert alert-success p-1">
+						Este <code>"INDICADOR"</code> tem o objetivo de demonstrar quantitativamente e percentualmente, o estado de cada CONCEITO de AVALIAÇÃO das LEITURAS DOS ALUNOS.
+					</div>							
+					<div class="row">
+						<div class="col-xl-6">
+							<div id="iConceitoAvaliacao" style="width:100%; height:300px;"></div>
+						</div>
+						<div class="col-xl-6">
+							@{
+								<div class="d-flex mt-2 mb-3">
+									<span class="fw-700">TOTAL LEITURAS TIPO "LEITURA PARA REMIÇÃO" <span class="fw-300"><i></i></span></span>
+									<span class="d-inline-block ml-auto"><span class="fw-900"><i>@Model.ChartIndiceAvaliacaoConceito.TotalLeituras</i></span></span>
+								</div>
+								<div class="d-flex mt-2">
+									PENDENTE
+									<span class="d-inline-block ml-auto">@Model.ChartIndiceAvaliacaoConceito.PendenteQ</span>
+								</div>
+								<div class="progress progress-sm mb-3">
+									<div class="progress-bar bg-info-700" role="progressbar" style='width: @Model.ChartIndiceAvaliacaoConceito.PendenteP' aria-valuenow='@Model.ChartIndiceAvaliacaoConceito.PendenteP' aria-valuemin="0" aria-valuemax="100"></div>
+								</div>
+								<div class="d-flex mt-2">
+									APROVADO
+									<span class="d-inline-block ml-auto">@Model.ChartIndiceAvaliacaoConceito.AprovadoQ</span>
+								</div>
+								<div class="progress progress-sm mb-3">
+									<div class="progress-bar bg-success-700" role="progressbar" style='width: @Model.ChartIndiceAvaliacaoConceito.AprovadoP' aria-valuenow='@Model.ChartIndiceAvaliacaoConceito.AprovadoP' aria-valuemin="0" aria-valuemax="100"></div>
+								</div>
+								<div class="d-flex">
+									INSUFICIENTE
+									<span class="d-inline-block ml-auto">@Model.ChartIndiceAvaliacaoConceito.InsuficienteQ</span>
+								</div>
+								<div class="progress progress-sm mb-g">
+									<div class="progress-bar bg-warning-700" role="progressbar" style='width: @Model.ChartIndiceAvaliacaoConceito.InsuficienteP' aria-valuenow='@Model.ChartIndiceAvaliacaoConceito.InsuficienteP' aria-valuemin="0" aria-valuemax="100"></div>
+								</div>
+								<div class="d-flex">
+									DESISTÊNCIA
+									<span class="d-inline-block ml-auto">@Model.ChartIndiceAvaliacaoConceito.DesistenciaQ</span>
+								</div>
+								<div class="progress progress-sm mb-g">
+									<div class="progress-bar bg-danger-900" role="progressbar" style='width: @Model.ChartIndiceAvaliacaoConceito.DesistenciaP' aria-valuenow='@Model.ChartIndiceAvaliacaoConceito.DesistenciaP' aria-valuemin="0" aria-valuemax="100"></div>
+								</div>
+								<div class="d-flex">
+									NÃO CUMPRIMENTO
+									<span class="d-inline-block ml-auto">@Model.ChartIndiceAvaliacaoConceito.NaoCumprimentoQ</span>
+								</div>
+								<div class="progress progress-sm mb-g">
+									<div class="progress-bar bg-danger-700" role="progressbar" style='width: @Model.ChartIndiceAvaliacaoConceito.NaoCumprimentoP' aria-valuenow='@Model.ChartIndiceAvaliacaoConceito.NaoCumprimentoP' aria-valuemin="0" aria-valuemax="100"></div>
+								</div>
+							}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xl-12">
+		<div id="panel-12" class="panel">
+			<div class="panel-hdr">	
+				<h2>
+					ÍNDICE <span class="fw-300"><i>ESCOLARIDADE - ALUNOS ATIVOS</i></span> 
+				</h2>
+				<div class="panel-toolbar">
+					<button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Abrir/Fechar"></button>
+				</div>
+			</div>
+			<div class="panel-container show">
+				<div class="panel-content">
+					<div class="alert alert-success p-1">
+						Este <code>"INDICADOR"</code> tem o objetivo de demonstrar o cenário quantitativo e percentual em tempo real da escolaridade dos ALUNOS ativos em ao menos uma ATIVIDADE EDUCACIONAL da unidade.
+					</div>							
+					<div class="row">
+						<div class="col-xl-6">
+							<div id="iEscolaridadeAlunos" style="width:100%; height:300px;"></div>
+						</div>
+						<div class="col-xl-6">
+							@{
+								<div class="d-flex mt-2 mb-3">
+									<span class="fw-700">TOTAL ALUNOS ATIVOS NA UNIDADE <span class="fw-300"><i></i></span></span>
+									<span class="d-inline-block ml-auto"><span class="fw-900"><i>@Model.ChartIndiceEscolaridadeAlunos.TotalAlunos</i></span></span>
+								</div>
+								<div class="d-flex mt-2">
+									NÃO INFORMADO
+									<span class="d-inline-block ml-auto">@Model.ChartIndiceEscolaridadeAlunos.NaoInformadoQ</span>
+								</div>
+								<div class="progress progress-sm mb-3">
+									<div class="progress-bar bg-fusion-700" role="progressbar" style='width: @Model.ChartIndiceEscolaridadeAlunos.NaoInformadoP' aria-valuenow='@Model.ChartIndiceEscolaridadeAlunos.NaoInformadoP' aria-valuemin="0" aria-valuemax="100"></div>
+								</div>
+								<div class="d-flex mt-2">
+									ENSINO FUNDAMENTAL I
+									<span class="d-inline-block ml-auto">@Model.ChartIndiceEscolaridadeAlunos.EnsinoFundamentalIQ</span>
+								</div>
+								<div class="progress progress-sm mb-3">
+									<div class="progress-bar bg-success-700" role="progressbar" style='width: @Model.ChartIndiceEscolaridadeAlunos.EnsinoFundamentalIP' aria-valuenow='@Model.ChartIndiceEscolaridadeAlunos.EnsinoFundamentalIP' aria-valuemin="0" aria-valuemax="100"></div>
+								</div>
+								<div class="d-flex">
+									ENSINO FUNDAMENTAL II
+									<span class="d-inline-block ml-auto">@Model.ChartIndiceEscolaridadeAlunos.EnsinoFundamentalIIQ</span>
+								</div>
+								<div class="progress progress-sm mb-g">
+									<div class="progress-bar bg-danger-700" role="progressbar" style='width: @Model.ChartIndiceEscolaridadeAlunos.EnsinoFundamentalIIP' aria-valuenow='@Model.ChartIndiceEscolaridadeAlunos.EnsinoFundamentalIIP' aria-valuemin="0" aria-valuemax="100"></div>
+								</div>
+								<div class="d-flex">
+									ENSINO MÉDIO
+									<span class="d-inline-block ml-auto">@Model.ChartIndiceEscolaridadeAlunos.EnsinoMedioQ</span>
+								</div>
+								<div class="progress progress-sm mb-g">
+									<div class="progress-bar bg-warning-700" role="progressbar" style='width: @Model.ChartIndiceEscolaridadeAlunos.EnsinoMedioP' aria-valuenow='@Model.ChartIndiceEscolaridadeAlunos.EnsinoMedioP' aria-valuemin="0" aria-valuemax="100"></div>
+								</div>
+								<div class="d-flex">
+									ENSINO SUPERIOR
+									<span class="d-inline-block ml-auto">@Model.ChartIndiceEscolaridadeAlunos.EnsinoSuperiorQ</span>
+								</div>
+								<div class="progress progress-sm mb-g">
+									<div class="progress-bar bg-info-700" role="progressbar" style='width: @Model.ChartIndiceEscolaridadeAlunos.EnsinoSuperiorP' aria-valuenow='@Model.ChartIndiceEscolaridadeAlunos.EnsinoSuperiorP' aria-valuemin="0" aria-valuemax="100"></div>
+								</div>
+							}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xl-12">
+		<div id="panel-12" class="panel">
+			<div class="panel-hdr">	
+				<h2>
+					ACERVO <span class="fw-300"><i>LITERÁRIO - BIBLIOTECA VIRTUAL</i></span> 
+				</h2>
+				<div class="panel-toolbar">
+					<button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Abrir/Fechar"></button>
+				</div>
+			</div>
+			<div class="panel-container show">
+				<div class="panel-content">
+					<div class="alert alert-success p-1">
+						Este <code>"INFOGRÁFICO"</code> tem o objetivo de demonstrar o cenário quantitativo e percentual em tempo real do acervo literário da unidade.
+					</div>							
+					<div class="row">						
+						<div class="col-xl-6 mt-6">
+							@{
+								<div class="d-flex mt-2 mb-3">
+									<span class="fw-700">ACERVO TOTAL <span class="fw-300"><i></i></span></span>
+									<span class="d-inline-block ml-auto"><span class="fw-900"><i>@Model.ChartAcervoLiterario.Total</i></span></span>
+								</div>
+								<div class="d-flex mt-2">
+									ATIVOS
+									<span class="d-inline-block ml-auto">@Model.ChartAcervoLiterario.AtivosQ</span>
+								</div>
+								<div class="progress progress-sm mb-3">
+									<div class="progress-bar bg-success-500" role="progressbar" style='width: @Model.ChartAcervoLiterario.AtivosP' aria-valuenow='@Model.ChartAcervoLiterario.AtivosP' aria-valuemin="0" aria-valuemax="100"></div>
+								</div>
+								<div class="d-flex">
+									INATIVOS
+									<span class="d-inline-block ml-auto">@Model.ChartAcervoLiterario.InativosQ</span>
+								</div>
+								<div class="progress progress-sm mb-3">
+									<div class="progress-bar bg-danger-500" role="progressbar" style='width: @Model.ChartAcervoLiterario.InativosP' aria-valuenow='@Model.ChartAcervoLiterario.InativosP' aria-valuemin="0" aria-valuemax="100"></div>
+								</div>
+								<div class="d-flex">
+									DISPONÍVEIS
+									<span class="d-inline-block ml-auto">@Model.ChartAcervoLiterario.DisponiveisQ</span>
+								</div>
+								<div class="progress progress-sm mb-3">
+									<div class="progress-bar bg-primary-500" role="progressbar" style='width: @Model.ChartAcervoLiterario.DisponiveisP' aria-valuenow='@Model.ChartAcervoLiterario.DisponiveisP' aria-valuemin="0" aria-valuemax="100"></div>
+								</div>
+								<div class="d-flex">
+									INDISPONÍVEIS
+									<span class="d-inline-block ml-auto">@Model.ChartAcervoLiterario.IndisponiveisQ</span>
+								</div>
+								<div class="progress progress-sm mb-g">
+									<div class="progress-bar bg-warning-500" role="progressbar" style='width: @Model.ChartAcervoLiterario.IndisponiveisP' aria-valuenow='@Model.ChartAcervoLiterario.IndisponiveisP' aria-valuemin="0" aria-valuemax="100"></div>
+								</div>
+							}
+						</div>
+						<div class="col-xl-6">
+							<div id="pieChart" style="width:100%; height:300px;"></div>
+						</div>
+					</div>
+					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row" id="chart-end">
+	<div class="col-xl-12">
+		<div id="panel-12" class="panel">
+			<div class="panel-hdr">	
+				<h2>
+					ÍNDICE <span class="fw-300"><i>ADESÃO - PROJETO LEITURA</i></span> 
+				</h2>
+				<div class="panel-toolbar">
+					<button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Abrir/Fechar"></button>
+				</div>
+			</div>
+			<div class="panel-container show">
+				<div class="panel-content">
+					<div class="alert alert-success p-1">
+						Este <code>"INDICADOR"</code> tem o objetivo de demonstrar o cenário quantitativo e percentual em tempo real do total de participantes do PROJETO DE LEITURA em relação ao total de RECLUSOS da unidade.
+					</div>							
+					<div class="row">
+						<div class="col-xl-6">
+							<div id="iAdesao" style="width:100%; height:300px;"></div>
+						</div>
+						<div class="col-xl-6 mt-6">
+							@{
+								<div class="d-flex mt-2 mb-3">
+									<span class="fw-700">TOTAL REEDUCANDOS RECOLHIDOS NA UNIDADE <span class="fw-300"><i></i></span></span>
+									<span class="d-inline-block ml-auto"><span class="fw-900"><i>@Model.ChartIndiceAdesaoProjetoLeitura.TotalDetentos</i></span></span>
+								</div>
+								<div class="d-flex mt-2">
+									PARTICIPANTES
+									<span class="d-inline-block ml-auto">@Model.ChartIndiceAdesaoProjetoLeitura.ParticipantesQ</span>
+								</div>
+								<div class="progress progress-sm mb-3">
+									<div class="progress-bar bg-warning-500" role="progressbar" style='width: @Model.ChartIndiceAdesaoProjetoLeitura.ParticipantesP' aria-valuenow='@Model.ChartIndiceAdesaoProjetoLeitura.ParticipantesP' aria-valuemin="0" aria-valuemax="100"></div>
+								</div>
+								<div class="d-flex">
+									NÃO PARTICIPANTES
+									<span class="d-inline-block ml-auto">@Model.ChartIndiceAdesaoProjetoLeitura.NaoParticipantesQ</span>
+								</div>
+								<div class="progress progress-sm mb-g">
+									<div class="progress-bar bg-primary-500" role="progressbar" style='width: @Model.ChartIndiceAdesaoProjetoLeitura.NaoParticipantesP' aria-valuenow='@Model.ChartIndiceAdesaoProjetoLeitura.NaoParticipantesP' aria-valuemin="0" aria-valuemax="100"></div>
+								</div>
+							}
+						</div>						
+					</div>
+					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section ScriptsBlock {
+	<script src="~/js/dependency/moment/moment.js"></script>	
+	<script src="~/js/miscellaneous/fullcalendar/fullcalendar.bundle.js"></script>
+	<script src="~/js/statistics/sparkline/sparkline.bundle.js"></script>
+	<script src="~/js/statistics/easypiechart/easypiechart.bundle.js"></script>
+	<script src="~/js/statistics/flot/flot.bundle.js"></script>
+	<script src="~/js/miscellaneous/jqvmap/jqvmap.bundle.js"></script>
+	<script src="~/js/statistics/flot/flot.bundle.js"></script>
+	<script src="~/js/statistics/chartjs/chartjs.bundle.js"></script>
+	<script src="~/js/statistics/d3/d3.js"></script>
+	<script src="~/js/statistics/c3/c3.js"></script>
+	
+	<script>
+		var colors = [
+			color.success._500,
+			color.danger._500
+		];
+
+		var colorsIAdesao = [
+			color.warning._500,
+			color.info._500
+		];
+
+		var colorsIEscolaridadeAlunos = [
+			color.fusion._700,
+			color.success._700, 
+			color.danger._700,
+			color.warning._700,
+			color.info._700
+		];
+
+		var colorsIConceitoAvaliacao = [
+			color.info._700,
+			color.success._700, 
+			color.warning._700,
+			color.danger._900,
+			color.danger._700
+		];
+
+		var pieChart = c3.generate({
+			bindto: "#pieChart",
+			data: {
+				columns: [
+					['ATIVOS', @Model.ChartAcervoLiterario.AtivosP.Replace("%", "")],
+					['INATIVOS', @Model.ChartAcervoLiterario.InativosP.Replace("%", "")]
+				],
+				type : 'pie'
+			},
+			color: {
+				pattern: colors
+			}
+		});
+
+		var iAdesao = c3.generate({
+			bindto: "#iAdesao",
+			data: {
+				columns: [
+					['PARTICIPANTES', @Model.ChartIndiceAdesaoProjetoLeitura.ParticipantesP.Replace("%", "")],
+					['NÃO PARTICIPANTES', @Model.ChartIndiceAdesaoProjetoLeitura.NaoParticipantesP.Replace("%", "")]
+				],
+				type : 'pie'
+			},
+			color: {
+				pattern: colorsIAdesao
+			}
+		});
+
+		var iEscolaridadeAlunos = c3.generate({
+			bindto: "#iEscolaridadeAlunos",
+			data: {
+				columns: [
+					['NÃO INFORMADO', @Model.ChartIndiceEscolaridadeAlunos.NaoInformadoP.Replace("%", "")],
+					['FUNDAMENTAL I', @Model.ChartIndiceEscolaridadeAlunos.EnsinoFundamentalIP.Replace("%", "")],
+					['FUNDAMENTAL II', @Model.ChartIndiceEscolaridadeAlunos.EnsinoFundamentalIIP.Replace("%", "")],
+					['MÉDIO', @Model.ChartIndiceEscolaridadeAlunos.EnsinoMedioP.Replace("%", "")],
+					['SUPERIOR', @Model.ChartIndiceEscolaridadeAlunos.EnsinoSuperiorP.Replace("%", "")]
+				],
+				type : 'pie'
+			},
+			color: {
+				pattern: colorsIEscolaridadeAlunos
+			}
+		});
+
+		var iConceitoAvaliacao = c3.generate({
+			bindto: "#iConceitoAvaliacao",
+			data: {
+				columns: [
+					['PENDENTE', @Model.ChartIndiceAvaliacaoConceito.PendenteP.Replace("%", "")],
+					['APROVADO', @Model.ChartIndiceAvaliacaoConceito.AprovadoP.Replace("%", "")],
+					['INSUFICIENTE', @Model.ChartIndiceAvaliacaoConceito.InsuficienteP.Replace("%", "")],
+					['DESISTÊNCIA', @Model.ChartIndiceAvaliacaoConceito.DesistenciaP.Replace("%", "")],
+					['NÃO CUMPRIMENTO', @Model.ChartIndiceAvaliacaoConceito.NaoCumprimentoP.Replace("%", "")]
+				],
+				type : 'pie'
+			},
+			color: {
+				pattern: colorsIConceitoAvaliacao
+			}
+		});
+
+		var down = function() {
+			$('html, body').animate({ 
+				scrollTop: $('#chart-end').offset().top 
+			}, 500);
+			up();
+		};
+
+		var up = function() {
+			$('html, body').animate({ 
+				scrollTop: $('#chart-start').offset().top
+			}, 500);
+			down();
+		};
+
+		var scrollAutomatic = function () {
+			var posicaoAtualScroll = this.scrollY;
+
+			if (posicaoAtualScroll <= 548 && posicaoAtualScroll != 0)
+			{
+				$("html, body").animate({ 
+					scrollTop: "0px" 
+				}, 10000);
+
+				posicaoAtualScroll = 0;
+			}
+			else if (posicaoAtualScroll == 0)
+			{
+				$("html, body").animate({
+					scrollTop: "1600px"
+				}, 10000);
+			} else if (posicaoAtualScroll <= 648 && posicaoAtualScroll != 0)
+			{
+				$("html, body").animate({ 
+					scrollTop: "0px"
+				}, 10000);
+				posicaoAtualScroll = 1600;
+			}
+		};
+		
+		$(document).ready(function() {
+			// automatic scroll inative
+			@* setInterval(function () {
+				scrollAutomatic();
+			}, 15000); *@
+		});
+
+	</script>
+}

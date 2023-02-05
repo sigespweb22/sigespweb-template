@@ -1,0 +1,403 @@
+@{ 
+	ViewData["Title"] = "Reforço";
+	ViewData["PageName"] = "servidor-estado-reforco_list";
+	ViewData["Category0"] = @Settings.App;
+	ViewData["Category1"] = "Meu Reforço";
+	ViewData["Heading"] = "<i class='subheader-icon fal fa-calendar-star'></i> Meus reforços<sup class='badge badge-primary fw-500'>NOVO</sup>";
+	ViewData["PageDescription"] = "Listagem dos meus reforços.";
+}
+@section HeadBlock {
+	<link rel="stylesheet" media="screen, print" href="~/css/miscellaneous/fullcalendar/fullcalendar.bundle.css">
+}
+<div class="row">
+	<div class="col-xl-12">
+		<div id="panel-1" class="panel">
+			<div class="panel-hdr">	
+				<h2>
+					Gerenciamento dos <span class="fw-300"><i>Meus reforços</i></span> 
+				</h2>
+				<div class="panel-toolbar">
+					<button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Abrir/Fechar"></button>
+				</div>
+			</div>
+			<div class="panel-container show">
+				<div class="panel-content">									
+					<div id="calendar"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section ScriptsBlock {
+	<script src="~/js/dependency/moment/moment.js"></script>
+	<script src="~/js/miscellaneous/fullcalendar/fullcalendar.bundle.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/locales/pt-br.js"></script>
+	<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	
+	<script>
+		const apiServidorEstadoReforcoCreate = 'api/servidores-estado-reforcos/create';
+		var todayDate = moment().startOf('day');
+		var YM = todayDate.format('YYYY-MM');
+		var YESTERDAY = todayDate.clone().subtract(1, 'day').format('YYYY-MM-DD');
+		var TODAY = todayDate.format('YYYY-MM-DD');
+		var TOMORROW = todayDate.clone().add(1, 'day').format('YYYY-MM-DD');
+
+		let eventos = [
+			{
+				allday: true,
+				title: 'INDISPONIVEL',
+				start: YM + '+03T00:00:00',
+				end: YM + '+03T23:59:00',
+				description: 'This is a test description', //this is currently bugged: https://github.com/fullcalendar/fullcalendar/issues/1795
+				className: "bg-danger border-danger"
+			},
+			{
+				title: 'INDISPONIVEL',
+				start: YM + '-06',
+				className: "bg-danger border-danger"
+			},
+			{
+				title: 'Reporting',
+				start: YM + '-14T13:30:00',
+				end: YM + '-14',
+				className: "bg-white bg-danger border-primary text-primary"
+			},
+			{
+				title: 'Company Trip',
+				start: YM + '-02',
+				end: YM + '-03',
+				className: "bg-primary border-primary text-white"
+			},
+			{
+				title: 'NextGen Expo 2019 - Product Release',
+				start: YM + '-03',
+				end: YM + '-05',
+				className: "bg-info border-info text-white"
+			},
+			{
+				title: 'Dinner',
+				start: YM + '-12',
+				end: YM + '-10'
+			},
+			{
+				id: 999,
+				title: 'Repeating Event',
+				start: YM + '-09T16:00:00',
+				className: "bg-danger border-danger text-white"
+			},
+			{
+				id: 1000,
+				title: 'Repeating Event',
+				start: YM + '-16T16:00:00'
+			},
+			{
+				title: 'Conference',
+				start: YESTERDAY,
+				end: TOMORROW,
+				className: "bg-success border-success text-white"
+			},
+			{
+				title: 'Meeting',
+				start: TODAY + 'T10:30:00',
+				end: TODAY + 'T12:30:00',
+				className: "bg-primary text-white border-primary"
+			},
+			{
+				title: 'Lunch',
+				start: TODAY + 'T12:00:00',
+				className: "bg-info border-info"
+			},
+			{
+				title: 'Meeting',
+				start: TODAY + 'T14:30:00',
+				className: "bg-warning text-dark border-warning"
+			},
+			{
+				title: 'Happy Hour',
+				start: TODAY + 'T17:30:00',
+				className: "bg-success border-success text-white"
+			},
+			{
+				title: 'Dinner',
+				start: TODAY + 'T20:00:00',
+				className: "bg-danger border-danger text-white"
+			},
+			{
+				title: 'Birthday Party',
+				start: TOMORROW + 'T07:00:00',
+				className: "bg-primary text-white border-primary text-white"
+			},
+			{
+				title: 'Gotbootstrap Meeting',
+				url: 'http://gotbootstrap.com/',
+				start: YM + '-28',
+				className: "bg-info border-info text-white"
+			}
+		];
+
+		var getAllReforco = function ()
+		{
+
+		};
+
+		var createOrEditReforco = function (infos, crud) {
+			if (infos == null ||
+				infos === 'undefined')
+			{
+				Swal.fire({
+					title: "Problemas ao obter uma data para marcação de reforço",
+					text: " Atualize a página e tente novamente. Persistindo o problema, informe a equipe técnica do sistema.",
+					icon: "error",
+					timer: 4000,
+					showCancelButton: false,
+					showConfirmButton: true,
+					confirmButtonColor: "#fd3995",
+					timerProgressBar: true,
+					buttons: false
+				});
+			}
+			else
+			{
+				/** validations generals **/
+
+				/** check availability **/
+				if (infos.event != null)
+				{
+					if (infos.event.title == 'INDISPONIVEL')
+					{
+						return Swal.fire({
+									title: "INDISPONÍVEL",
+									text: "Não é possível marcar reforço nesta data, pois está indisponível.",
+									icon: "error",
+									timer: 5000,
+									timerProgressBar: true,
+									showCancelButton: false,
+									showConfirmButton: false,
+									buttons: false
+								});
+					}
+				}
+
+				/** markup confirmation**/
+				var semana = ["Domingo", "Segunda-Feira", "Terça-Feira", "Quarta-Feira", "Quinta-Feira", "Sexta-Feira", "Sábado"];
+				var weekday = semana[infos.date.getDay()];
+				var dataReforco = infos.dateStr.substring(8,10) + "/" + infos.dateStr.substring(5,7) + "/" + infos.dateStr.substring(0,4);
+
+				Swal.fire({
+					title: "Confirmação de agendamento",
+					text: "Deseja realmente agendar um de seus reforços para "+ weekday + " - " + dataReforco + "?",
+					showDenyButton: false,
+					showCancelButton: true,
+					confirmButtonText: 'Sim',
+					confirmButtonColor: "#179c8e",
+					cancelButtonText: 'Desistir',
+				}).then((result) => {
+					if (result.isConfirmed) {
+						const servidorEstadoReforcoViewModel = {
+							dataPrevistaInicio: infos.dateStr
+						};
+
+						$.ajax({
+							url: apiServidorEstadoReforcoCreate, 
+							type: 'POST',
+							contentType: "application/json;charset=utf-8",
+							data: JSON.stringify(servidorEstadoReforcoViewModel, null, 4),
+							success: function (data) {
+								if(data == 1)
+								{
+									Swal.fire({
+										text: "Reforço agendado com sucesso!",
+										icon: "success",
+										timer: 3000,
+										showCancelButton: false,
+										showConfirmButton: false,
+										confirmButtonColor: "#179c8e",
+										timerProgressBar: true,
+										buttons: false
+									});
+								}
+							},
+							error: function (error, jqXHR, textStatus, errorThrown) {
+								if (error.status == 400)
+								{
+									Swal.fire({
+										title: "Marcação inválida!",
+										text: error.responseText,
+										icon: "error",
+										timer: 10000,
+										timerProgressBar: true,
+										showCancelButton: false,
+										showConfirmButton: false,
+										buttons: false
+									});
+								} else if (error.status == 500) {
+									Swal.fire({
+										title: "Marcação inválida!",
+										text: error.responseText.title,
+										icon: "error",
+										timer: 10000,
+										timerProgressBar: true,
+										showCancelButton: false,
+										showConfirmButton: false,
+										buttons: false
+									});
+								} else {
+									const returnObj = Object.entries(error.responseJSON.errors);
+									returnObj.forEach(function(err) {
+										err[1].forEach(function (int) {
+											toastr["error"](err[0], int);
+										})
+									});
+								}
+							}
+						});
+					}
+				});
+			}
+		};
+		
+		$(document).ready(function () {
+			var calendarEl = document.getElementById('calendar');
+			var calendar = new FullCalendar.Calendar(calendarEl, {
+				plugins: ['dayGrid', 'list', 'timeGrid', 'interaction', 'bootstrap'],
+				themeSystem: 'bootstrap',
+				locale: 'pt-br',
+				timeZone: 'UTC',
+				monthNames: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+				monthNamesShort: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+				dayNames: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sabado'],
+				dayNamesShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'],
+				//dateAlignment: "month", //week, month
+				buttonText: {
+					today:    'hoje',
+					month:    'mês',
+					/*week:     'agenda semana por dia',*/
+					day:      'dia',
+					list:     'semana'
+				},
+				eventTimeFormat: {
+					hour: 'numeric',
+					minute: '2-digit',
+					meridiem: 'short'
+				},
+				navLinks: true,			
+				header: {
+					left: 'prev,next today addEventButton',
+					center: 'title',
+					@* right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek' *@
+					right: 'dayGridMonth,timeGridDay,listWeek'
+				},
+				footer: {
+					left:   '',
+					center: '',
+					right:  ''
+				},
+				@* customButtons: {
+					addEventButton: {
+						text: '+reforço',
+						click: function() {
+							Swal.fire({
+								title: error.responseText,
+								text: "Deseja recolhê-lo em sua unidade?",
+								showDenyButton: false,
+								showCancelButton: true,
+								confirmButtonText: 'Sim',
+								confirmButtonColor: "#179c8e",
+								cancelButtonText: 'Cancelar',
+							}).then((result) => {
+								if (result.isConfirmed) {
+									$.ajax({ 
+										url: apiChangeTenancy + rowdata.ipen, 
+										type: 'GET',
+										contentType: "application/json;charset=utf-8",
+										success: function (data) {
+											$(".modal").modal('hide');
+											$('#dt-basic-example').dataTable().api().ajax.reload();
+
+											if(data == 1)
+											{
+												Swal.fire({
+													text: "Detento recolhido com sucesso!",
+													icon: "success",
+													timer: 2000,
+													showCancelButton: false,
+													showConfirmButton: true,
+													confirmButtonColor: "#179c8e",
+													timerProgressBar: true,
+													buttons: false
+												});
+											} else {
+
+											}
+										},
+										error: function (error, jqXHR, textStatus, errorThrown) {
+											$(".modal").modal('hide');
+											$('#dt-basic-example').dataTable().api().ajax.reload();
+
+											if (error.status == 400)
+											{
+												toastr["error"](error.responseText);
+											} else if (error.status == 500) {
+												toastr["error"](error.responseJSON.title);
+											} else {
+												const returnObj = Object.entries(error.responseJSON.errors);
+												returnObj.forEach(function(err) {
+													err[1].forEach(function (int) {
+														toastr["error"](err[0], int);
+													})
+												});
+											}
+										}
+									});
+								}
+							});
+							
+							var dateStr = prompt('Enter a date in YYYY-MM-DD format');
+							var date = new Date(dateStr + 'T00:00:00'); // will be in local time
+							if (!isNaN(date.valueOf())) { // valid?
+								calendar.addEvent({
+									title: 'dynamic event',
+									start: date,
+									allDay: true
+								});
+								alert('Great. Now, update your database...');
+							} else {
+								alert('Invalid date.');
+							}
+						}
+					}
+				}, *@
+				//height: 700,
+				editable: true,
+				eventLimit: true, // allow "more" link when too many events
+				views: {
+				sevenDays: {
+					type: 'agenda',
+					buttonText: '7 Days',
+					visibleRange: function(currentDate) {
+							return {
+								start: currentDate.clone().subtract(2, 'days'),
+								end: currentDate.clone().add(5, 'days'),
+							};
+						},
+						duration: {days: 7},
+						dateIncrement: { days: 1 },
+					},
+				},
+				events: eventos,
+				dateClick: function(info) {
+					createOrEditReforco(info, 'create')
+				},
+				eventClick: function(info) {
+					createOrEditReforco(info, 'edit')
+				}
+				/*viewRender: function(view) {
+					localStorage.setItem('calendarDefaultView',view.name);
+					$('.fc-toolbar .btn-primary').removeClass('btn-primary').addClass('btn-outline-secondary');
+				},*/
+			});
+			calendar.render();
+		});
+	</script>
+}

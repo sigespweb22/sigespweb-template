@@ -1,0 +1,699 @@
+@model Sigesp.Application.ViewModels.ApplicationUserViewModel
+
+@{
+	ViewData["Title"] = "Meu perfil";
+	ViewData["PageName"] = "usuario_perfil";
+	ViewData["Category0"] = @Settings.App;
+	ViewData["Category1"] = "Sistema";
+    ViewData["Category2"] = "Usuários perfil";
+	ViewData["Heading"] = "<i class='subheader-icon fal fa-user-circle'></i> Meu perfil<span class='fw-300'></span> <sup class='badge badge-primary fw-500'>NOVO</sup>";
+	ViewData["PageDescription"] = "Gerenciamento dos meus dados de usuário";
+}
+@section HeadBlock {
+	<link rel="stylesheet" media="screen, print" href="~/css/formplugins/cropperjs/cropper.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/fa-solid.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/formplugins/select2/select2.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/notifications/sweetalert2/sweetalert2.bundle.css">
+}
+
+<div class="row">
+	<div class="col-xl-12">
+		<div id="panel-1" class="panel">
+			<div class="panel-hdr">	
+				<h2>
+					Gerenciamento dos <span class="fw-300"><i>Dados de perfil do usuário</i></span> 
+				</h2>
+				<div class="panel-toolbar">
+					<button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Abrir/Fechar"></button>
+				</div>
+			</div>
+			<div class="panel-container show">
+				<div class="panel-content">
+					<form id="perfil-form" method="post">
+						<div class="form-group">
+							<div class="row mb-2">
+								<div class="col-lg-4">
+									<div class="form-group">
+										<label class="form-label" for="nome">
+											Nome: <span class="text-danger">*</span>
+										</label>
+										<input type="text" id="nome" 
+											name="nome"
+											class="form-control mb-2" 
+											placeholder="Informe um nome" 
+											value="@(Model.ContaUsuarioViewModel.Nome)" required>    
+									</div>
+								</div>
+								<div class="col-lg-4">
+									<div class="form-group">
+										<label class="form-label" for="userName">
+											Usuário:
+										</label>
+										<input type="text" id="userName" 
+											name="userName"
+											class="form-control mb-2" 
+											placeholder="Informe um nome" 
+											value="@(Model.UserName)" disabled>    
+									</div>
+								</div>
+								<div class="col-lg-4 ">
+									<div class="form-group">
+										<label class="form-label" for="password">
+											Senha:
+										</label>
+										<div class="input-group">
+											<input type="password" 
+												id="password" name="password"
+												class="form-control"
+												 placeholder="Informe uma senha" 
+												 		aria-label="Informe uma senha" 
+														 	aria-describedby="button-addon5">
+											<div class="input-group-append">
+												<button class="btn btn-dark text-white" 
+													type="button" 
+														id="button-addon5" onclick="showOrHidePassword()">
+															<i class="@(Settings.Theme.IconPrefix) fa-eye"></i>
+												</button>
+											</div>
+										</div>
+										<div class="help-block">Sua senha deve ter de 6 a 20 caracteres, conter ao menos uma letra maiúscula, um número, um caracter especial e não deve conter espaços.</div>
+									</div>
+								</div>
+								<div class="col-lg-3 mt-3">
+									<div class="form-group">
+										<label class="form-label" for="email">
+											E-mail: <span class="text-danger">*</span>
+										</label>
+										<input type="text" id="email" 
+											name="email"
+											class="form-control" placeholder="Informe um e-mail" 
+												value="@(Model.Email)" disabled>
+									</div>
+								</div>
+								<div class="col-lg-3 mt-3">
+									<div class="form-group">
+										<label class="form-label" 
+											for="setor">
+											Setor:
+										</label>
+										<select name="setor" 
+												class="select2 form-control" 
+													id="setor" required>
+                            			</select>
+									</div>
+								</div>
+								<div class="col-lg-3 mt-3">
+									<div class="form-group">
+										<label class="form-label" 
+											for="funcao">
+											Função: <span class="text-danger">*</span>
+										</label>
+										<select name="funcao" 
+												class="select2 form-control" 
+													id="funcao" required>
+                            			</select>
+									</div>
+								</div>
+								<div class="col-lg-3 mt-3">
+									<div class="form-group">
+										<label class="form-label" 
+											for="tema">
+											Tema: <span class="text-danger">*</span>
+										</label>
+										<select name="tema" 
+												class="select2 form-control" 
+													id="tema" required>
+                            			</select>
+									</div>
+								</div>
+							</div>
+							<div class="row mt-3">
+								<div class="col-lg-12">
+									<div class="form-group">
+										<label class="h2 form-label">Escolha da foto de perfil</label>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="panel-container show">
+									<div class="panel-content">
+										<div class="alert alert-warning p-1">
+											<strong>Nota:</strong> Para obter uma imagem de perfil, primeiro <code>localize sua foto em seu computador</code>, após, <code>centralize o quadrado que está sobre a imagem</code> buscando um recorte de imagem <strong>similar a uma foto 3x4.</strong> Depois clique em <code>Recortar foto</code> para confirmar sua escolha.
+										</div>								
+										<div class="container">
+											<div class="row">
+												<div class="col-xl-9">
+													<div class="img-container">
+														@if (Model.ContaUsuarioViewModel.PerfilFoto.IsNullOrEmpty())
+														{
+															<img id="image" src="~/img/avatar_hipster.jpg"
+																	alt="Avatar demonstrativo"/>
+														} else {
+															<img id="image" src="@(Model.ContaUsuarioViewModel.PerfilFoto)"
+																	alt="Avatar demonstrativo"/>
+														}
+													</div>
+												</div>
+												<div class="col-xl-3">
+													<div class="docs-preview clearfix">
+														<div class="img-preview preview-lg"></div>
+														<div class="img-preview preview-md"></div>
+														<div class="img-preview preview-sm"></div>
+														<div class="img-preview preview-xs"></div>
+													</div>
+													<div class="docs-data">
+														<div class="input-group input-group-sm">
+															<span class="input-group-prepend">
+															<label class="input-group-text" for="dataX">X</label>
+															</span>
+															<input type="text" class="form-control" id="dataX" placeholder="x">
+															<span class="input-group-append">
+															<span class="input-group-text">px</span>
+															</span>
+														</div>
+														<div class="input-group input-group-sm">
+															<span class="input-group-prepend">
+															<label class="input-group-text" for="dataY">Y</label>
+															</span>
+															<input type="text" class="form-control" id="dataY" placeholder="y">
+															<span class="input-group-append">
+															<span class="input-group-text">px</span>
+															</span>
+														</div>
+														<div class="input-group input-group-sm">
+															<span class="input-group-prepend">
+															<label class="input-group-text" for="dataWidth">Largura</label>
+															</span>
+															<input type="text" class="form-control" id="dataWidth" placeholder="Largura">
+															<span class="input-group-append">
+															<span class="input-group-text">px</span>
+															</span>
+														</div>
+														<div class="input-group input-group-sm">
+															<span class="input-group-prepend">
+															<label class="input-group-text" for="dataHeight">Altura</label>
+															</span>
+															<input type="text" class="form-control" id="dataHeight" placeholder="Altura">
+															<span class="input-group-append">
+															<span class="input-group-text">px</span>
+															</span>
+														</div>
+														<div class="input-group input-group-sm">
+															<span class="input-group-prepend">
+															<label class="input-group-text" for="dataScaleX">Escala X</label>
+															</span>
+															<input type="text" class="form-control" id="dataScaleX" placeholder="Escala X">
+														</div>
+														<div class="input-group input-group-sm">
+															<span class="input-group-prepend">
+															<label class="input-group-text" for="dataScaleY">Escala Y</label>
+															</span>
+															<input type="text" class="form-control" id="dataScaleY" placeholder="Escala Y">
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-lg-9 docs-buttons">
+													<div class="btn-group">
+														<button type="button" class="btn btn-primary" data-method="reset" title="Reset">
+														<span class="docs-tooltip" data-toggle="tooltip" data-animation="false" title="">
+														<span class="fas fa-sync"></span>
+														</span>
+														</button>
+														<label class="btn btn-primary btn-upload" for="inputImage" title="Upload foto de perfil">
+														<input type="file" class="sr-only" id="inputImage" name="file" accept=".jpg,.jpeg,.png,.gif,.bmp,.tiff">
+														<span class="docs-tooltip" data-toggle="tooltip" data-animation="false" title="Buscar sua foto no computador">
+														<span class="fas fa-image mr-1"></span> Buscar foto no computador
+														</span>
+														</label>
+													</div>
+													<div class="btn-group btn-group-crop">
+														<button type="button" class="btn btn-outline-primary" data-method="getCroppedCanvas" data-option="{ &quot;width&quot;: 120, &quot;height&quot;: 120 }">
+														<span class="docs-tooltip" data-toggle="tooltip" data-animation="false" title="">
+														Recortar foto
+														</span>
+														</button>
+													</div>
+													<div class="modal fade docs-cropped" id="getCroppedCanvasModal" aria-hidden="true" aria-labelledby="getCroppedCanvasTitle" role="dialog" tabindex="-1">
+														<div class="modal-dialog">
+															<div class="modal-content">
+																<div class="modal-header">
+																	<h5 class="modal-title" id="getCroppedCanvasTitle">Veja como ficou sua foto :)</h5>
+																	<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+																	<span aria-hidden="true">&times;</span>
+																	</button>
+																</div>
+																<div class="modal-body"></div>
+																<div class="modal-footer">
+																	<button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+																	<a class="btn btn-primary" id="download" href="javascript:void(0);" download="cropped.jpg">Caso queira, faça o download da sua nova foto de perfil</a>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row text-right mb-2">
+								<div class="col-lg-12">
+									<a class="mb-2 mr-2">
+										<button type="button" id="perfil-save"
+											 class="btn btn-warning waves-effect waves-themed text-dark">
+											<span class="fal fa-save fs-lg mr-1"></span> Salvar
+										</button>
+									</a>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>	
+	</div>
+</div>
+
+@section ScriptsBlock {
+	<script src="~/js/formplugins/cropperjs/cropper.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+    <script src="~/js/formplugins/select2/select2.bundle.js"></script>
+    <script src="~/js/datagrid/datatables/datatables.export.js"></script>
+    <script src="~/js/notifications/toastr/toastr.js"></script>
+    <script src="~/js/extensions/automapper-extensions.js"></script>
+	<script src="~/js/extensions/jquery-serialization-extensions.js"></script>
+	<script src="~/js/notifications/sweetalert2/sweetalert2.bundle.js"></script>
+
+	<script>
+		function ContaUsuarioViewModel(temaAtual) {
+			this.temaAtual = temaAtual
+		}
+
+		function ApplicationUserViewModel(userId, userName, email, password,
+											twoFactorEnable, nome, perfilFoto, 
+											setor, funcao) {
+			this.userId = userId;
+			this.userName = userName;
+			this.email = email;
+			this.password = password;
+			this.twoFactorEnable = twoFactorEnable;
+			this.nome = nome;
+			this.perfilFoto = perfilFoto;
+			this.setor = setor;
+			this.funcao = funcao;
+			this.ContaUsuarioViewModel = new ContaUsuarioViewModel()
+		};
+
+		const applicationUserViewModel = new ApplicationUserViewModel();
+
+		var showOrHidePassword = function () {
+			var typeInput = $('#password').attr('type');
+
+			if (typeInput == 'password')
+			{
+				$('#password').prop('type', 'text');
+			}
+			else
+			{
+				$('#password').prop('type', 'password');
+			}
+		};
+
+		$("#perfil-save").click(function (event) {
+            var obj = $("#perfil-form").serializeJSON();
+			const urlEdit = `@Url.Action("UpdatePerfil", "Usuario")`;
+
+			applicationUserViewModel.email = obj.email;
+			applicationUserViewModel.setor = obj.setor;
+			applicationUserViewModel.funcao = obj.funcao;
+			applicationUserViewModel.nome = obj.nome;
+			applicationUserViewModel.password = obj.password;
+			applicationUserViewModel.ContaUsuarioViewModel.temaAtual = obj.tema;
+
+            $.ajax({ 
+				url: urlEdit, 
+				type: 'POST',
+				contentType: "application/json;charset=utf-8",
+				data: JSON.stringify(applicationUserViewModel, null, 4),
+				success: function (data) {
+					Swal.fire({
+						text: "Registro atualizado com sucesso!",
+						icon: "success",
+						timer: 2000,
+						showCancelButton: false,
+						showConfirmButton: true,
+						confirmButtonColor: "#179c8e",
+						timerProgressBar: true,
+						buttons: false
+					}).then(function (data) {
+						window.location.href = '/usuario/perfil';
+					});
+				},
+				error: function (error, jqXHR, textStatus, errorThrown) {
+					const returnObj = Object.entries(error.responseJSON.errors);
+
+					returnObj.forEach(function(err) {
+						Swal.fire({
+							text: err[1].code + " - " + err[1].description,
+							icon: "error",
+							timer: 3000,
+							showCancelButton: false,
+							showConfirmButton: true,
+							confirmButtonColor: "#fd3995",
+							timerProgressBar: true,
+							buttons: false
+						})
+					});
+				}
+			});
+        });
+
+		const themes = [
+			{ id: "1", nome: "Modo escuro"},
+			{ id: "2", nome: "Modo clássico"},
+			{ id: "3", nome: "Modo claro"}
+		]
+
+		$(function () {
+			'use strict';
+
+			//init select2
+            $('.select2').select2();
+
+			var funcaoId = '@(Model.ContaUsuarioViewModel.FuncaoId)';
+			var funcaoTitulo = '@(Model.ContaUsuarioViewModel.Funcao)';
+			var setorId = '@(Model.ContaUsuarioViewModel.SetorId)';
+			var setorTitulo = '@(Model.ContaUsuarioViewModel.Setor)';
+			var temaId = '@(Model.ContaUsuarioViewModel.TemaAtual)';
+
+			// ** set data in select2 tema
+			themes.forEach((item, index) => {
+				$('#tema').append('<option value=' + item.id + '>' + item.nome + '</option>');
+			})
+
+			$("#tema").select2().val(null)
+			$("#tema").select2({ 
+				placeholder: "Selecione um tema",
+				language: {
+					noResults: (params) => {
+						return "Nenhum registro encontrado";
+					}
+				}
+			})
+
+			$("#tema").select2("val", temaId);
+
+			$('#setor').append('<option value=' + setorId + '>' + setorTitulo + '</option>');
+			$('#funcao').append('<option value=' + funcaoId + '>' + funcaoTitulo + '</option>');
+			
+			const urlSearchFuncao = `@Url.Action("SearchFuncao", "Usuario")`;		
+			const urlSearchSetor = `@Url.Action("SearchSetor", "Usuario")`;
+
+			$("#funcao").select2({
+				placeholder: "Selecione uma função",
+				allowClear: true,
+				minimumInputLength: 3,
+				language: {
+					inputTooShort: function() {
+						return 'Digite 3 ou mais caracteres para iniciar a busca';
+					}
+				},
+				ajax: {
+					url: urlSearchFuncao,
+					type: 'GET',
+					contentType: "application/json; charset=utf-8",
+					data: function (params) {
+						var query =
+						{
+							term: params.term,
+						};
+						return query;
+					},
+					processResults: function (result) {
+						return {
+							results: $.map(result, function (item) {
+								return {
+									id: item.id,
+									text: item.titulo
+								};
+							}),
+						};
+					}
+				}
+			});
+
+			$("#setor").select2({
+				placeholder: "Selecione um setor",
+				allowClear: true,
+				minimumInputLength: 3,
+				language: {
+					inputTooShort: function() {
+						return 'Digite 3 ou mais caracteres para iniciar a busca';
+					}
+				},
+				ajax: {
+					url: urlSearchSetor,
+					type: 'GET',
+					contentType: "application/json; charset=utf-8",
+					data: function (params) {
+						var query =
+						{
+							term: params.term,
+						};
+						return query;
+					},
+					processResults: function (result) {
+						return {
+							results: $.map(result, function (item) {
+								return {
+									id: item.id,
+									text: item.titulo
+								};
+							}),
+						};
+					}
+				}
+			});
+
+			//init cropped
+			var URL = window.URL || window.webkitURL;
+			var $image = $('#image');
+			var $download = $('#download');
+			var $dataX = $('#dataX');
+			var $dataY = $('#dataY');
+			var $dataHeight = $('#dataHeight');
+			var $dataWidth = $('#dataWidth');
+			var $dataRotate = $('#dataRotate');
+			var $dataScaleX = $('#dataScaleX');
+			var $dataScaleY = $('#dataScaleY');
+			var options = {
+				aspectRatio: 1 / 1,
+				preview: '.img-preview',
+				crop: function (e) {
+					$dataX.val(Math.round(e.detail.x));
+					$dataY.val(Math.round(e.detail.y));
+					$dataHeight.val(Math.round(e.detail.height));
+					$dataWidth.val(Math.round(e.detail.width));
+					$dataRotate.val(e.detail.rotate);
+					$dataScaleX.val(e.detail.scaleX);
+					$dataScaleY.val(e.detail.scaleY);
+				}
+			};
+			var originalImageURL = $image.attr('src');
+			var uploadedImageName = 'cropped.jpg';
+			var uploadedImageType = 'image/jpeg';
+			var uploadedImageURL;
+			// Tooltip
+			$('[data-toggle="tooltip"]').tooltip();
+			// Cropper
+			$image.on({
+				ready: function (e) {
+					console.log(e.type);
+				},
+				cropstart: function (e) {
+					console.log(e.type, e.detail.action);
+				},
+				cropmove: function (e) {
+					console.log(e.type, e.detail.action);
+				},
+				cropend: function (e) {
+					console.log(e.type, e.detail.action);
+				},
+				crop: function (e) {
+					console.log(e.type);
+				},
+				zoom: function (e) {
+					console.log(e.type, e.detail.ratio);
+				}
+			}).cropper(options);
+			// Buttons
+			if (!$.isFunction(document.createElement('canvas').getContext)) {
+				$('button[data-method="getCroppedCanvas"]').prop('disabled', true);
+			}
+			if (typeof document.createElement('cropper').style.transition === 'undefined') {
+				$('button[data-method="rotate"]').prop('disabled', true);
+				$('button[data-method="scale"]').prop('disabled', true);
+			}
+			// Download
+			if (typeof $download[0].download === 'undefined') {
+				$download.addClass('disabled');
+			}
+			// Options
+			$('.docs-toggles').on('change', 'input', function () {
+				var $this = $(this);
+				var name = $this.attr('name');
+				var type = $this.prop('type');
+				var cropBoxData;
+				var canvasData;
+				if (!$image.data('cropper')) {
+					return;
+				}
+				if (type === 'checkbox') {
+					options[name] = $this.prop('checked');
+					cropBoxData = $image.cropper('getCropBoxData');
+					canvasData = $image.cropper('getCanvasData');
+					options.ready = function () {
+						$image.cropper('setCropBoxData', cropBoxData);
+						$image.cropper('setCanvasData', canvasData);
+					};
+				} else if (type === 'radio') {
+					options[name] = $this.val();
+				}
+				$image.cropper('destroy').cropper(options);
+			});
+			// Methods
+			$('.docs-buttons').on('click', '[data-method]', function () {
+				var $this = $(this);
+				var data = $this.data();
+				var cropper = $image.data('cropper');
+				var cropped;
+				var $target;
+				var result;
+				if ($this.prop('disabled') || $this.hasClass('disabled')) {
+					return;
+				}
+				if (cropper && data.method) {
+					data = $.extend({}, data); // Clone a new one
+					if (typeof data.target !== 'undefined') {
+						$target = $(data.target);
+						if (typeof data.option === 'undefined') {
+							try {
+								data.option = JSON.parse($target.val());
+							} catch (e) {
+								console.log(e.message);
+							}
+						}
+					}
+					cropped = cropper.cropped;
+					switch (data.method) {
+						case 'rotate':
+							if (cropped && options.viewMode > 0) {
+								$image.cropper('clear');
+							}
+							break;
+						case 'getCroppedCanvas':
+							if (uploadedImageType === 'image/jpeg') {
+								if (!data.option) {
+									data.option = {};
+								}
+								data.option.fillColor = '#fff';
+							}
+							break;
+					}
+					result = $image.cropper(data.method, data.option, data.secondOption);
+					switch (data.method) {
+						case 'rotate':
+							if (cropped && options.viewMode > 0) {
+								$image.cropper('crop');
+							}
+							break;
+						case 'scaleX':
+						case 'scaleY':
+							$(this).data('option', -data.option);
+							break;
+						case 'getCroppedCanvas':
+							if (result) {
+								// Bootstrap's Modal
+								$('#getCroppedCanvasModal').modal().find('.modal-body').html(result);
+								if (!$download.hasClass('disabled')) {
+									download.download = uploadedImageName;
+									applicationUserViewModel.perfilFoto = result.toDataURL(uploadedImageType);
+									console.log(result.toDataURL(uploadedImageType));
+									$download.attr('href', result.toDataURL(uploadedImageType));
+								}
+							}
+							break;
+						case 'destroy':
+							if (uploadedImageURL) {
+								URL.revokeObjectURL(uploadedImageURL);
+								uploadedImageURL = '';
+								$image.attr('src', originalImageURL);
+							}
+							break;
+					}
+					if ($.isPlainObject(result) && $target) {
+						try {
+							$target.val(JSON.stringify(result));
+						} catch (e) {
+							console.log(e.message);
+						}
+					}
+				}
+			});
+			// Keyboard
+			$(document.body).on('keydown', function (e) {
+				if (e.target !== this || !$image.data('cropper') || this.scrollTop > 300) {
+					return;
+				}
+				switch (e.which) {
+					case 37:
+						e.preventDefault();
+						$image.cropper('move', -1, 0);
+						break;
+					case 38:
+						e.preventDefault();
+						$image.cropper('move', 0, -1);
+						break;
+					case 39:
+						e.preventDefault();
+						$image.cropper('move', 1, 0);
+						break;
+					case 40:
+						e.preventDefault();
+						$image.cropper('move', 0, 1);
+						break;
+				}
+			});
+			// Import image
+			var $inputImage = $('#inputImage');
+			if (URL) {
+				$inputImage.change(function () {
+					var files = this.files;
+					var file;
+					if (!$image.data('cropper')) {
+						return;
+					}
+					if (files && files.length) {
+						file = files[0];
+						if (/^image\/\w+$/.test(file.type)) {
+							uploadedImageName = file.name;
+							uploadedImageType = file.type;
+							if (uploadedImageURL) {
+								URL.revokeObjectURL(uploadedImageURL);
+							}
+							uploadedImageURL = URL.createObjectURL(file);
+							$image.cropper('destroy').attr('src', uploadedImageURL).cropper(options);
+							$inputImage.val('');
+						} else {
+							window.alert('Please choose an image file.');
+						}
+					}
+				});
+			} else {
+				$inputImage.prop('disabled', true).parent().addClass('disabled');
+			}
+		});
+	</script>
+}

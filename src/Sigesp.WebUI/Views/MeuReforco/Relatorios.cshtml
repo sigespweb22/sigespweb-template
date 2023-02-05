@@ -1,0 +1,114 @@
+@{
+	ViewData["Title"] = "Relatórios";
+	ViewData["PageName"] = "meu-reforco_relatorios";
+	ViewData["Category0"] = @Settings.App;
+	ViewData["Category1"] = "Meu Reforço";
+	ViewData["Category2"] = "Meu Reforço";
+	ViewData["Heading"] = "<i class='notprint subheader-icon fal fa-file-alt'></i>Meu Reforço Relatórios<span class='notprint fw-300'></span> <sup class='notprint badge badge-primary fw-500'>NOVO</sup>";
+	ViewData["PageDescription"] = "";
+}
+
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/page-invoice.css">
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/select2/select2.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/notifications/toastr/toastr.css">
+}
+
+<div class="row notprint">
+    <div class="col-xl-12">
+		<div id="panel-1" class="panel">
+			<div class="panel-hdr">
+				<h2>
+					Relatório reforços AGENDADOS <span class="fw-300"><i> Consolidado por DATA PREVISTA PARA INÍCIO da realização REFORÇO</i></span> 
+				</h2>
+				<div class="panel-toolbar">
+					<button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Abrir/Fechar"></button>
+				</div>
+			</div>
+			<div class="panel-container show">
+				<div class="panel-content">									
+					<div class="panel-tag">
+						Faça suas escolhas, depois clique em GERAR" para que o relatório seja criado de acordo com suas definições.
+					</div>
+                    <form asp-action="RelatorioReforcosAgendados" asp-controller="MeuReforco" id="relatorio-reforcos-agendados-form" method="post">
+                        <div class="form-group">
+							<div id="data-reforco">
+								<label class="form-label mt-3" for="datepicker-dataReforco">Data reforço (Escolha um período):</label>
+								<div class="input-daterange input-group" id="datepicker-dataReforco">
+									<input type="text" name="dataReforcoInicio" 
+										class="form-control" id="dataReforcoInicio">
+									<div class="input-group-append input-group-prepend">
+										<span class="input-group-text fs-xl"><i class="@(Settings.Theme.IconPrefix) fa-ellipsis-h"></i></span>
+									</div>
+									<input type="text" name="dataReforcoFim"
+										class="form-control" id="dataReforcoFim">
+								</div>
+							</div>
+                        </div>
+						<div class="alert alert-info p-1">
+							<strong>Nota 1:</strong> Ao omitir qualquer informação <strong>será retornado todos os dados</strong>.
+						</div>
+					    <button id="relatorio-reforcos-agendados-btn" type="button" class="btn btn-outline-primary mb-g" >GERAR</button>
+                    </form>
+				</div>
+			</div>
+		</div>		
+	</div>
+</div>
+
+@section ScriptsBlock {
+	<script src="~/js/formplugins/select2/select2.bundle.js"></script>
+	<script src="~/js/dependency/moment/moment.js"></script>
+	<script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+	<script src="~/js/notifications/toastr/toastr.js"></script>
+	<script src="~/js/extensions/jquery-serialization-extensions.js"></script>
+
+	<script>
+		toastr.options = {
+			"closeButton": false,
+			"debug": false,
+			"newestOnTop": true,
+			"progressBar": true,
+			"positionClass": "toast-top-right",
+			"preventDuplicates": true,
+			"onclick": null,
+			"showDuration": 500,
+			"hideDuration": 100,
+			"timeOut": 10000,
+			"extendedTimeOut": 1000,
+			"showEasing": "swing",
+			"hideEasing": "linear",
+			"showMethod": "fadeIn",
+			"hideMethod": "fadeOut"
+		};
+
+		$("#relatorio-reforcos-agendados-btn").click(function (event) {
+			$("#relatorio-reforcos-agendados-form").submit();
+        });
+
+		//Datepicker config
+		// Class definition
+		var controls = {
+			leftArrow: '<i class="@(Settings.Theme.IconPrefix) fa-angle-left" style="font-size: 1.25rem"></i>',
+			rightArrow: '<i class="@(Settings.Theme.IconPrefix) fa-angle-right" style="font-size: 1.25rem"></i>'
+		};
+
+		var runDatePicker = function () {
+			// range picker
+			$('#datepicker-dataReforco').datepicker({
+				todayHighlight: true,
+				templates: controls,
+				format: 'dd/mm/yy'
+			});
+		};
+
+		$(document).ready(function () {
+            //init select2
+            $('.select2').select2();
+
+			//run datepicker
+			runDatePicker();
+		});
+	</script>
+}

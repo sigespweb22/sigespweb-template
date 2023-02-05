@@ -1,0 +1,15 @@
+.note-editor .note-toolbar .note-color-all .note-dropdown-menu, .note-popover .popover-content .note-color-all .note-dropdown-menu {
+  min-width: 343px !important;
+}
+
+.note-editor .note-toolbar .note-para .note-dropdown-menu, .note-popover .popover-content .note-para .note-dropdown-menu {
+  min-width: 241px !important;
+}
+
+.note-toolbar {
+  background-color: #303136 !important;
+}
+
+.mod-skin-dark:not(.mod-skin-light) .note-toolbar .note-btn {
+  background: #6c757d !important;
+}

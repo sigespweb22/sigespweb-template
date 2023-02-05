@@ -1,0 +1,275 @@
+@model Sigesp.Application.ViewModels.Cards.ServidorEstadoReforcoCardViewModel
+
+@{ 
+	ViewData["Title"] = "Todos";
+	ViewData["PageName"] = "servidor-estado-reforco_list";
+	ViewData["Category0"] = @Settings.App;
+	ViewData["Category1"] = "Meu Reforço";
+	ViewData["Heading"] = "<i class='subheader-icon fal fa-calendar-star'></i> Meus reforços<sup class='badge badge-primary fw-500'>NOVO</sup>";
+	ViewData["PageDescription"] = "Listagem de todos os meus reforços.";
+}
+@section HeadBlock {
+	<link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-daterangepicker/bootstrap-daterangepicker.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/formplugins/select2/select2.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/theme-demo.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/notifications/toastr/toastr.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/notifications/sweetalert2/sweetalert2.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/modal-printable.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/extensions/generals-extensions.css">
+}
+
+<div class="row">
+	<div class="col-sm-4 col-xl-4">
+		<div class="p-3 bg-info-900 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="text-center display-4 d-block l-h-n m-0 fw-500">
+				    @Model.CurrentMonthTotal
+					<small class="m-0 l-h-n">@Model.CurrentMonthLabel</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-calendar-star position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>
+	<div class="col-sm-4 col-xl-4">
+		<div class="p-3 bg-info-500 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="text-center display-4 d-block l-h-n m-0 fw-500">
+					@Model.SecondMonthTotal
+					<small class="m-0 l-h-n">@Model.SecondMonthLabel</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-calendar-star position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>
+	<div class="col-sm-4 col-xl-4">
+		<div class="p-3 bg-info-100 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="text-center display-4 d-block l-h-n m-0 fw-500">
+					@Model.ThirdMonthTotal
+					<small class="m-0 l-h-n">@Model.ThirdMonthLabel</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-calendar-star position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>	
+</div>
+
+<div class="row">
+	<div class="col-xl-12">
+		<div id="panel-1" class="panel">
+			<div class="panel-hdr">	
+				<h2>
+					Listagem dos <span class="fw-300"><i>Meus Reforços</i></span>
+				</h2>
+				<div class="panel-toolbar">
+					<ul class="nav nav-pills border-bottom-0" role="tablist">
+						<li class="nav-item">
+							<a class="nav-link active" data-toggle="tab" href="#pill_default-1" role="tab">Principal</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div class="panel-container show">
+				<div class="panel-content">									
+					<div class="tab-content pt-4">
+						<div class="tab-pane fade show active" id="pill_default-1" role="tabpanel" aria-labelledby="pill_default-1">
+							<div class="row">
+								<div class="col-xl-12">
+									<table id="dt-basic-example" style="width:100%"
+										class="table table-bordered 
+											table-hover table-striped w-100
+											display nowrap">
+									</table>									
+								</div>
+							</div>
+						</div>
+					</div>					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section ScriptsBlock {
+<script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+<script src="~/js/datagrid/datatables/datatables.export.js"></script>
+<script src="~/js/dependency/moment/moment.js"></script>
+<script src="~/js/notifications/toastr/toastr.js"></script>
+<script src="~/js/extensions/automapper-extensions.js"></script>
+
+<script>
+	toastr.options = {
+		"closeButton": false,
+		"debug": false,
+		"newestOnTop": true,
+		"progressBar": true,
+		"positionClass": "toast-top-right",
+		"preventDuplicates": true,
+		"onclick": null,
+		"showDuration": 300,
+		"hideDuration": 100,
+		"timeOut": 10000,
+		"extendedTimeOut": 1000,
+		"showEasing": "swing",
+		"hideEasing": "linear",
+		"showMethod": "fadeIn",
+		"hideMethod": "fadeOut"
+	};
+
+	var boolOptions = ["NÃO", "SIM"];
+	var controls = {
+		leftArrow: '<i class="@(Settings.Theme.IconPrefix) fa-angle-left" style="font-size: 1.25rem"></i>',
+		rightArrow: '<i class="@(Settings.Theme.IconPrefix) fa-angle-right" style="font-size: 1.25rem"></i>'
+	};
+	var apiSERMe = 'api/servidores-estado-reforcos/list-me'
+
+	$(document).ready( function () {
+		// Column Definitions
+		var columnSet = [
+			{
+				title: "Id",
+				id: "id",
+				data: "id",
+				type: "readonly",
+				visible: false,
+				searchable: false,
+				name: "Id"
+			},
+			{
+				title: "Dia semana",
+				id: "diaSemana",	
+				data: "diaSemana",
+				type: "readonly",
+				required: true,
+				orderable: false,
+				searchable: false,
+				visible: true,
+				render: function (data) {
+					return data.toUpperCase()
+				},
+				name: "DiaSemana"
+			},
+			{
+				title: "Mês",
+				id: "mesExtenso",
+				data: "mesExtenso",
+				type: "readonly",
+				searchable: true,
+				orderable: false,
+				visible: true,
+				render: function (data) {
+					return data.toUpperCase()
+				},
+				name: "MesExtenso"
+			},
+			{
+				title: "Situação",
+				id: "reforcoSituacao",
+				data: "reforcoSituacao",
+				type: "readonly",
+				searchable: false,
+				orderable: false,
+				visible: true,
+				name: "ReforcoSituacao"
+			},
+			{
+				title: "Data prevista início",
+				id: "dataPrevistaInicio",	
+				data: "dataPrevistaInicio",
+				type: "readonly",
+				required: false,
+				searchable: false,
+				orderable: false,
+				visible: true,
+				render: function (data) {
+					return moment(data).format('DD/MM/YYYY');
+				},
+				name: "DataPrevistaInicio"
+			},
+			{
+				title: "Data prevista fim",
+				id: "dataPrevistaFim",	
+				data: "dataPrevistaFim",
+				type: "readonly",
+				required: false,
+				searchable: false,
+				orderable: false,
+				visible: true,
+				render: function (data) {
+					return moment(data).format('DD/MM/YYYY');
+				},
+				name: "DataPrevistaFim"
+			},
+			{
+				title: "É expediente?",
+				id: "isExpediente",	
+				data: "isExpediente",
+				type: "readonly",
+				required: false,
+				searchable: false,
+				visible: true,
+				name: "IsExpediente"
+			}
+		];
+
+		/* start data table */
+		var myTable = $('#dt-basic-example')
+			.dataTable({
+			/* check datatable buttons page for more info on how this DOM structure works */
+			dom: "<'row mb-3'<'col-sm-12 col-md-3 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-9 d-flex align-items-center justify-content-end'B>>" +
+				 "<'row'<'col-sm-12'tr>>" +
+				 "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+			ajax: {
+				url : apiSERMe,
+				type: 'POST',
+				dataSrc: function (json) {
+					return transformObjArrayFieldBoolBackToFront(json.data.data);
+				}
+        	},
+			responsive: true,
+			lengthMenu: [
+				[50, 100, -1],
+				["50", "100", "Todos"],
+			],
+			@* aaSorting: [ [20,'desc'], [19,'asc'] ], *@
+			scrollY:        400,
+			scrollX:        true,
+			scrollCollapse: true,
+			serverSide: true,
+			processing: true,
+			altEditor: true,
+			pagingType: "full_numbers",
+			language: {
+            	decimal: ",",
+            	thousands: ".",
+        		searchPlaceholder: "Busque pelo MÊS por EXTENSO",
+				sProcessing: '<span id=\"loading-image\" "class="fa fa-spinner fa-spin fa-2x spinner-border spinner-border-sm text-primary mr-2""><img class="manImg" src="img/loading_alt_3.gif" width="50" height="50"></img></span>',
+				sZeroRecords: "Nenhum registro encontrado.",
+				oPaginate: {
+                    "sFirst": "Primeiro",
+                    "sPrevious": "Anterior",
+                    "sNext": "Próximo",
+                    "sLast": "Último"
+                },
+				sInfo: "Mostrando _START_ de _END_ de um total de _TOTAL_",
+                sInfoEmpty: "Nenhuma registro encontrado.",
+                sInfoFiltered: " (filtrado a partir de um total de _MAX_ registros)",
+                sInfoPostFix: "",
+				select: {
+					rows: "%d linhas selecionadas"
+				}
+        	},
+			columns: columnSet,
+			select: 'multiple',
+			buttons: [],
+			columnDefs: []
+		});
+
+		$('#dt-basic-example_filter input').bind('keyup', function(e) {
+			$('#dt-basic-example_filter input').val($('#dt-basic-example_filter input').val().toUpperCase());
+		});
+	});
+</script>
+}

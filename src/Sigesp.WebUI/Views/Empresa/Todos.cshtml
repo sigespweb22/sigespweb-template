@@ -1,0 +1,664 @@
+@model Sigesp.Application.ViewModels.Cards.EmpresaCardViewModel
+
+@{
+	ViewData["Title"] = "Empresas";
+	ViewData["PageName"] = "empresa_todos";
+	ViewData["Category0"] = @Settings.App;
+	ViewData["Category1"] = "Laboral";
+	ViewData["Heading"] = "<i class='subheader-icon fal fa-building'></i> Empresas<span class='fw-300'></span> <sup class='badge badge-primary fw-500'>NOVO</sup>";
+	ViewData["PageDescription"] = "Listagem de todas as empresas do sistema";
+}
+@section HeadBlock {
+	<link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/formplugins/select2/select2.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/theme-demo.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/notifications/toastr/toastr.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/notifications/sweetalert2/sweetalert2.bundle.css">
+}
+
+<div class="row">
+	<div class="col-sm-6 col-xl-3">
+		<div class="p-3 bg-primary-300 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="display-4 d-block l-h-n m-0 fw-500">
+					@Model.Ativas
+					<small class="m-0 l-h-n">Ativas</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-building position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>
+	<div class="col-sm-6 col-xl-3">
+		<div class="p-3 bg-warning-400 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="display-4 d-block l-h-n m-0 fw-500">
+				    @Model.Email
+					<small class="m-0 l-h-n">Email</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-at position-absolute pos-right pos-bottom opacity-15  mb-n1 mr-n1" style="font-size: 6rem;"></i>
+		</div>
+	</div>
+	<div class="col-sm-6 col-xl-3">
+		<div class="p-3 bg-success-200 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="display-4 d-block l-h-n m-0 fw-500">
+					@Model.WhatsApp
+					<small class="m-0 l-h-n">WhatsApp</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-address-book position-absolute pos-right pos-bottom opacity-15  mb-n1 mr-n1" style="font-size: 6rem;"></i>
+		</div>
+	</div>
+	<div class="col-sm-6 col-xl-3">
+		<div class="p-3 bg-info-200 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="display-4 d-block l-h-n m-0 fw-500">
+				    @Model.Inativas
+					<small class="m-0 l-h-n">Inativas</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-empty-set position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size: 6rem;"></i>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xl-12">
+		<div id="panel-1" class="panel">
+			<div class="panel-hdr">	
+				<h2>
+					Gerenciamento de <span class="fw-300"><i>Empresas</i></span> 
+				</h2>
+				<div class="panel-toolbar">
+					<button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Abrir/Fechar"></button>
+				</div>
+			</div>
+			<div class="panel-container show">
+				<div class="panel-content">									
+					<div class="tab-content pt-4">
+						<div class="tab-pane fade show active" id="tab_default-1" role="tabpanel">
+							<div class="row">
+								<div class="col-xl-12">
+									<table id="dt-basic-example" class="table table-bordered table-hover table-striped w-100"></table>
+								</div>
+							</div>	
+						</div>
+					</div>					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section ScriptsBlock {
+<script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+<script src="~/js/formplugins/select2/select2.bundle.js"></script>
+<script src="~/js/datagrid/datatables/datatables.export.js"></script>
+<script src="~/js/notifications/toastr/toastr.js"></script>
+<script src="~/js/extensions/automapper-extensions.js"></script>
+<script src="~/js/notifications/sweetalert2/sweetalert2.bundle.js"></script>
+
+<script type="text/javascript">
+	const endpointEmpresas = "/api/empresas";
+	const urlList = `@Url.Action("List", "Empresa")`;
+
+	var estados = [];
+
+	var oldExportAction = function (self, e, dt, button, config) {
+		if (button[0].className.indexOf('buttons-excel') >= 0) {
+			if ($.fn.dataTable.ext.buttons.excelHtml5.available(dt, config)) {
+				$.fn.dataTable.ext.buttons.excelHtml5.action.call(self, e, dt, button, config);
+			}
+			else {
+				$.fn.dataTable.ext.buttons.excelFlash.action.call(self, e, dt, button, config);
+			}
+		} else if (button[0].className.indexOf('buttons-print') >= 0) {
+			$.fn.dataTable.ext.buttons.print.action(e, dt, button, config);
+		}
+	};
+
+    var newExportAction = function (e, dt, button, config) {
+		var self = this;
+		var oldStart = dt.settings()[0]._iDisplayStart;
+
+		dt.one('preXhr', function (e, s, data) {
+			// Just this once, load all data from the server...
+			data.start = 0;
+			data.length = 2147483647;
+
+			dt.one('preDraw', function (e, settings) {
+				// Call the original action function 
+				oldExportAction(self, e, dt, button, config);
+
+				dt.one('preXhr', function (e, s, data) {
+					// DataTables thinks the first item displayed is index 0, but we're not drawing that.
+					// Set the property to what it was before exporting.
+					settings._iDisplayStart = oldStart;
+					data.start = oldStart;
+				});
+
+				// Reload the grid with the original page. Otherwise, API functions like table.cell(this) don't work properly.
+				setTimeout(dt.ajax.reload, 0);
+
+				// Prevent rendering of the full data to the DOM
+				return false;
+			});
+		});
+
+		// Requery the server with the new one-time export settings
+		dt.ajax.reload();
+	};
+
+	@foreach (var estado in @Model.Estados)
+	{
+		@:estados.push('@estado');
+	}
+
+	toastr.options = {
+		"closeButton": false,
+		"debug": false,
+		"newestOnTop": true,
+		"progressBar": true,
+		"positionClass": "toast-top-right",
+		"preventDuplicates": true,
+		"onclick": null,
+		"showDuration": 300,
+		"hideDuration": 100,
+		"timeOut": 10000,
+		"extendedTimeOut": 1000,
+		"showEasing": "swing",
+		"hideEasing": "linear",
+		"showMethod": "fadeIn",
+		"hideMethod": "fadeOut"
+	}
+
+	var toUpperCaseFormFields = function () {
+		$('#razaoSocial').val($('#razaoSocial').val().toUpperCase());
+		$('#nomeFantasia').val($('#nomeFantasia').val().toUpperCase());
+		$('#cnpj').val($('#cnpj').val().toUpperCase());
+		$('#cidade').val($('#cidade').val().toUpperCase());
+		$('#cidade').val($('#cidade').val().toUpperCase());
+		$('#logradouro').val($('#logradouro').val().toUpperCase());
+		$('#numero').val($('#numero').val().toUpperCase());
+		$('#bairro').val($('#bairro').val().toUpperCase());
+		$('#responsavel').val($('#responsavel').val().toUpperCase());
+		$('#email').val($('#email').val().toUpperCase());
+	};
+
+	$(document).ready( function () {
+		$(document).on('focus', '.select2-selection.select2-selection--single', function (e) {
+			$(this).closest(".select2-container").siblings('select:enabled').select2('open');
+		});
+
+		// steal focus during close - only capture once and stop propogation
+		$('select.select2').on('select2:closing', function (e) {
+			$(e.target).data("select2").$selection.one('focus focusin', function (e) {
+				e.stopPropagation();
+			});
+		});
+
+		//Tecla atalho CTRL + Z
+		$(document).keydown(function(e) {
+			if (e.ctrlKey && e.which === 90) $(".btn-add").click();
+			toUpperCaseFormFields();
+		});
+
+		//No evento de click do botão add, set focus no campo nome depois abre a select2
+		$(document).on("click", ".btn-add", function () {
+			
+			setTimeout(function() {
+				$('#razaoSocial').focus();
+			}, 500);
+		});
+
+		/* 
+		NOTES:
+			Column id
+			---------------------------------------------------
+			Please always keep in mind that DataTable framework allows two different kinds of "rows": Arrays and Objects. In first case columns are indexed through integers; in second case columns are indexed by their attribute name. Usually JSON's use the Object approach, but we cannot be sure.
+			Row key
+			---------------------------------------------------
+			There is no default key in the table. Inside your callback functions, probably you will need a row key to build URL's, in that case you can get them from the rowdata parameter.
+		COLUMN DEFINITIONS:
+			title = "string" - title name on table header th and on form labels
+			---------------------------------------------------
+			id = "string" - id assigned to imput element when editing/adding in modal
+			---------------------------------------------------
+			data = "string"  - data name from the dataset
+			---------------------------------------------------
+			type = "text" | "select" | "hidden" | "readonly"  - Type of HTML input to be shown.
+			---------------------------------------------------
+			hoverMsg = "some msg" - The message will appear as a tooltip over the input field.
+			---------------------------------------------------
+			pattern = r.e.  - If type is "input", the typed text will be matched against given regular expression, before submit.
+			---------------------------------------------------
+			msg = "some string" - An error message that is displayed in case pattern is not matched. Set HTML "data-errorMsg" attribute.
+			---------------------------------------------------
+			maxLength = integer - If type is "input", set HTML "maxlength" attribute.
+			---------------------------------------------------
+			options = ["a", "b", "c"] - If type is "select", the options that shall be presented.
+			---------------------------------------------------
+			select2 = {} - If type is "select", enable a select2 component. Select2 jQuery plugin must be linked. More select2 configuration options may be passed within the array.
+			---------------------------------------------------
+			datepicker = {} - If type is "text", enable a datepicker component. jQuery-UI plugin must be linked. More datepicker configuration options may be passed within the array.
+			---------------------------------------------------
+			multiple = true | false - Set HTML "multiple" attribute (for use with select2).
+			---------------------------------------------------
+			unique = true | false - Ensure that no two rows have the same value. The check is performed client side, not server side. Set HTML "data-unique" attribute. (Probably there's some issue with this).
+			---------------------------------------------------
+			uniqueMsg = "some string" - An error message that is displayed when the unique constraint is not respected. Set HTML "data-uniqueMsg" attribute.
+			---------------------------------------------------
+			special = "any string" - Set HTML "data-special" attribute (don't know what's that needed for).
+			---------------------------------------------------
+			defaultValue = "any string" - Adds a default value when adding a row
+			---------------------------------------------------
+		*/
+		function refreshTable() {
+			$('#dt-basic-example').each(function() {
+				dt = $(this).dataTable();
+				dt.fnDraw();
+			})
+		}
+
+		// Event Lot
+		var events = $("#app-eventlog");
+		// Column Definitions
+		var columnSet = [{
+			title: "Id",
+			id: "id",
+			data: "id",
+			placeholderMsg: "Automático",
+			visible: false,
+			type: "readonly",
+			required: false
+		},
+		{
+			title: "Razão social",
+			id: "razaoSocial",
+			data: "razaoSocial",
+			type: "text",
+			pattern: "^[a-z A-Z]*$",
+			errorMsg: "*Permitido somente texto, e sem acentuação.",
+			maxLength: 255,
+			placeholderMsg: "Informe a razão social",
+			visible: false,
+			required: true,
+			searchable: false,
+			name: "RazaoSocial"
+		},
+        {
+			title: "Nome fantasia",
+			id: "nomeFantasia",
+			data: "nomeFantasia",
+			type: "text",
+			pattern: "^[a-z A-Z]*$",
+			errorMsg: "*Permitido somente texto, e sem acentuação.",
+			maxLength: 255,
+			placeholderMsg: "Informe o nome fantasia",
+			visible: true,
+			required: true,
+			searchable: true,
+			orderable: true,
+			name: "NomeFantasia"
+		},
+		{
+			title: "Cnpj",
+			id: "cnpj",	
+			data: "cnpj",
+			type: "text",
+			pattern: "^[0-9]{14}$",
+			errorMsg: "*CNPJ inválido! CNPJ é formado por 14 caracteres numéricos.",
+			placeholderMsg: "Informe o CNPJ",
+			visible: true,
+			required: false,
+			searchable: false,
+			orderable: true,
+			name: "Cnpj"		
+		},
+		{
+			title: "Cep",
+			id: "cep",	
+			data: "cep",
+			type: "number",
+			placeholderMsg: "Informe o CEP",
+			visible: false,
+			searchable: false,
+			required: false,
+			name: "Cep"
+		},
+		{	
+			title: "Cidade",
+			id: "cidade",	
+			data: "cidade",
+			type: "text",
+			maxLength: 50,
+			placeholderMsg: "Informe a cidade",
+			visible: true,
+			required: false,
+			searchable: false,
+			orderable: true,
+			name: "Cidade"
+		},
+        {	
+			title: "Estado",
+			data: "estado",
+			type: "select",
+			options: estados,
+			multiple : false,
+			visible: true,
+			maxLength: 2,
+			placeholderMsg: "Informe o estado",
+            select2 : {
+				placeholder: "Selecione um estado",
+				width: "100%",
+				allowClear: true,
+				minimumInputLength: 3,
+				language: {
+					inputTooShort: function() {
+						return 'Digite 3 ou mais caracteres para iniciar a busca';
+					}
+				}
+			},
+			render : function (data, type, row, meta) {
+				return data;
+			},
+			searchable: false,
+			orderable: true,
+			name: "Estado"
+		},
+        {	
+			title: "Logradouro",
+			id: "logradouro",	
+			data: "logradouro",
+			type: "text",
+			maxLength: 150,
+			placeholderMsg: "Informe o logradouro",
+			visible: false,
+			required: true,
+			searchable: false,
+			name: "Logradouro"
+		},
+        {	
+			title: "Número",
+			id: "numero",	
+			data: "numero",
+			type: "text",
+			maxLength: 10,
+			placeholderMsg: "Informe o número",
+			visible: false,
+			searchable: false,
+			required: false,
+			name: "Numero"
+		},
+        {	
+			title: "Bairro",
+			id: "bairro",	
+			data: "bairro",
+			type: "text",
+			maxLength: 50,
+			placeholderMsg: "Informe o bairro",
+			visible: false,
+			searchable: false,
+			required: true,
+			name: "Bairro"
+		},
+        {	
+			title: "Responsável",
+			id: "responsavel",	
+			data: "responsavel",
+			type: "text",
+			maxLength: 255,
+			pattern: "^[a-z A-Z]*$",
+			errorMsg: "*Campo obrigatório.",
+			placeholderMsg: "Informe o responsável",
+			visible: false,			
+			required: true,
+			searchable: false,			
+			name: "Responsavel"
+		},
+        {	
+			title: "Email",
+			id: "email",	
+			data: "email",
+			type: "text",
+			maxLength: 100,
+            pattern: "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$",
+			placeholderMsg: "Informe o responsável",
+            errorMsg: "*Email inválido - Informe um email válido.",
+			visible: true,			
+			required: false,
+			searchable: false,
+			orderable: true,
+			name: "Email"
+		},
+        {
+			title: "Telefone fixo",
+			id: "telefoneFixo",	
+			data: "telefoneFixo",
+			type: "number",
+			placeholderMsg: "Informe o telefone fixo",
+			visible: false,			
+			required: false,
+			searchable: false,			
+			name: "TelefoneFixo"
+		},
+        {	
+			title: "Telefone celular",
+			id: "telefoneCelular",	
+			data: "telefoneCelular",
+			type: "number",
+			maxLength: 14,
+			placeholderMsg: "Informe o telefone celular",
+			visible: false,			
+			required: false,
+			searchable: false,			
+			name: "TelefoneCelular"
+		},
+        {	
+			title: "WhatsApp",
+			id: "whatsApp",	
+			data: "whatsApp",
+			type: "number",
+			placeholderMsg: "Informe o whatsApp",
+			visible: true,			
+			required: false,
+			searchable: false,
+			orderable: false,
+			name: "WhatsApp"
+		}
+		]
+		/* start data table */
+		var myTable = $('#dt-basic-example').dataTable({
+			/* check datatable buttons page for more info on how this DOM structure works */
+			dom: "<'row mb-3'<'col-sm-12 col-md-6 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-6 d-flex align-items-center justify-content-end'B>>" +
+				"<'row'<'col-sm-12'tr>>" +
+				"<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+			ajax: {
+				url : urlList,
+				type: 'POST',
+				dataSrc: function (json) {
+					return transformObjArrayFieldBoolBackToFront(json.data.data);
+				}
+        	},
+			initComplete: function(settings, json){
+				@* settings.oInit.buttons[3].click();
+				console.log(settings.oInit.buttons[3]); *@
+        	},
+			serverSide: true,
+			processing: true,
+			pagingType: "full_numbers",
+			language: {
+				select: {
+					rows: "%d linhas selecionadas"
+				},
+            	decimal: ",",
+            	thousands: ".",
+				@* search: "_INPUT_", *@
+        		searchPlaceholder: "Busque pelo nome fantasia",
+				sProcessing: '<span id=\"loading-image\" "class="fa fa-spinner fa-spin fa-2x spinner-border spinner-border-sm text-primary mr-2""><img class="manImg" src="img/loading_alt_3.gif" width="50" height="50"></img></span>',
+				sZeroRecords: "Nenhum registro encontrado.",
+				oPaginate: {
+                    "sFirst": "Primeiro",
+                    "sPrevious": "Anterior",
+                    "sNext": "Próximo",
+                    "sLast": "Último"
+                },
+				sInfo: "Mostrando _START_ de _END_ de um total de _TOTAL_",
+                sInfoEmpty: "Nenhuma registro encontrado.",
+                sInfoFiltered: " (filtrado a partir de um total de _MAX_ registros)",
+                sInfoPostFix: "",
+				@* sInfo: "_TOTAL_ Encontrados / Motrando _START_ De _END_ Total", *@
+				@* "sProcessing": "<span id=\"loading-image\" class=\"fa fa-spinner fa-spin fa-2x\" ></span>"
+                "sSearch": "অনুসন্ধান:",
+                "sUrl": "" *@
+        	},
+			columns: columnSet,
+			/* selecting multiple rows will not work */
+			select: 'single',
+			/* altEditor at work */
+			altEditor: true,
+			responsive: true,
+			/* buttons uses classes from bootstrap, see buttons page for more details */
+			buttons: [
+				{
+					extend: 'selected',
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-times mr-1"></i> Delete',
+					name: 'delete',
+					className: 'btn-danger btn-sm mr-1'
+				},
+				{
+					extend: 'selected',
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-edit mr-1"></i> Editar',
+					name: 'edit',
+					className: 'btn-warning btn-sm mr-1 btn-edit'
+				},
+				{
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-plus mr-1"></i> Novo',
+					name: 'add',
+					className: 'btn-primary btn-sm mr-1 btn-add'
+				},
+				{
+					extend: 'excelHtml5',
+					text: 'Excel',
+					exportOptions: {
+						columns: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+                	},					
+					className: 'btn-outline-success btn-sm',
+					action: newExportAction
+            	}						
+			],
+			columnDefs: [],
+			/* default callback for insertion: mock webservice, always success */
+			onAddRow: function(dt, rowdata, success, error) {
+				$.ajax({ 
+					url: endpointEmpresas, 
+					type: 'POST',
+					contentType: "application/json;charset=utf-8",
+					@* headers:{
+            			"Authorization": "Basic " + ""
+        			}, *@
+					data: JSON.stringify(rowdata, null, 4),
+					success: function (data) {
+						$(".modal").modal('hide');
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						Swal.fire({
+							text: "Registro criado com sucesso!",
+							icon: "success",
+							timer: 2000,
+							showCancelButton: false,
+							showConfirmButton: true,
+							confirmButtonColor: "#179c8e",
+							timerProgressBar: true,
+							buttons: false
+						});
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						const returnObj = Object.entries(error.responseJSON.errors);
+
+						returnObj.forEach(function(err) {
+							err[1].forEach(function (int) {
+								toastr["error"](err[0], int);
+							})
+						});
+					}
+				});
+			},
+			onEditRow: function(dt, rowdata, success, error) {
+				$.ajax({ 
+					url: endpointEmpresas, 
+					type: 'PUT',
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(rowdata, null, 4), 
+					success: function (data) {
+						$(".modal").modal('hide');
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						Swal.fire({
+							text: "Registro atualizado com sucesso!",
+							icon: "success",
+							timer: 2000,
+							showCancelButton: false,
+							showConfirmButton: true,
+							confirmButtonColor: "#179c8e",
+							timerProgressBar: true,
+							buttons: false
+						});
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						const returnObj = Object.entries(error.responseJSON.errors);
+
+						returnObj.forEach(function(err) {
+							err[1].forEach(function (int) {
+								toastr["error"](err[0], int);
+							})
+						});
+					}
+				});
+			},
+			onDeleteRow: function(dt, rowdata, success, error) {
+				$.ajax({ 
+					url: endpointEmpresas, 
+					type: 'DELETE', 
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(rowdata, null, 4), 
+					success: function (data) {
+						$(".modal").modal('hide');
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						Swal.fire({
+							text: "Registro deletado com sucesso!",
+							icon: "success",
+							timer: 2000,
+							showCancelButton: false,
+							showConfirmButton: true,
+							confirmButtonColor: "#179c8e",
+							timerProgressBar: true,
+							buttons: false
+						});
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						const returnObj = Object.entries(error.responseJSON.errors);
+
+						returnObj.forEach(function(err) {
+							err[1].forEach(function (int) {
+								toastr["error"](err[0], int);
+							})
+						});
+					} 
+				});
+			},		
+		});
+
+		$('#dt-basic-example_filter input').bind('keyup', function(e) {
+			$('#dt-basic-example_filter input').val($('#dt-basic-example_filter input').val().toUpperCase());
+
+			@* if(e.keyCode == 13) {
+				myTable.fnFilter(this.value);
+			} *@
+		});
+
+	});
+</script>
+}

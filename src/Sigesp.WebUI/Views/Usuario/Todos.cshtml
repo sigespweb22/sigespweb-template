@@ -1,0 +1,429 @@
+@model Sigesp.Application.ViewModels.Cards.UsuarioCardViewModel
+
+@{ 
+	ViewData["Title"] = "Usuários";
+	ViewData["PageName"] = "usuario_todos";
+	ViewData["Category0"] = @Settings.App;
+	ViewData["Category1"] = "Sistema";
+	ViewData["Heading"] = "<i class='subheader-icon fal fa-users'></i> Usuários<span class='fw-300'></span> <sup class='badge badge-primary fw-500'>NOVO</sup>";
+	ViewData["PageDescription"] = "Listagem de todos os usuários do sistema";
+}
+@section HeadBlock {
+	<link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/formplugins/select2/select2.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/theme-demo.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/notifications/toastr/toastr.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/notifications/sweetalert2/sweetalert2.bundle.css">
+}
+
+<div class="row">
+	<div class="col-sm-6 col-xl-3">
+		<div class="p-3 bg-primary-300 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="display-4 d-block l-h-n m-0 fw-500">
+					@Model.Ativos
+					<small class="m-0 l-h-n">Ativos</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-users position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>
+	<div class="col-sm-6 col-xl-3">
+		<div class="p-3 bg-warning-400 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="display-4 d-block l-h-n m-0 fw-500">
+				    @Model.FalhasAcesso
+					<small class="m-0 l-h-n">Falhas acesso</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-times-circle position-absolute pos-right pos-bottom opacity-15  mb-n1 mr-n4" style="font-size: 6rem;"></i>
+		</div>
+	</div>
+	<div class="col-sm-6 col-xl-3">
+		<div class="p-3 bg-success-200 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="display-4 d-block l-h-n m-0 fw-500">
+					@Model.TwoFactors
+					<small class="m-0 l-h-n">Dois fatores habilitados</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-lock position-absolute pos-right pos-bottom opacity-15 mb-n5 mr-n6" style="font-size: 8rem;"></i>
+		</div>
+	</div>
+	<div class="col-sm-6 col-xl-3">
+		<div class="p-3 bg-info-200 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="display-4 d-block l-h-n m-0 fw-500">
+				    @Model.ConfirmacoesPendentes
+					<small class="m-0 l-h-n">Confirmações pendentes</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-envelope position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n4" style="font-size: 6rem;"></i>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xl-12">
+		<div id="panel-1" class="panel">
+			<div class="panel-hdr">	
+				<h2>
+					Gerenciamento de <span class="fw-300"><i>Usuários</i></span> 
+				</h2>
+				<div class="panel-toolbar">
+					<button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Abrir/Fechar"></button>
+				</div>
+			</div>
+			<div class="panel-container show">
+				<div class="panel-content">									
+					<div class="tab-content pt-4">
+						<div class="tab-pane fade show active" id="tab_default-1" role="tabpanel">
+							<div class="row">
+								<div class="col-xl-12">
+									<table id="dt-basic-example" class="table table-bordered table-hover table-striped w-100"></table>
+								</div>
+							</div>	
+						</div>
+					</div>					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section ScriptsBlock {
+<script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+<script src="~/js/formplugins/select2/select2.bundle.js"></script>
+<script src="~/js/datagrid/datatables/datatables.export.js"></script>
+<script src="~/js/notifications/toastr/toastr.js"></script>
+<script src="~/js/extensions/automapper-extensions.js"></script>
+<script src="~/js/notifications/sweetalert2/sweetalert2.bundle.js"></script>
+
+<script type="text/javascript">
+	const endpointUsers = "/api/users";
+
+	var applicationRoles = [];
+
+	@foreach (var applicationRole in Model.ApplicationRoles)
+	{
+		@:applicationRoles.push('@applicationRole');
+	}
+
+@* Tente utilizar o laço utilizando a sintaxe razor e depois atribuir o valor de um array gerado para a variável javascript.
+
+Algo assim:
+
+@{
+   var vetor = new object[Model.Count()];
+}
+
+@for (int i = 0; i < Model.Count(); i++)
+{
+    vetor[i] = new {
+                 source = Model.ElementAtOrDefault(i).Source,
+                 percentage = Model.ElementAtOrDefault(i).Percentage
+               };
+}
+e depois no javascript é só atribuir o array para a variável.
+
+<script>
+    var data = @vetor;
+</script> *@
+
+	var oldExportAction = function (self, e, dt, button, config) {
+		if (button[0].className.indexOf('buttons-excel') >= 0) {
+			if ($.fn.dataTable.ext.buttons.excelHtml5.available(dt, config)) {
+				$.fn.dataTable.ext.buttons.excelHtml5.action.call(self, e, dt, button, config);
+			}
+			else {
+				$.fn.dataTable.ext.buttons.excelFlash.action.call(self, e, dt, button, config);
+			}
+		} else if (button[0].className.indexOf('buttons-print') >= 0) {
+			$.fn.dataTable.ext.buttons.print.action(e, dt, button, config);
+		}
+	};
+
+	var newExportAction = function (e, dt, button, config) {
+		var self = this;
+		var oldStart = dt.settings()[0]._iDisplayStart;
+
+		dt.one('preXhr', function (e, s, data) {
+			// Just this once, load all data from the server...
+			data.start = 0;
+			data.length = 2147483647;
+
+			dt.one('preDraw', function (e, settings) {
+				// Call the original action function 
+				oldExportAction(self, e, dt, button, config);
+
+				dt.one('preXhr', function (e, s, data) {
+					// DataTables thinks the first item displayed is index 0, but we're not drawing that.
+					// Set the property to what it was before exporting.
+					settings._iDisplayStart = oldStart;
+					data.start = oldStart;
+				});
+
+				// Reload the grid with the original page. Otherwise, API functions like table.cell(this) don't work properly.
+				setTimeout(dt.ajax.reload, 0);
+
+				// Prevent rendering of the full data to the DOM
+				return false;
+			});
+		});
+
+		// Requery the server with the new one-time export settings
+		dt.ajax.reload();
+	};
+
+	toastr.options = {
+		"closeButton": false,
+		"debug": false,
+		"newestOnTop": true,
+		"progressBar": true,
+		"positionClass": "toast-top-right",
+		"preventDuplicates": true,
+		"onclick": null,
+		"showDuration": 300,
+		"hideDuration": 100,
+		"timeOut": 5000,
+		"extendedTimeOut": 1000,
+		"showEasing": "swing",
+		"hideEasing": "linear",
+		"showMethod": "fadeIn",
+		"hideMethod": "fadeOut"
+	}
+
+	var boolOptions = ["SIM", "NÃO"];
+
+	$(document).ready( function () {
+		// Event Lot
+		var events = $("#app-eventlog");
+		// Column Definitions
+		var columnSet = [{
+			title: "Id",
+			id: "userId",
+			data: "userId",
+			placeholderMsg: "Automático",
+			visible: false,
+			type: "readonly",
+			required: true
+		},
+		{	
+			title: "Login",
+			id: "userName",	
+			data: "userName",
+			type: "text",
+			placeholderMsg: "Username",
+			visible: true,
+			searchable: true,
+			required: true
+		},
+		{
+			title: "Email",
+			id: "email",
+			data: "email",
+			type: "text",
+			pattern: "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$",
+			placeholderMsg: "user@@domain.com",
+			errorMsg: "*Email inválido - Informe um email válido.",
+			unique: true,
+			required: false,
+			uniqueMsg: "Email já existe"
+		},
+		{
+			title: "Dois fatores",
+			id: "twoFactorEnabled",
+			data: "twoFactorEnabled",
+			multiple : false,
+            select2 : { width: "100%"},
+			type: "select", 
+			options: boolOptions
+		},
+		{
+			title: "Acessos",
+			data: "applicationUserRoles",
+			type: "select",
+			options: applicationRoles,
+			multiple : true,
+			visible: true,
+            select2 : { width: "100%" },
+			render : function (data, type, row, meta) {
+				return data;
+            }
+		}
+		]
+		/* start data table */
+		var myTable = $('#dt-basic-example').dataTable({
+			/* check datatable buttons page for more info on how this DOM structure works */
+			dom: "<'row mb-3'<'col-sm-12 col-md-6 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-6 d-flex align-items-center justify-content-end'B>>" +
+				"<'row'<'col-sm-12'tr>>" +
+				"<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+			ajax: {
+				url : endpointUsers,
+				dataSrc: function (json) {
+					return transformObjArrayFieldBoolBackToFront(json.data);
+				}
+        	},
+			columns: columnSet,
+			/* selecting multiple rows will not work */
+			select: 'single',
+			/* altEditor at work */
+			altEditor: true,
+			responsive: true,
+			/* buttons uses classes from bootstrap, see buttons page for more details */
+			buttons: [
+				{
+					extend: 'selected',
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-times mr-1"></i> Delete',
+					name: 'delete',
+					className: 'btn-danger btn-sm mr-1'
+				},
+				{
+					extend: 'selected',
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-edit mr-1"></i> Editar',
+					name: 'edit',
+					className: 'btn-warning btn-sm mr-1'
+				},
+				{
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-plus mr-1"></i> Novo',
+					name: 'add',
+					className: 'btn-primary btn-sm mr-1'
+				},
+				{
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-sync mr-1"></i> Sincronizar',
+					name: 'refresh',
+					className: 'btn-info btn-sm'
+				},
+				{
+					extend: 'excelHtml5',
+					text: 'Excel',
+					exportOptions: {
+						columns: [0, 1, 2, 3, 4]
+                	},
+					className: 'btn-outline-success btn-sm',
+					action: newExportAction
+            	}							
+			],
+			columnDefs: [
+			],
+			/* default callback for insertion: mock webservice, always success */
+			onAddRow: function(dt, rowdata, success, error) {
+				$.ajax({ 
+					url: endpointUsers, 
+					type: 'POST',
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(transformObjFieldBoolFrontToBack(rowdata), null, 4), 
+					success: function (data) {
+						$(".modal").modal('hide');
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						Swal.fire({
+							text: "Registro criado com sucesso!",
+							icon: "success",
+							timer: 2000,
+							showCancelButton: false,
+							showConfirmButton: true,
+							confirmButtonColor: "#179c8e",
+							timerProgressBar: true,
+							buttons: false
+						});
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						const returnObj = Object.entries(error.responseJSON.errors);
+
+						returnObj.forEach(function(err) {
+							err[1].forEach(function (int) {
+								toastr["error"](err[0], int);
+							})
+						});
+					}
+				});
+
+				@* console.log("Missing AJAX configuration for INSERT");
+				success(rowdata);
+				// demo only below:
+				events.prepend('<p class="text-success fw-500">'+JSON.stringify(rowdata, null, 4) + '</p>');  *@
+			},
+			onEditRow: function(dt, rowdata, success, error) {
+				$.ajax({ 
+					url: endpointUsers, 
+					type: 'PUT',
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(transformObjFieldBoolFrontToBack(rowdata), null, 4), 
+					success: function (data) {
+						$(".modal").modal('hide');
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						Swal.fire({
+							text: "Registro atualizado com sucesso!",
+							icon: "success",
+							timer: 2000,
+							showCancelButton: false,
+							showConfirmButton: true,
+							confirmButtonColor: "#179c8e",
+							timerProgressBar: true,
+							buttons: false
+						});
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						const returnObj = Object.entries(error.responseJSON.errors);
+
+						returnObj.forEach(function(err) {
+							err[1].forEach(function (int) {
+								toastr["error"](err[0], int);
+							})
+						});
+					}
+				});
+
+				@* console.log("Missing AJAX configuration for UPDATE");
+				success(rowdata);
+				// demo only below:
+				events.prepend('<p class="text-info fw-500">'+JSON.stringify(rowdata, null, 4) + '</p>');  *@
+			},
+			onDeleteRow: function(dt, rowdata, success, error) {
+				$.ajax({ 
+					url: endpointUsers, 
+					type: 'DELETE', 
+					data: JSON.stringify(transformObjFieldBoolFrontToBack(rowdata), null, 4),
+					success: success(rowdata), 
+					success: function (data) {
+						$(".modal").modal('hide');
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						Swal.fire({
+							text: "Registro deletado com sucesso!",
+							icon: "success",
+							timer: 2000,
+							showCancelButton: false,
+							showConfirmButton: true,
+							confirmButtonColor: "#179c8e",
+							timerProgressBar: true,
+							buttons: false
+						});
+					}, 
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						const returnObj = Object.entries(error.responseJSON.errors);
+
+						returnObj.forEach(function(err) {
+							err[1].forEach(function (int) {
+								toastr["error"](err[0], int);
+							})
+						});
+					}
+				});
+				@* console.log("Missing AJAX configuration for DELETE");
+				success(rowdata);
+				// demo only below:
+				events.prepend('<p class="text-danger fw-500">'+JSON.stringify(rowdata, null, 4) + '</p>');  *@
+			},		
+		});
+	});
+</script>
+}

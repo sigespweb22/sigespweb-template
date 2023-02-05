@@ -1,0 +1,868 @@
+@model Sigesp.Application.ViewModels.Cards.FormularioLeituraDicaEscritaCardViewModel
+
+@{
+	ViewData["Title"] = "Dicas escrita";
+	ViewData["PageName"] = "formulario-leitura_dica-escrita_lista";
+	ViewData["Category0"] = @Settings.App;
+	ViewData["Category1"] = "Educação";
+	ViewData["Category2"] = "Alunos";
+	ViewData["Category3"] = "Leituras";
+	ViewData["Heading"] = "<i class='subheader-icon fal fa-typewriter'></i> Grupos e Dicas de Escrita<span class='fw-300'></span> <sup class='badge badge-primary fw-500'>NOVO</sup>";
+	ViewData["PageDescription"] = "Listagem dos grupos e suas dicas de escrita";
+}
+@section HeadBlock {
+	<link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/formplugins/select2/select2.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/theme-demo.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/notifications/toastr/toastr.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/notifications/sweetalert2/sweetalert2.bundle.css">
+}
+
+<div class="row">
+	<div class="col-sm-6 col-xl-6">
+		<div class="p-3 bg-primary-300 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="display-4 d-block l-h-n m-0 fw-500">
+					@Model.TotalGrupos
+					<small class="m-0 l-h-n">Total Grupos</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-layer-group position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>
+	<div class="col-sm-6 col-xl-6">
+		<div class="p-3 bg-success-400 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="text-center display-4 d-block l-h-n m-0 fw-500">
+				    @Model.TotalDicas
+					<small class="m-0 l-h-n">Total Dicas</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-quote-right position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>	
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xl-12">
+		<div id="panel-1" class="panel">
+			<div class="panel-hdr">	
+				<h2>
+					Gerenciamento dos <span class="fw-300"><i>Grupos de Dicas e Dicas de Escrita</i></span>
+				</h2>
+				<div class="panel-toolbar">
+					<ul class="nav nav-pills border-bottom-0" role="tablist">
+						<li class="nav-item">
+							<a class="nav-link active" data-toggle="tab" href="#pill_default-1" role="tab">Principal</a>
+						</li>
+						@* <li class="nav-item">
+							<a class="nav-link" data-toggle="tab" href="#pill_default-2" role="tab">Vídeos</a>
+						</li> *@
+					</ul>
+				</div>
+			</div>
+			<div class="panel-container show">
+				<div class="panel-content">									
+					<div class="tab-content pt-4">
+						<div class="tab-pane fade show active" id="pill_default-1" role="tabpanel" aria-labelledby="pill_default-1">
+							<div class="row">
+								<div class="col-xl-12">
+									<table id="dt-basic-example" style="width:100%"
+										class="table table-bordered 
+											table-hover table-striped w-100
+											display nowrap">
+									</table>									
+								</div>
+							</div>
+						</div>
+						@* <div class="tab-pane fade" id="pill_default-2" role="tabpanel" aria-labelledby="pill_default-2">
+							<div class="row">
+								<div class="col-xl-12">
+									<div class="panel-tag">
+										<code>Relatório avaliação | Como gerar um <strong>Relatório Avaliação</strong> com filtro de período (Data e Hora) das avaliações efetuadas:</code> <a href="https://youtu.be/xqxta7t718o" target="_blank">Clique aqui</a> e confira o vídeo com as instruções.</a>
+									</div>
+								</div>
+							</div>	
+						</div> *@
+					</div>					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="modal-nova-dica" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header" id="modal-nova-dica-header">
+				<h5 class="modal-title" id="modal-nova-dica-title"></h5>
+				<button type="button" class="close" onclick="modalNovaDicaClose()" data-dismiss="modal" aria-label="Close">
+				<span aria-hidden="true"><i class="@(Settings.Theme.IconPrefix) fa-times"></i></span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<form id="form-nova-dica" method="post">
+					<div class="form-group">
+						<!-- Dados gerais -->
+						<div class="row">
+							<div class="col-xl-4">
+								<div class="form-group">
+									<label class="h2 form-label">Crie uma dica de leitura personalizada</label>
+								</div>
+							</div>
+						</div>
+						<hr class="mt-0 mb-g">
+						<!-- Dica -->
+						<div class="row mb-2">
+							<div class="col-lg-12">
+								<div class="form-group">
+									<label class="form-label" for="modalNovaDicaDica">
+										Dica<span class="text-danger">*</span>:
+									</label>
+									<input type="text" name="modalNovaDicaDica" 
+											id="modalNovaDicaDica" class="form-control" 
+											placeholder="Informe uma dica" value="">
+								</div>
+							</div>
+						</div>
+						<!-- Ordem -->
+						<div class="row mb-2">
+							<div class="col-lg-12">
+								<div class="form-group">
+									<label class="form-label" for="modalNovaDicaOrdem">
+										Ordem<span class="text-danger">*</span>:
+									</label>
+									<input type="number" name="modalNovaDicaOrdem" 
+											id="modalNovaDicaOrdem" class="form-control" 
+											placeholder="Informe uma ordem" value="">
+								</div>
+							</div>
+						</div>
+						<!-- Grupo dica -->
+						<div class="row mb-2">
+							<div class="col-lg-12">
+								<div class="form-group">
+									<label class="form-label" for="modalNovaDicaGrupo">
+										Grupo dica<span class="text-danger">*</span>:
+									</label>
+									<select name="modalNovaDicaGrupo"
+										class="select2 form-control" 
+											id="modalNovaDicaGrupo">
+									</select>
+								</div>
+							</div>
+						</div>
+						<hr class="mt-5 mb-g">
+					</div>
+					<div class="modal-footer" style="margin-right: -17px;">
+						<button type="button" id="btn-nova-dica-close" class="btn btn-secondary" data-dismiss="modal" onclick="modalNovaDicaClose()">Fechar</button>
+						<button type="button" id="btn-nova-dica-save" class="btn btn-primary" onclick="modalNovaDicaSave()">Salvar</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section ScriptsBlock {
+<script src="~/js/dependency/moment/moment.js"></script>
+<script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+<script src="~/js/formplugins/select2/select2.bundle.js"></script>
+<script src="~/js/datagrid/datatables/datatables.export.js"></script>
+<script src="~/js/notifications/toastr/toastr.js"></script>
+<script src="~/js/extensions/automapper-extensions.js"></script>
+<script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+<script src="~/js/notifications/sweetalert2/sweetalert2.bundle.js"></script>
+<script src="~/js/extensions/jquery-serialization-extensions.js"></script>
+<script src="~/js/extensions/dom-control-extensions.js"></script>
+
+<script>
+	toastr.options = {
+		"closeButton": false,
+		"debug": false,
+		"newestOnTop": true,
+		"progressBar": true,
+		"positionClass": "toast-top-right",
+		"preventDuplicates": true,
+		"onclick": null,
+		"showDuration": 300,
+		"hideDuration": 100,
+		"timeOut": 5000,
+		"extendedTimeOut": 1000,
+		"showEasing": "swing",
+		"hideEasing": "linear",
+		"showMethod": "fadeIn",
+		"hideMethod": "fadeOut"
+	};
+
+	const dicaEscritaApiServiceLista = "/api/formularios-leituras/dicas-escrita/lista";
+	const dicaEscritaApiServiceNovo = "/api/formularios-leituras/dicas-escrita/novo";
+	const dicaEscritaApiServiceEdicao = "/api/formularios-leituras/dicas-escrita/edicao";
+	const dicaEscritaApiServiceDelete = "/api/formularios-leituras/dicas-escrita/delete";
+
+	var boolOptions = ["NÃO", "SIM"];
+	var controls = {
+		leftArrow: '<i class="@(Settings.Theme.IconPrefix) fa-angle-left" style="font-size: 1.25rem"></i>',
+		rightArrow: '<i class="@(Settings.Theme.IconPrefix) fa-angle-right" style="font-size: 1.25rem"></i>'
+	}
+
+	var oldExportAction = function (self, e, dt, button, config) {
+		if (button[0].className.indexOf('buttons-excel') >= 0) {
+			if ($.fn.dataTable.ext.buttons.excelHtml5.available(dt, config)) {
+				$.fn.dataTable.ext.buttons.excelHtml5.action.call(self, e, dt, button, config);
+			}
+			else {
+				$.fn.dataTable.ext.buttons.excelFlash.action.call(self, e, dt, button, config);
+			}
+		} else if (button[0].className.indexOf('buttons-print') >= 0) {
+			$.fn.dataTable.ext.buttons.print.action(e, dt, button, config);
+		}
+	};
+
+	var newExportAction = function (e, dt, button, config) {
+		var self = this;
+		var oldStart = dt.settings()[0]._iDisplayStart;
+
+		dt.one('preXhr', function (e, s, data) {
+			// Just this once, load all data from the server...
+			data.start = 0;
+			data.length = 2147483647;
+
+			dt.one('preDraw', function (e, settings) {
+				// Call the original action function 
+				oldExportAction(self, e, dt, button, config);
+
+				dt.one('preXhr', function (e, s, data) {
+					// DataTables thinks the first item displayed is index 0, but we're not drawing that.
+					// Set the property to what it was before exporting.
+					settings._iDisplayStart = oldStart;
+					data.start = oldStart;
+				});
+
+				// Reload the grid with the original page. Otherwise, API functions like table.cell(this) don't work properly.
+				setTimeout(dt.ajax.reload, 0);
+
+				// Prevent rendering of the full data to the DOM
+				return false;
+			});
+		});
+
+		// Requery the server with the new one-time export settings
+		dt.ajax.reload();
+	};
+
+	const toUpperCase = (elem) => {
+		return $(`input[name=${elem.currentTarget.name}]`).val(elem.currentTarget.value.toUpperCase());
+	}
+
+	const ativarGrupoDica = (dicaEscritaId) => {
+		bobcatJS
+			.FormularioLeituraStoreService
+			.dicaEscritaAtivarAsync(dicaEscritaId)
+			.then((response) => {
+				$('#dt-basic-example').dataTable().api().ajax.reload();
+
+				Swal.fire({
+					text: "Registro ativado com sucesso!",
+					icon: "success",
+					timer: 2000,
+					showCancelButton: false,
+					showConfirmButton: true,
+					confirmButtonColor: "#179c8e",
+					timerProgressBar: true,
+					buttons: false
+				});
+			})
+			.catch((e) => {
+				$('#dt-basic-example').dataTable().api().ajax.reload();
+
+				if (e.response.data.errors.Messages != null && 
+				    typeof e.response.data.errors.Messages != 'undefined')
+				{
+					e.response.data.errors.Messages.forEach(function(err) {
+						toastr["error"](err);
+					});
+				} else {
+					e.response.data.forEach(function(err) {
+						toastr["error"](err);
+					});
+				}
+			})
+	}
+
+	const inativarGrupoDica = (dicaEscritaId) => {
+		bobcatJS
+			.FormularioLeituraStoreService
+			.dicaEscritaInativarAsync(dicaEscritaId)
+			.then((response) => {
+				$('#dt-basic-example').dataTable().api().ajax.reload();
+
+				Swal.fire({
+					text: "Registro inativado com sucesso!",
+					icon: "success",
+					timer: 2000,
+					showCancelButton: false,
+					showConfirmButton: true,
+					confirmButtonColor: "#179c8e",
+					timerProgressBar: true,
+					buttons: false
+				});
+			})
+			.catch((e) => {
+				$('#dt-basic-example').dataTable().api().ajax.reload();
+						
+				const returnObj = Object.entries(error.responseJSON.errors);
+
+				returnObj.forEach(function(err) {
+					err[1].forEach(function (int) {
+						toastr["error"](err[0], int);
+					})
+				});
+			})
+	}
+
+	const setValuesInSelect2 = (values, idSelect2, placeholder) => {
+		if (bobcatJS.GeneralExtensions.isNullOrEmptyOrUndefined(idSelect2)) return "Id select2 não informado."
+		if (bobcatJS.GeneralExtensions.isNullOrEmptyOrUndefined(values)) return setExceptionInPlaceholderSelect2("Nenhum registro encontrado", idSelect2)
+
+		values.forEach((item, index) => {
+			$(`#${idSelect2}`).append("<option value='"+item.id+"' selected>"+item.nome+"</option>");
+		})
+
+		$(`#${idSelect2}`).select2().val(null);
+		$(`#${idSelect2}`).select2({
+			placeholder: placeholder,
+			allowClear: true,
+			noResults: function (params) {
+				return "Nenhum registro encontrado";
+			}
+		});
+	}
+
+	const toogleModalAddDica = () => {
+		$('#modal-nova-dica').modal('toggle');
+		$("#modal-nova-dica-title")
+			.text("Nova Dica");
+		
+		// obter os grupos de dicas
+		bobcatJS
+			.FormularioLeituraStoreService
+			.dicaEscritaListaAsync()
+			.then((response) => {
+				
+				setValuesInSelect2(response.data, "modalNovaDicaGrupo", "Informe um grupo de dica")
+			})
+			.catch((e) => {
+				if (e.response.status === 404)
+				{
+					$("#modalNovaDicaGrupo").select2().val(null);
+					$("#modalNovaDicaGrupo").select2({
+						placeholder: "Nenhum registro encontrado, ou todos os registros estão inativos",
+						allowClear: true,
+						noResults: function (params) {
+							return "Nenhum registro encontrado";
+						}
+					});
+				} else {
+					const returnObj = Object.entries(error.responseJSON.errors);
+
+					returnObj.forEach(function(err) {
+						err[1].forEach(function (int) {
+							toastr["error"](err[0], int);
+						})
+					});
+
+					return toastr['error'](e)
+				}
+			})
+	}
+
+	const modalNovaDicaClose = () => {
+		$("#modalNovaDicaDica").val(null);
+		$("#modalNovaDicaOrdem").val(null);
+		$("#modalNovaDicaGrupo").select2().empty();
+
+		$('#modal-nova-dica').modal('toggle');
+	}
+
+	const modalNovaDicaSave = () => {
+		var rowdata = $("#form-nova-dica").serializeJSON();
+		
+		var flDeDVM = {
+			dica: rowdata.modalNovaDicaDica,
+			ordem: rowdata.modalNovaDicaOrdem,
+			formularioLeituraDicaEscritaId: rowdata.modalNovaDicaGrupo
+		}
+
+		bobcatJS
+			.FormularioLeituraStoreService
+			.dicaEscritaDicaNovoAsync(JSON.stringify(flDeDVM, null, 4))
+			.then((response) => {
+				modalNovaDicaClose()
+				$('#dt-basic-example').dataTable().api().ajax.reload();
+
+				Swal.fire({
+					text: "Dica de leitura criada com sucesso!",
+					icon: "success",
+					timer: 2000,
+					showCancelButton: false,
+					showConfirmButton: true,
+					confirmButtonColor: "#179c8e",
+					timerProgressBar: true,
+					buttons: false
+				});
+			})
+			.catch((e) => {
+				if (e.response.status === 400) return toastr['error'](e.response.data)
+				if (e.response.status === 500) return toastr['error'](e.responseText)
+				if (e.response.status === 500) return toastr['error'](e.responseText.title)
+
+				return toastr['error'](e)
+			})
+	}
+
+	const createDicasEscritaToGrupo = function (data) {
+		if (bobcatJS.GeneralExtensions.isNullOrEmptyOrUndefined(data))
+			return toastr['error']("Dica(s) escrita requerida(s).")
+
+		// ** create dinamically field
+
+		// first label
+		var label = '<div class="form-group row" id="row_label-dicas">'+
+						'<div class="col-lg-12 text-right">'+
+							'<h4>Dicas</h4>'+
+						'</div>'+
+					'</div>'+
+					'<div class="alert alert-primary">'+
+						'<div class="d-flex flex-start w-100">'+
+							'<div class="d-flex align-center mr-2 hidden-sm-down">'+
+								'<span class="icon-stack icon-stack-lg">'+
+									'<i class="base-7 icon-stack-3x color-primary-400"></i>'+
+									'<i class="base-7 icon-stack-2x color-primary-600 opacity-70"></i>'+
+									'<i class="fal fa-exclamation icon-stack-1x text-white opacity-90"></i>'+
+								'</span>'+
+							'</div>'+
+							'<div class="d-flex flex-fill">'+
+								'<div class="flex-fill">'+
+									'<span class="h5">Atenção!<span class="fw-700 text-warning"><i></i></span></span>'+
+									'<br> Para alterar as dicas, não é preciso apertar no botão salvar. Apenas faça as modificações necessárias e saia do campo alterado que tudo será <span class="fw-700 text-primary"><i>salvo automaticamente.</span></i>'+
+									'<br><br> Somente se você mudar o "Nome" do Grupo de dicas será necessário salvar esta alteração no botão Salvar.</span></i>'+
+								'</div>'+
+							'</div>'+
+						'</div>'+
+					'</div>'
+
+		$("#row_isDeleted").after(label);
+
+		//second dicas
+		data.map((item, index) => {
+			var field = `<div class="form-group row" id="row_dica_${index}">`+
+							'<div>'+
+								`<input type="text" id="dica_${index}_id" `+
+									`name="dica_${index}_id" `+
+									'class="form-control" '+
+									`value="${item.id}" hidden`+
+								'/>'+
+							'</div>'+
+							'<div class="col-lg-8">'+
+								`<input type="text" id="dica_${index}_dica" `+
+									`title="Dica de escrita" name="dica_${index}_dica" placeholder="Dica de escrita" `+
+									'class="form-control" '+
+									`value="${item.dica}" `+
+								'/>'+
+							'</div>'+
+							'<div class="col-lg-3">'+
+								`<input type="number" id="dica_${index}_ordem" `+
+									`title="Ordem da dica de escrita" name="dica_${index}_ordem" placeholder="Ordem da dica de escrita" `+
+									'class="form-control" '+
+									`value="${item.ordem}"`+
+								'/>'+
+							'</div>'+
+							'<div class="col-lg-1">'+
+								`<a onclick="removeStateFormularioLeituraDicaEscritaDicas('${item.id}', this)" `+
+								'style="position: relative; left: -41px; top: 6px;"'+
+								'class="text-white btn btn-remove-dia-total '+
+								'btn-sm btn-danger btn-icon ml-5"'+
+								'title="Excluir dica escrita">'+
+									'<i class="fal fa-times"></i>'+
+								'</a>'+
+							'</div>'+
+							'<div style="clear:both;"></div>'+
+						'</div>'
+
+			$("#row_label-dicas").after(field);
+
+			// ** handle event to change
+			$(`#dica_${index}_dica`).on('change', (e) => {
+				updateFormularioLeituraDicaEscritaDicas(item.id, e)
+			})
+
+			$(`#dica_${index}_ordem`).on('change', (e) => {
+				updateFormularioLeituraDicaEscritaDicas(item.id, e)
+			})
+		})
+	}
+
+	// Update directally in db
+	const updateFormularioLeituraDicaEscritaDicas = (id, elem) => {
+		if (bobcatJS.GeneralExtensions.isNullOrEmptyOrUndefined(id)) return toastr['error']("Id requerido.")
+		if (bobcatJS.GeneralExtensions.isNullOrEmptyOrUndefined(elem)) return toastr['error']("Dica requerida.")
+		
+		const elemSplited = elem.currentTarget.id.split("_")
+
+		var data = {
+			id: id,
+			dica: '',
+			ordem: 0
+		}
+
+		if (elemSplited[2] === 'dica')
+		{
+			if (bobcatJS.GeneralExtensions.isNullOrEmptyOrUndefined(elem.currentTarget.value)) return toastr['error']("Dica é requerida para atualizar.")
+			data.dica = elem.currentTarget.value
+		} else if (elemSplited[2] === 'ordem')
+		{
+			if (bobcatJS.GeneralExtensions.isNullOrEmptyOrUndefined(elem.currentTarget.value)) return toastr['error']("Ordem é requerida para atualizar.")
+			data.ordem = elem.currentTarget.value
+		}
+		
+		bobcatJS
+			.FormularioLeituraStoreService
+			.dicaEscritaDicaEdicaoAsync(JSON.stringify(data, null, 4))
+			.then((response) => {
+				$('#dt-basic-example').dataTable().api().ajax.reload();
+				console.log("Dica escrita dica atualizada com sucesso.")
+			})
+			.catch((e) => {
+				const returnObj = Object.entries(error.responseJSON.errors);
+
+				returnObj.forEach(function(err) {
+					err[1].forEach(function (int) {
+						toastr["error"](err[0], int);
+					})
+				});
+
+				return toastr['error'](e)
+			})
+	}
+
+	// Remove state array formularioLeituraDicaEscritaDicas
+	const removeStateFormularioLeituraDicaEscritaDicas = (id, elem) => {
+		if (bobcatJS.GeneralExtensions.isNullOrEmptyOrUndefined(id)) return toastr['error']("Id requerido.")
+		
+		bobcatJS
+			.FormularioLeituraStoreService
+			.dicaEscritaDicaDeleteAsync(id)
+			.then((response) => {
+				// ** Update data in datatable
+				$('#dt-basic-example').dataTable().api().ajax.reload();
+				
+				// ** Remove element in DOM
+				var elemIdToDelete = getParentNode(elem, 2)
+				$(elemIdToDelete).remove()
+
+				// ** Success message in console
+				console.log("Dica escrita excluída com sucesso.")
+			})
+			.catch((e) => {
+				const returnObj = Object.entries(error.responseJSON.errors);
+
+				returnObj.forEach(function(err) {
+					err[1].forEach(function (int) {
+						toastr["error"](err[0], int);
+					})
+				});
+
+				return toastr['error'](e)
+			})
+	}
+
+	$(document).ready( function () {
+		//Tecla atalho CTRL + Z - Novo registro
+		$(document).keydown(function(e) {
+			if (e.ctrlKey && e.which === 90) $(".btn-add").click();
+		});
+
+		$(document).on("click", ".btn-actions", function () {
+			$("#row_id").hide();
+		});
+
+		$(document).on("click", ".btn-add", function () {
+			$("input[name=Nome]").on('keyup', (elem) => {
+				toUpperCase(elem);
+			})
+
+			setTimeout(function() {
+				$("input[name=Nome]").focus();
+			}, 500);
+
+			$("#isDeleted").attr('disabled', true);
+		});
+
+		$(document).on("click", ".btn-edit", function (event) {
+			$("input[name=Nome]").on('keyup', (elem) => {
+				toUpperCase(elem);
+			})
+
+			setTimeout(function() {
+				$("input[name=Nome]").focus();
+			}, 500);
+
+			$("#isDeleted").attr('disabled', true);
+
+			var tableToQuery = $("#dt-basic-example").DataTable();
+			var selectedRow = $("#dt-basic-example tr.selected");
+			var row = tableToQuery.row(selectedRow).data();
+
+			row.formularioLeituraDicaEscritaDicas
+
+			createDicasEscritaToGrupo(row.formularioLeituraDicaEscritaDicas.sort((a, b) => {return b.ordem - a.ordem}))
+		});
+
+		// Column Definitions
+		var columnSet = [
+			{
+				title: "Id",
+				id: "id",
+				data: "id",
+				placeholderMsg: "Automático",
+				type: "readonly",
+				visible: false,
+				searchable: false,
+				name: "Id"
+			},
+			{
+				title: "Nome",
+				id: "nome",
+				data: "nome",
+				type: "text",
+				visible: true,
+				searchable: true,
+				orderable: true,
+				required: true,				
+				name: "Nome"
+			},
+			{
+				title: "É ativo?",
+				data: "isDeleted",
+				type: "select",
+				options: boolOptions,
+				searchable: false,
+				multiple : false,
+				visible: true,
+				select2 : { width: "100%" },
+				orderable: true,
+				required: true,
+				name: "IsDeleted"
+			}
+		];
+
+		/* start data table */
+		var myTable = $('#dt-basic-example')
+			.dataTable({
+			/* check datatable buttons page for more info on how this DOM structure works */
+			dom: "<'row mb-3'<'col-sm-12 col-md-3 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-9 d-flex align-items-center justify-content-end'B>>" +
+				 "<'row'<'col-sm-12'tr>>" +
+				 "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+			ajax: {
+				url : dicaEscritaApiServiceLista,
+				type: 'POST',
+				dataSrc: function (json) {
+					return transformObjArrayFieldBoolBackToFront(json.data.data);
+				}
+        	},
+			lengthMenu: [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
+			scrollY:        400, 
+			scrollX:        true,
+			scrollCollapse: true,
+			serverSide: true,
+			processing: true,
+			altEditor: true,
+			pagingType: "full_numbers",
+			language: {
+            	decimal: ",",
+            	thousands: ".",
+        		searchPlaceholder: "Busque pelo NOME DO GRUPO",
+				sProcessing: '<span id=\"loading-image\" "class="fa fa-spinner fa-spin fa-2x spinner-border spinner-border-sm text-primary mr-2""><img class="manImg" src="img/loading_alt_3.gif" width="50" height="50"></img></span>',
+				sZeroRecords: "Nenhum registro encontrado.",
+				oPaginate: {
+                    "sFirst": "Primeiro",
+                    "sPrevious": "Anterior",
+                    "sNext": "Próximo",
+                    "sLast": "Último"
+                },
+				sInfo: "Mostrando _START_ de _END_ de um total de _TOTAL_",
+                sInfoEmpty: "Nenhuma registro encontrado.",
+                sInfoFiltered: " (filtrado a partir de um total de _MAX_ registros)",
+                sInfoPostFix: "",
+				select: {
+					rows: "%d linhas selecionadas"
+				}
+        	},
+			columns: columnSet,
+			select: 'single',
+			fixedColumns: {
+				leftColumns: 1
+			},
+			buttons: [
+				{
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-plus mr-1"></i> Nova dica',
+					name: '',
+					className: 'btn-info btn-sm mr-1 btn-nova-dica',
+					action: function (e, dt, node, config) {
+						toogleModalAddDica();
+					}
+				},
+				{	
+					extend: 'selected',
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-arrow-up mr-1"></i> Ativar',
+					name: '',
+					className: 'btn-success btn-sm mr-1 btn-actions',
+					action: function (e, dt, node, config) {
+						var rowSelected = dt.rows(".selected").data();
+
+						if (rowSelected.length > 1) return toastr['info']("Selecione apenas uma dica escrita para ativar.")
+						if (rowSelected[0].isDeleted === 'SIM') return toastr['info']("Dica escrita já está ativa.")
+
+						ativarGrupoDica(rowSelected[0].id)
+                	}
+				},
+				{	
+					extend: 'selected',
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-arrow-down mr-1"></i> Desativar',
+					name: '',
+					className: 'btn-danger btn-sm mr-1 btn-actions',
+					action: function (e, dt, node, config) {
+						var rowSelected = dt.rows(".selected").data();
+
+						if (rowSelected.length > 1) return toastr['info']("Selecione apenas uma dica escrita para inativar.")
+						if (rowSelected[0].isDeleted === 'NÃO') return toastr['info']("Dica escrita já está inativa.")
+
+						inativarGrupoDica(rowSelected[0].id)						
+                	}
+				},
+				{
+					extend: 'selected',
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-edit mr-1"></i> Editar',
+					name: 'edit',
+					className: 'btn-warning btn-sm mr-1 btn-actions btn-edit'
+				},
+				{
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-plus mr-1"></i> Novo grupo dicas',
+					name: 'add',
+					className: 'btn-primary btn-sm mr-1 btn-actions btn-add'
+				}					
+			],
+			columnDefs: [],
+			onAddRow: function(dt, rowdata, success, error) {
+				$.ajax({ 
+					url: dicaEscritaApiServiceNovo,
+					type: 'POST',
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(transformObjFieldBoolFrontToBack(rowdata), null, 4),
+					success: function (data) {
+						$(".modal").modal('hide');
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						Swal.fire({
+							text: "Registro criado com sucesso!",
+							icon: "success",
+							timer: 2000,
+							showCancelButton: false,
+							showConfirmButton: true,
+							confirmButtonColor: "#179c8e",
+							timerProgressBar: true,
+							buttons: false
+						});
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+						
+						const returnObj = Object.entries(error.responseJSON.errors);
+
+						returnObj.forEach(function(err) {
+							err[1].forEach(function (int) {
+								toastr["error"](err[0], int);
+							})
+						});
+					}
+				});
+			},
+			onEditRow: function(dt, rowdata, success, error) {
+				$.ajax({ 
+					url: dicaEscritaApiServiceEdicao, 
+					type: 'PUT',
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(transformObjFieldBoolFrontToBack(rowdata), null, 4),
+					success: function (data) {
+						$(".modal").modal('hide');
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						Swal.fire({
+							text: "Registro atualizado com sucesso!",
+							icon: "success",
+							timer: 2000,
+							showCancelButton: false,
+							showConfirmButton: true,
+							confirmButtonColor: "#179c8e",
+							timerProgressBar: true,
+							buttons: false
+						});
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						const returnObj = Object.entries(error.responseJSON.errors);
+
+						returnObj.forEach(function(err) {
+							err[1].forEach(function (int) {
+								toastr["error"](err[0], int);
+							})
+						});
+					}
+				});
+			},
+			onDeleteRow: function(dt, rowdata, success, error) {
+				$.ajax({ 
+					url: dicaEscritaApiServiceDelete, 
+					type: 'DELETE', 
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(transformObjFieldBoolFrontToBack(rowdata), null, 4),
+					success: function (data) {
+						$(".modal").modal('hide');
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						Swal.fire({
+							text: "Registro deletado com sucesso!",
+							icon: "success",
+							timer: 2000,
+							showCancelButton: false,
+							showConfirmButton: true,
+							confirmButtonColor: "#179c8e",
+							timerProgressBar: true,
+							buttons: false
+						});
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						const returnObj = Object.entries(error.responseJSON.errors);
+
+						returnObj.forEach(function(err) {
+							err[1].forEach(function (int) {
+								toastr["error"](err[0], int);
+							})
+						});
+					}
+				});
+			},		
+		});
+
+		$('#dt-basic-example_filter input').bind('keyup', function(e) {
+			$('#dt-basic-example_filter input').val($('#dt-basic-example_filter input').val().toUpperCase());
+		});
+	});
+
+</script>
+}

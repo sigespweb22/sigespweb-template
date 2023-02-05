@@ -1,0 +1,845 @@
+@model Sigesp.Application.ViewModels.Cards.ServidorEstadoCardViewModel
+
+@{
+	ViewData["Title"] = "Servidores";
+	ViewData["PageName"] = "servidor-estado_lista";
+	ViewData["Category0"] = @Settings.App;
+	ViewData["Category1"] = "Meu reforço";
+	ViewData["Heading"] = "<i class='subheader-icon fal fa-user-shield'></i> Servidores do estado<span class='fw-300'></span> <sup class='badge badge-primary fw-500'>NOVO</sup>";
+	ViewData["PageDescription"] = "Listagem de todos os servidores do estado";
+}
+@section HeadBlock {
+	<link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/formplugins/select2/select2.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/theme-demo.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/notifications/toastr/toastr.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/notifications/sweetalert2/sweetalert2.bundle.css">
+}
+
+<div class="row">
+	<div class="col-sm-6 col-xl-4">
+		<div class="p-3 bg-primary-300 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="display-4 d-block l-h-n m-0 fw-500">
+					@Model.Total
+					<small class="m-0 l-h-n">Total</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-users position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>
+	<div class="col-sm-6 col-xl-2">
+		<div class="p-3 bg-danger-400 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="text-center display-4 d-block l-h-n m-0 fw-500">
+				    @Model.Expedientes
+					<small class="m-0 l-h-n">Expediente</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-users position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>	
+	</div>
+	<div class="col-sm-6 col-xl-2">
+		<div class="p-3 bg-warning-400 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="text-center display-4 d-block l-h-n m-0 fw-500">
+				    @Model.NaoExpedientes
+					<small class="m-0 l-h-n">Não Expediente</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-users position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>
+	<div class="col-sm-6 col-xl-2">
+		<div class="p-3 bg-success-400 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="text-center display-4 d-block l-h-n m-0 fw-500">
+				    @Model.FeriasAgendadasToCurrentYear
+					<small class="m-0 l-h-n">Ferias este ano</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-users position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>	
+	<div class="col-sm-6 col-xl-2">
+		<div class="p-3 bg-primary-200 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="text-center display-4 d-block l-h-n m-0 fw-500">
+				    @Model.LicencaPremioToCurrentYear
+					<small class="m-0 l-h-n">Licença prêmio este ano</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-users position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xl-12">
+		<div id="panel-1" class="panel">
+			<div class="panel-hdr">	
+				<h2>
+					Gerenciamento dos <span class="fw-300"><i>Servidores do Estado</i></span>
+				</h2>
+				<div class="panel-toolbar">
+					<ul class="nav nav-pills border-bottom-0" role="tablist">
+						<li class="nav-item">
+							<a class="nav-link active" data-toggle="tab" href="#pill_default-1" role="tab">Principal</a>
+						</li>
+						@* <li class="nav-item">
+							<a class="nav-link" data-toggle="tab" href="#pill_default-2" role="tab">Vídeos</a>
+						</li> *@
+					</ul>
+				</div>
+			</div>
+			<div class="panel-container show">
+				<div class="panel-content">									
+					<div class="tab-content pt-4">
+						<div class="tab-pane fade show active" id="pill_default-1" role="tabpanel" aria-labelledby="pill_default-1">
+							<div class="row">
+								<div class="col-xl-12">
+									<table id="dt-basic-example" style="width:100%"
+										class="table table-bordered 
+											table-hover table-striped w-100
+											display nowrap">
+									</table>									
+								</div>
+							</div>
+						</div>
+						@* <div class="tab-pane fade" id="pill_default-2" role="tabpanel" aria-labelledby="pill_default-2">
+							<div class="row">
+								<div class="col-xl-12">
+									<div class="panel-tag">
+										<code>Relatório avaliação | Como gerar um <strong>Relatório Avaliação</strong> com filtro de período (Data e Hora) das avaliações efetuadas:</code> <a href="https://youtu.be/xqxta7t718o" target="_blank">Clique aqui</a> e confira o vídeo com as instruções.</a>
+									</div>
+								</div>
+							</div>	
+						</div> *@
+					</div>					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section ScriptsBlock {
+<script src="~/js/dependency/moment/moment.js"></script>
+<script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+<script src="~/js/formplugins/select2/select2.bundle.js"></script>
+<script src="~/js/datagrid/datatables/datatables.export.js"></script>
+<script src="~/js/notifications/toastr/toastr.js"></script>
+<script src="~/js/extensions/automapper-extensions.js"></script>
+<script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+<script src="~/js/notifications/sweetalert2/sweetalert2.bundle.js"></script>
+
+<script>
+	toastr.options = {
+		"closeButton": false,
+		"debug": false,
+		"newestOnTop": true,
+		"progressBar": true,
+		"positionClass": "toast-top-right",
+		"preventDuplicates": true,
+		"onclick": null,
+		"showDuration": 300,
+		"hideDuration": 100,
+		"timeOut": 5000,
+		"extendedTimeOut": 1000,
+		"showEasing": "swing",
+		"hideEasing": "linear",
+		"showMethod": "fadeIn",
+		"hideMethod": "fadeOut"
+	};
+
+	const seApiServiceLista = "/api/servidores-estado/lista";
+	const seApiServiceNovo = "/api/servidores-estado/novo";
+	const seApiServiceEdicao = "/api/servidores-estado/edicao";
+	const seApiServiceDelete = "/api/servidores-estado/delete";
+
+	var boolOptions = ["NÃO", "SIM"];
+	var usuarios = [];
+	var plantoes = [];
+	var galerias = [];
+	var controls = {
+		leftArrow: '<i class="@(Settings.Theme.IconPrefix) fa-angle-left" style="font-size: 1.25rem"></i>',
+		rightArrow: '<i class="@(Settings.Theme.IconPrefix) fa-angle-right" style="font-size: 1.25rem"></i>'
+	}
+
+	@foreach (var plantao in @Model.Plantoes)
+	{
+		@:plantoes.push('@plantao');
+	}
+
+	@foreach (var galeria in @Model.Galerias)
+	{
+		@:galerias.push('@galeria');
+	}
+
+	var oldExportAction = function (self, e, dt, button, config) {
+		if (button[0].className.indexOf('buttons-excel') >= 0) {
+			if ($.fn.dataTable.ext.buttons.excelHtml5.available(dt, config)) {
+				$.fn.dataTable.ext.buttons.excelHtml5.action.call(self, e, dt, button, config);
+			}
+			else {
+				$.fn.dataTable.ext.buttons.excelFlash.action.call(self, e, dt, button, config);
+			}
+		} else if (button[0].className.indexOf('buttons-print') >= 0) {
+			$.fn.dataTable.ext.buttons.print.action(e, dt, button, config);
+		}
+	};
+
+	var newExportAction = function (e, dt, button, config) {
+		var self = this;
+		var oldStart = dt.settings()[0]._iDisplayStart;
+
+		dt.one('preXhr', function (e, s, data) {
+			// Just this once, load all data from the server...
+			data.start = 0;
+			data.length = 2147483647;
+
+			dt.one('preDraw', function (e, settings) {
+				// Call the original action function 
+				oldExportAction(self, e, dt, button, config);
+
+				dt.one('preXhr', function (e, s, data) {
+					// DataTables thinks the first item displayed is index 0, but we're not drawing that.
+					// Set the property to what it was before exporting.
+					settings._iDisplayStart = oldStart;
+					data.start = oldStart;
+				});
+
+				// Reload the grid with the original page. Otherwise, API functions like table.cell(this) don't work properly.
+				setTimeout(dt.ajax.reload, 0);
+
+				// Prevent rendering of the full data to the DOM
+				return false;
+			});
+		});
+
+		// Requery the server with the new one-time export settings
+		dt.ajax.reload();
+	};
+
+	const setExceptionInPlaceholderSelect2 = (ex, idSelect2) => {
+		$(`#${idSelect2}`).select2().empty();
+		$(`#${idSelect2}`).select2({ 
+			placeholder: ex
+		});
+	}
+
+	const setStateInitialSelect2 = (idSelect2, placeholder) => {
+		$(`#${idSelect2}`).select2().val(null)
+		$(`#${idSelect2}`).select2({ 
+			placeholder: placeholder,
+			language: {
+				noResults: (params) => {
+					return "Nenhum registro encontrado";
+				}
+			}
+		})
+	}
+
+	const setValuesInSelect2 = (values, idSelect2, placeholder) => {
+		if (bobcatJS.GeneralExtensions.isNullOrEmptyOrUndefined(idSelect2)) return "Id select2 não informado."
+		if (bobcatJS.GeneralExtensions.isNullOrEmptyOrUndefined(values)) return setExceptionInPlaceholderSelect2("Nenhum registro encontrado", idSelect2)
+
+		values.forEach((item, index) => {
+			$(`#${idSelect2}`).append("<option value='"+item.id+"' selected>"+item.nome+"</option>");
+		})
+
+		$(`#${idSelect2}`).select2().val(null);
+		$(`#${idSelect2}`).select2({
+			placeholder: placeholder,
+		});
+	}
+
+	$(document).ready( function () {
+		//Tecla atalho CTRL + Z - Novo registro
+		$(document).keydown(function(e) {
+			if (e.ctrlKey && e.which === 90) $(".btn-add").click();
+		});
+
+		$(document).on("click", ".btn-actions", function () {
+			$("#row_id").hide();
+			$("#row_isDeleted").hide();
+		});
+
+		$(document).on("click", ".btn-add", function () {
+			// get and set users in select2 to add new servidor estado
+			bobcatJS
+				.UserStoreService
+				.listToSelect2()
+				.then((response) => {
+					setValuesInSelect2(response.data, "servidorEstadoNome", "Informe um usuário do sistema")
+				})
+				.catch((e) => {
+					if (e.response.status === 400) return toastr['error'](e.response.data)
+					if (e.response.status === 500) return toastr['error'](e.responseText)
+					if (e.response.status === 500) return toastr['error'](e.responseText.title)
+
+					return toastr['error'](e)
+				})
+
+				$('#servidorEstadoNome').select2('focus');
+
+				setStateInitialSelect2("isExpediente", "Informe se é expediente ou não")
+				setStateInitialSelect2("hasPrioridadeMarcacaoReforco", "Informe se tem prioridade de reforço")
+				setStateInitialSelect2("hasLicencaPremioAgendada", "Informe se estará em licença prêmio este ano")
+				setStateInitialSelect2("hasFeriasAgendadas", "Informe se estará em férias este ano")
+				setStateInitialSelect2("plantaoNome", "Informe o nome do plantão")
+				setStateInitialSelect2("galeria", "Informe uma galeria")
+		});
+
+		$(document).on("click", ".btn-edit", function (event) {
+			var tableToQuery = $("#dt-basic-example").DataTable();
+			var selectedRow = $("#dt-basic-example tr.selected");
+			var row = tableToQuery.row(selectedRow).data();
+
+			// get and set users in select2 to add new servidor estado
+			bobcatJS
+				.UserStoreService
+				.listToSelect2Servidores()
+				.then((response) => {
+					setValuesInSelect2(response.data, "servidorEstadoNome", "Informe um usuário do sistema")
+					
+					setTimeout(function () {
+						$("#servidorEstadoNome").select2().val(row.userId)
+						$("#servidorEstadoNome").select2()
+
+						$("#galeria").select2().val(row.galeria)
+						$("#galeria").select2()
+					}, 500)
+				})
+				.catch((e) => {
+					if (e.response.status === 400) return toastr['error'](e.response.data)
+					if (e.response.status === 500) return toastr['error'](e.responseText)
+					if (e.response.status === 500) return toastr['error'](e.responseText.title)
+
+					return toastr['error'](e)
+				})
+		});
+
+		// Column Definitions
+		var columnSet = [
+			{
+				title: "Id",
+				id: "id",
+				data: "id",
+				placeholderMsg: "Automático",
+				type: "readonly",
+				visible: false,
+				searchable: false,
+				name: "Id"
+			},
+			{
+				title: "Nome",
+				id: "servidorEstadoNome",
+				data: "servidorEstadoNome",
+				type: "select",
+				multiple : false,				
+				visible: true,
+				select2 : {
+					width: "100%",
+					allowClear: true,
+					minimumInputLength: 3,
+					language: {
+						inputTooShort: function() {
+							return 'Digite 3 ou mais caracteres para iniciar a busca';
+						}
+					},
+					noResults: function (params) {
+						return "Nenhum registro encontrado";
+					}
+				},
+				render : function (data, type, row, meta) {
+					return data;
+				},
+				searchable: true,
+				orderable: true,
+				required: true,				
+				name: "Nome"
+			},
+			{
+				title: "Matrícula",
+				id: "matricula",
+				data: "matricula",
+				placeholderMsg: "Informe a matrícula",
+				type: "text",
+				visible: true,
+				searchable: false,
+				orderable: false,
+				required: true,	
+				name: "Matricula"
+			},
+			{
+				title: "Plantão",
+				data: "plantaoNome",
+				type: "select",
+				options: plantoes,
+				searchable: false,
+				multiple : false,
+				visible: true,
+				select2 : { width: "100%" },
+				orderable: true,
+				required: true,
+				name: "PlantaoNome"
+			},
+			{
+				title: "Galeria",
+				data: "galeria",
+				type: "select",
+				options: galerias,
+				searchable: false,
+				multiple : false,
+				visible: true,
+				select2 : { width: "100%" },
+				orderable: true,
+				required: true,
+				name: "Galeria"
+			},
+			{
+				title: "É expediente?",
+				data: "isExpediente",
+				type: "select",
+				options: boolOptions,
+				searchable: false,
+				multiple : false,
+				visible: true,
+				select2 : { width: "100%" },
+				orderable: true,
+				required: true,
+				name: "IsExpediente"
+			},
+			{
+				title: "Tem prioridade reforço?",
+				data: "hasPrioridadeMarcacaoReforco",
+				type: "select",
+				options: boolOptions,
+				searchable: false,
+				multiple : false,
+				visible: true,
+				select2 : { width: "100%" },
+				orderable: true,
+				required: true,
+				name: "HasPrioridadeMarcacaoReforco"
+			},
+			{
+				title: "Licença prêmio este ano?",
+				data: "hasLicencaPremioAgendada",
+				type: "select",
+				options: boolOptions,
+				searchable: false,
+				multiple : false,
+				visible: true,
+				select2 : { width: "100%" },
+				orderable: true,
+				required: true,
+				name: "HasLicencaPremioAgendada"
+			},
+			{
+				title: "Férias este ano?",
+				data: "hasFeriasAgendadas",
+				type: "select",
+				options: boolOptions,
+				searchable: false,
+				multiple : false,
+				visible: true,
+				select2 : { width: "100%" },
+				orderable: true,
+				required: true,
+				name: "HasFeriasAgendadas"
+			},
+			{
+				title: "Data início gozo",
+				id: "dataInicioGozo",	
+				data: "dataInicioGozo",
+				type: "date",
+				required: false,
+				searchable: false,
+				orderable: false,
+				visible: true,
+				render: function (data) {
+					return moment(data).format('DD/MM/YYYY');
+				},
+				name: "DataInicioGozo"
+			},
+			{
+				title: "Data fim gozo",
+				id: "dataFimGozo",	
+				data: "dataFimGozo",
+				type: "date",
+				required: false,
+				searchable: false,
+				orderable: false,
+				visible: true,
+				render: function (data) {
+					return moment(data).format('DD/MM/YYYY');
+				},
+				name: "DataFimGozo"
+			},
+			{
+				title: "É ativo?",
+				data: "isDeleted",
+				type: "select",
+				options: boolOptions,
+				searchable: false,
+				multiple : false,
+				visible: true,
+				select2 : { width: "100%" },
+				orderable: true,
+				required: true,
+				name: "IsDeleted"
+			}
+		];
+
+		/* start data table */
+		var myTable = $('#dt-basic-example')
+			.dataTable({
+			/* check datatable buttons page for more info on how this DOM structure works */
+			dom: "<'row mb-3'<'col-sm-12 col-md-3 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-9 d-flex align-items-center justify-content-end'B>>" +
+				 "<'row'<'col-sm-12'tr>>" +
+				 "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+			ajax: {
+				url : seApiServiceLista,
+				type: 'POST',
+				dataSrc: function (json) {
+					return transformObjArrayFieldBoolBackToFront(json.data.data);
+				}
+        	},
+			lengthMenu: [
+				[50, 100, -1],
+				["50", "100", "Todos"],
+			],
+			scrollY:        400,
+			scrollX:        true,
+			scrollCollapse: true,
+			serverSide: true,
+			processing: true,
+			altEditor: true,
+			pagingType: "full_numbers",
+			language: {
+            	decimal: ",",
+            	thousands: ".",
+        		searchPlaceholder: "Busque pelo NOME DO SERVIDOR",
+				sProcessing: '<span id=\"loading-image\" "class="fa fa-spinner fa-spin fa-2x spinner-border spinner-border-sm text-primary mr-2""><img class="manImg" src="img/loading_alt_3.gif" width="50" height="50"></img></span>',
+				sZeroRecords: "Nenhum registro encontrado.",
+				oPaginate: {
+                    "sFirst": "Primeiro",
+                    "sPrevious": "Anterior",
+                    "sNext": "Próximo",
+                    "sLast": "Último"
+                },
+				sInfo: "Mostrando _START_ de _END_ de um total de _TOTAL_",
+                sInfoEmpty: "Nenhuma registro encontrado.",
+                sInfoFiltered: " (filtrado a partir de um total de _MAX_ registros)",
+                sInfoPostFix: "",
+				select: {
+					rows: "%d linhas selecionadas"
+				}
+        	},
+			columns: columnSet,
+			select: 'single',
+			fixedColumns: {
+				leftColumns: 2
+			},
+			buttons: [
+				{	
+					extend: 'selected',
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-arrow-up mr-1"></i> Ativar',
+					name: '',
+					className: 'btn-success btn-sm mr-1 btn-actions',
+					action: function (e, dt, node, config) {
+						var rowSelected = dt.rows(".selected").data();
+
+						if (rowSelected[0].isDeleted === 'SIM') return toastr['info']("Usuário já está ativo.")
+
+						bobcatJS
+							.ServidorEstadoStoreService
+							.ativarAsync(rowSelected[0].id)
+							.then((response) => {
+								$('#dt-basic-example').dataTable().api().ajax.reload();
+
+									Swal.fire({
+										text: "Registro ativado com sucesso!",
+										icon: "success",
+										timer: 2000,
+										showCancelButton: false,
+										showConfirmButton: true,
+										confirmButtonColor: "#179c8e",
+										timerProgressBar: true,
+										buttons: false
+									});
+							})
+							.catch((e) => {
+								$('#dt-basic-example').dataTable().api().ajax.reload();
+						
+								const returnObj = Object.entries(error.responseJSON.errors);
+
+								returnObj.forEach(function(err) {
+									err[1].forEach(function (int) {
+										toastr["error"](err[0], int);
+									})
+								});
+							})
+                	}
+				},
+				{	
+					extend: 'selected',
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-arrow-down mr-1"></i> Desativar',
+					name: 'delete',
+					className: 'btn-danger btn-sm mr-1 btn-actions',
+					action: function (e, dt, node, config) {
+						var rowSelected = dt.rows(".selected").data();
+						if (rowSelected[0].isDeleted === 'NÃO') return toastr['info']("Usuário já está inativo.")
+
+						bobcatJS
+							.ServidorEstadoStoreService
+							.ativarAsync(rowSelected[0].id)
+							.then((response) => {
+								$('#dt-basic-example').dataTable().api().ajax.reload();
+
+									Swal.fire({
+										text: "Registro ativado com sucesso!",
+										icon: "success",
+										timer: 2000,
+										showCancelButton: false,
+										showConfirmButton: true,
+										confirmButtonColor: "#179c8e",
+										timerProgressBar: true,
+										buttons: false
+									});
+							})
+							.catch((e) => {
+								$('#dt-basic-example').dataTable().api().ajax.reload();
+						
+								const returnObj = Object.entries(error.responseJSON.errors);
+
+								returnObj.forEach(function(err) {
+									err[1].forEach(function (int) {
+										toastr["error"](err[0], int);
+									})
+								});
+							})
+                	}
+				},
+				{
+					extend: 'selected',
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-edit mr-1"></i> Editar',
+					name: 'edit',
+					className: 'btn-warning btn-sm mr-1 btn-actions btn-edit'
+				},
+				{
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-plus mr-1"></i> Nova',
+					name: 'add',
+					className: 'btn-primary btn-sm mr-1 btn-actions btn-add'
+				}					
+			],
+			columnDefs: [
+				{
+					targets: 1,
+					width: "450px"
+				},
+				{
+					targets: 4,
+					className: "text-center"
+				},
+				{
+					targets: 5,
+					className: "text-center",
+					render: function(data, type, full, meta) {
+
+						var badge = {
+							'SIM': {'title': 'SIM', 'class': 'badge-info'},
+							'NÃO': {'title': 'NÃO', 'class': 'badge-warning'}
+						};
+						if (typeof badge[data] === 'undefined') {
+							return data;
+						}
+						return '<span class="badge ' + badge[data].class + ' badge-pill">' + badge[data].title + '</span>';
+					}
+				},
+				{
+					targets: 6,
+					className: "text-center",
+					render: function(data, type, full, meta) {
+
+						var badge = {
+							'SIM': {'title': 'SIM', 'class': 'badge-info'},
+							'NÃO': {'title': 'NÃO', 'class': 'badge-warning'}
+						};
+						if (typeof badge[data] === 'undefined') {
+							return data;
+						}
+						return '<span class="badge ' + badge[data].class + ' badge-pill">' + badge[data].title + '</span>';
+					}
+				},
+				{
+					targets: 7,
+					className: "text-center",
+					render: function(data, type, full, meta) {
+
+						var badge = {
+							'SIM': {'title': 'SIM', 'class': 'badge-info'},
+							'NÃO': {'title': 'NÃO', 'class': 'badge-warning'}
+						};
+						if (typeof badge[data] === 'undefined') {
+							return data;
+						}
+						return '<span class="badge ' + badge[data].class + ' badge-pill">' + badge[data].title + '</span>';
+					}
+				},
+				{
+					targets: 8,
+					className: "text-center",
+					render: function(data, type, full, meta) {
+						var badge = {
+							'SIM': {'title': 'SIM', 'class': 'badge-info'},
+							'NÃO': {'title': 'NÃO', 'class': 'badge-warning'}
+						};
+						if (typeof badge[data] === 'undefined') {
+							return data;
+						}
+						return '<span class="badge ' + badge[data].class + ' badge-pill">' + badge[data].title + '</span>';
+					}
+				},
+				{
+					targets: 9,
+					className: "text-right"
+				},
+				{
+					targets: 10,
+					className: "text-right"
+				},
+				{
+					targets: 11,
+					className: "text-center",
+					render: function(data, type, full, meta) {
+						var badge = {
+							'SIM': {'title': 'SIM', 'class': 'badge-success'},
+							'NÃO': {'title': 'NÃO', 'class': 'badge-danger'}
+						};
+						if (typeof badge[data] === 'undefined') {
+							return data;
+						}
+						return '<span class="badge ' + badge[data].class + ' badge-pill">' + badge[data].title + '</span>';
+					}
+				},
+			],
+			onAddRow: function(dt, rowdata, success, error) {
+				rowdata.userId = rowdata.servidorEstadoNome;
+				delete rowdata.servidorEstadoNome
+
+				$.ajax({ 
+					url: seApiServiceNovo,
+					type: 'POST',
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(transformObjFieldBoolFrontToBack(rowdata), null, 4),
+					success: function (data) {
+						$(".modal").modal('hide');
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						Swal.fire({
+							text: "Registro criado com sucesso!",
+							icon: "success",
+							timer: 2000,
+							showCancelButton: false,
+							showConfirmButton: true,
+							confirmButtonColor: "#179c8e",
+							timerProgressBar: true,
+							buttons: false
+						});
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+						
+						const returnObj = Object.entries(error.responseJSON.errors);
+
+						returnObj.forEach(function(err) {
+							err[1].forEach(function (int) {
+								toastr["error"](err[0], int);
+							})
+						});
+					}
+				});
+			},
+			onEditRow: function(dt, rowdata, success, error) {
+				rowdata.userId = rowdata.servidorEstadoNome;
+				delete rowdata.servidorEstadoNome
+
+				$.ajax({ 
+					url: seApiServiceEdicao, 
+					type: 'PUT',
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(transformObjFieldBoolFrontToBack(rowdata), null, 4),
+					success: function (data) {
+						$(".modal").modal('hide');
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						Swal.fire({
+							text: "Registro atualizado com sucesso!",
+							icon: "success",
+							timer: 2000,
+							showCancelButton: false,
+							showConfirmButton: true,
+							confirmButtonColor: "#179c8e",
+							timerProgressBar: true,
+							buttons: false
+						});
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						const returnObj = Object.entries(error.responseJSON.errors);
+
+						returnObj.forEach(function(err) {
+							err[1].forEach(function (int) {
+								toastr["error"](err[0], int);
+							})
+						});
+					}
+				});
+			},
+			onDeleteRow: function(dt, rowdata, success, error) {
+				$.ajax({ 
+					url: seApiServiceDelete, 
+					type: 'DELETE', 
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(transformObjFieldBoolFrontToBack(rowdata), null, 4),
+					success: function (data) {
+						$(".modal").modal('hide');
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						Swal.fire({
+							text: "Registro deletado com sucesso!",
+							icon: "success",
+							timer: 2000,
+							showCancelButton: false,
+							showConfirmButton: true,
+							confirmButtonColor: "#179c8e",
+							timerProgressBar: true,
+							buttons: false
+						});
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						const returnObj = Object.entries(error.responseJSON.errors);
+
+						returnObj.forEach(function(err) {
+							err[1].forEach(function (int) {
+								toastr["error"](err[0], int);
+							})
+						});
+					}
+				});
+			},		
+		});
+
+		$('#dt-basic-example_filter input').bind('keyup', function(e) {
+			$('#dt-basic-example_filter input').val($('#dt-basic-example_filter input').val().toUpperCase());
+		});
+	});
+
+</script>
+}

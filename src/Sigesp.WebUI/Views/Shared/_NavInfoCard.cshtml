@@ -1,0 +1,47 @@
+<div class="info-card">
+	@* <img src="~/img/demo/avatars/@(Settings.Theme.Avatar)" class="profile-image rounded-circle" alt="@(Settings.Theme.User)"> *@
+	<img id="imgPerfil1" src="@(Settings.Theme.Avatar)" class="profile-image rounded-circle" alt="">
+	<div class="info-card-text">
+		@* <a href="#" class="d-flex align-items-center text-white">
+			<span id="nome" class="text-truncate text-truncate-sm d-inline-block">
+				@(Settings.Theme.Nome)
+			</span>
+		</a> *@
+		@* <span id="" class="d-inline-block text-truncate text-truncate-sm fw-300 text-warning"><i>@(Settings.Theme.Setor), @(Settings.Theme.Funcao)</i></span> *@
+		@* <span class="d-inline-block text-truncate text-truncate-sm">@(Settings.Theme.Cidade), @(Settings.Theme.Pais)</span> *@
+		<span id="tenancyNome" class="text-truncate text-truncate-sm d-inline-block fw-700"><i></i></span>
+		<span id="nome" class="d-inline-block text-truncate text-truncate-sm fw-400 text-warning">@(Settings.Theme.Nome)</span>
+		<span id="setorFuncao" class="d-inline-block text-truncate text-truncate-sm fw-300 text-warning"><i>@(Settings.Theme.Setor), @(Settings.Theme.Funcao)</i></span>
+	</div>
+	<img src="~/img/card-backgrounds/cover-5-lg.png" class="cover" alt="cover">
+	<a href="#" onclick="return false;" class="pull-trigger-btn" data-action="toggle" data-class="list-filter-active" data-target=".page-sidebar" data-focus="nav_filter_input">
+		<i class="@(Settings.Theme.IconPrefix) fa-angle-down"></i>
+	</a>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+	var spanTenancyNome = document.getElementById('tenancyNome');
+	var imgPerfilFoto1 = document.getElementById('imgPerfil1');
+	var spanNome = document.getElementById('nome');
+	var spanSetorFuncao = document.getElementById('setorFuncao');
+
+	$.ajax({ 
+		url: "/Usuario/GetCurrentUser", 
+		type: 'POST',
+		contentType: "application/json;charset=utf-8",
+		data: JSON.stringify("", null, 4),
+		success: function(success) {
+			spanSetorFuncao.textContent = success.currentUserMapped.contaUsuarioViewModel.setor + ", " + success.currentUserMapped.contaUsuarioViewModel.funcao;
+			imgPerfilFoto1.src = success.currentUserMapped.contaUsuarioViewModel.perfilFoto;
+			spanNome.textContent = success.currentUserMapped.contaUsuarioViewModel.nome;
+			spanTenancyNome.textContent = success.currentUserMapped.tenant.nomeExibicao;
+		},
+		error: function (error, jqXHR, textStatus, errorThrown) {
+			console.log(error);
+
+			error.responseJSON.errors.Messages.forEach(function(err) {
+				toastr["error"](err);
+			});
+		}
+	});
+</script>

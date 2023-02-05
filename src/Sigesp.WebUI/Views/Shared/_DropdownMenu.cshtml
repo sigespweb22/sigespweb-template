@@ -1,0 +1,83 @@
+<div class="dropdown-header bg-trans-gradient d-flex flex-row py-4 rounded-top">
+	<div class="d-flex flex-row align-items-center mt-1 mb-1 color-white">
+		<span class="mr-2">
+			@* <img src="~/img/demo/avatars/@(Settings.Theme.Avatar)" class="rounded-circle profile-image" alt="@(Settings.Theme.User)"> *@
+			<img id="imgPerfil3" src="@(Settings.Theme.Avatar)" class="rounded-circle profile-image" alt="">
+		</span>
+		<div class="info-card-text">
+			<div id="divNome" class="fs-lg text-truncate text-truncate-lg">@(Settings.Theme.Nome)</div>
+			<span id="spanEmail" class="text-truncate text-truncate-md opacity-80">@(Settings.Theme.Email)</span>
+		</div>
+	</div>
+</div>
+<div class="dropdown-divider m-0"></div>
+@* <a href="#" class="dropdown-item" data-action="app-reset">
+	<span data-i18n="drpdwn.reset_layout">Reset Layout</span>
+</a>
+<a href="#" class="dropdown-item" data-toggle="modal" data-target=".js-modal-settings">
+	<span data-i18n="drpdwn.settings">Settings</span>
+</a> *@
+<div class="dropdown-divider m-0"></div>
+<a href="#" class="dropdown-item" data-action="app-fullscreen">
+	<span data-i18n="drpdwn.fullscreen">Tela cheia</span> 
+	<i class="float-right text-muted fw-n">F11</i>
+</a>
+<a href="#" class="dropdown-item" data-action="app-print">
+	<span data-i18n="drpdwn.print">Imprimir</span> 
+	<i class="float-right text-muted fw-n">Ctrl + P</i>
+</a>
+@* <div class="dropdown-multilevel dropdown-multilevel-left">
+	<div class="dropdown-item">
+		Language
+	</div>
+	<div class="dropdown-menu">
+		<a href="#?lang=fr" class="dropdown-item" data-action="lang" data-lang="fr">Français</a>
+		<a href="#?lang=en" class="dropdown-item active" data-action="lang" data-lang="en">English (US)</a>
+		<a href="#?lang=es" class="dropdown-item" data-action="lang" data-lang="es">Español</a>
+		<a href="#?lang=ru" class="dropdown-item" data-action="lang" data-lang="ru">Русский язык</a>
+		<a href="#?lang=jp" class="dropdown-item" data-action="lang" data-lang="jp">日本語</a>
+		<a href="#?lang=ch" class="dropdown-item" data-action="lang" data-lang="ch">中文</a>
+		<a href="#?lang=pr" class="dropdown-item" data-action="lang" data-lang="pt">Português</a>
+	</div>
+</div> *@
+<div class="dropdown-divider m-0"></div>
+<a class="dropdown-item fw-500 pt-3 pb-3" asp-area="Identity" asp-page="/account/logout">
+	<span data-i18n="drpdwn.page-logout">Sair</span> 
+	@* <span class="float-right fw-n">&commat;@(Settings.Theme.Twitter)</span> *@
+</a>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+	var imgPerfilFoto3 = document.getElementById('imgPerfil3');
+	var nome = document.getElementById('divNome');
+	var email = document.getElementById('spanEmail');
+
+	$.ajax({ 
+		url: "/Usuario/GetCurrentUser",
+		type: 'POST',
+		contentType: "application/json;charset=utf-8",
+		data: JSON.stringify("", null, 4),
+		success: function(success) {
+			imgPerfilFoto3.src = success.currentUserMapped.contaUsuarioViewModel.perfilFoto;
+			nome.innerHTML += success.currentUserMapped.contaUsuarioViewModel.nome;
+			email.textContent = success.currentUserMapped.email;
+
+			if (success.currentUserMapped.tenant != null &&
+				success.currentUserMapped.tenant != "")
+			{
+				if (success.currentUserMapped.tenant.apiKey != null &&
+					success.currentUserMapped.tenant.apiKey != "")
+				{
+					localStorage.setItem("ApiKey", success.currentUserMapped.tenant.apiKey);
+				}
+			}
+		},
+		error: function (error, jqXHR, textStatus, errorThrown) {
+			console.log(error);
+
+			error.responseJSON.errors.Messages.forEach(function(err) {
+				toastr["error"](err);
+			});
+		}
+	});
+</script>

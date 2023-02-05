@@ -1,0 +1,944 @@
+@model Sigesp.Application.ViewModels.Cards.AlunoLeitorCardViewModel
+
+@{
+	ViewData["Title"] = "Leitores";
+	ViewData["PageName"] = "aluno-leitor_todos";
+	ViewData["Category0"] = @Settings.App;
+	ViewData["Category1"] = "Educação";
+	ViewData["Category2"] = "Alunos";
+	ViewData["Heading"] = "<i class='subheader-icon fal fa-book-user'></i> Leitores<span class='fw-300'></span> <sup class='badge badge-primary fw-500'>NOVO</sup>";
+	ViewData["PageDescription"] = "Listagem dos LEITORES do projeto DESPERTAR pela LEITURA";
+}
+@section HeadBlock {
+	<link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/formplugins/select2/select2.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/theme-demo.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/notifications/toastr/toastr.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/notifications/sweetalert2/sweetalert2.bundle.css">
+}
+
+<div class="row">
+	<div class="col-sm-4 col-xl-4">
+		<div class="p-3 bg-info rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="display-4 d-block l-h-n m-0 fw-500">
+					@Model.Total
+					<small class="m-0 l-h-n">Total</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-book-reader position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>
+	<div class="col-sm-4 col-xl-4">
+		<div class="p-3 bg-success rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="display-4 d-block l-h-n m-0 fw-500">
+					@Model.Ativos
+					<small class="m-0 l-h-n">Ativos</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-book-reader position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>
+	<div class="col-sm-4 col-xl-4">
+		<div class="p-3 bg-danger rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="display-4 d-block l-h-n m-0 fw-500">
+				    @Model.Inativos
+					<small class="m-0 l-h-n">Inativos</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-users-slash position-absolute pos-right pos-bottom opacity-15  mb-n1 mr-n1" style="font-size: 6rem;"></i>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xl-12">
+		<div id="panel-1" class="panel">
+			<div class="panel-hdr">	
+				<h2>
+					Gerenciamento de <span class="fw-300"><i>Leitores</i></span> 
+				</h2>
+				<div class="panel-toolbar">
+					<button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Abrir/Fechar"></button>
+				</div>
+			</div>
+			<div class="panel-container show">
+				<div class="panel-content">									
+					<div class="tab-content pt-4">
+						<div class="tab-pane fade show active" id="tab_default-1" role="tabpanel">
+							<div class="row">
+								<div class="col-xl-12">
+									<table id="dt-basic-example" class="table table-bordered table-hover table-striped w-100"></table>
+								</div>
+							</div>	
+						</div>
+					</div>					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section ScriptsBlock {
+<script src="~/js/dependency/moment/moment.js"></script>
+<script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+<script src="~/js/formplugins/select2/select2.bundle.js"></script>
+<script src="~/js/datagrid/datatables/datatables.export.js"></script>
+<script src="~/js/notifications/toastr/toastr.js"></script>
+<script src="~/js/extensions/automapper-extensions.js"></script>
+<script src="~/js/extensions/helpers-extensions.js"></script>
+<script src="~/js/extensions/string-extensions.js"></script>
+<script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+<script src="~/js/notifications/sweetalert2/sweetalert2.bundle.js"></script>
+
+<script>
+	toastr.options = {
+		"closeButton": false,
+		"debug": false,
+		"newestOnTop": true,
+		"progressBar": true,
+		"positionClass": "toast-top-right",
+		"preventDuplicates": true,
+		"onclick": null,
+		"showDuration": 300,
+		"hideDuration": 100,
+		"timeOut": 10000,
+		"extendedTimeOut": 1000,
+		"showEasing": "swing",
+		"hideEasing": "linear",
+		"showMethod": "fadeIn",
+		"hideMethod": "fadeOut"
+	};
+
+	const apiAlunosLeitores = "/api/alunos-leitores";
+	const apiAlunosLeitoresNovo = "/api/alunos-leitores/novo";
+	const apiAlunosLeitoresEdicao = "/api/alunos-leitores/edicao";
+	const apiAlunosLeitoresDelete = "/api/alunos-leitores/delete";
+	const apiAlunosLeitoresLista = "/api/alunos-leitores/lista";
+
+	var boolOptions = ["NÃO", "SIM"];
+	var alunos = [];
+	var professores = [];
+	var livroGeneros = [];
+	var alunosLeitores = [];
+	var ocorrenciasDesistencia = [];
+	var controls = {
+		leftArrow: '<i class="@(Settings.Theme.IconPrefix) fa-angle-left" style="font-size: 1.25rem"></i>',
+		rightArrow: '<i class="@(Settings.Theme.IconPrefix) fa-angle-right" style="font-size: 1.25rem"></i>'
+	}
+
+	@foreach (var aluno in @Model.Alunos)
+	{
+		@:alunos.push('@aluno');
+	}
+
+	@foreach (var professor in @Model.Professores)
+	{
+		@:professores.push('@professor');
+	}
+
+	@foreach (var livroGenero in @Model.LivroGeneros)
+	{
+		@:livroGeneros.push('@livroGenero');
+	}
+
+	@foreach (var ocorrenciasDesistencia in @Model.OcorrenciasDesistencia)
+	{
+		@:ocorrenciasDesistencia.push('@ocorrenciasDesistencia');
+	}
+
+	var oldExportAction = function (self, e, dt, button, config) {
+		if (button[0].className.indexOf('buttons-excel') >= 0) {
+			if ($.fn.dataTable.ext.buttons.excelHtml5.available(dt, config)) {
+				$.fn.dataTable.ext.buttons.excelHtml5.action.call(self, e, dt, button, config);
+			}
+			else {
+				$.fn.dataTable.ext.buttons.excelFlash.action.call(self, e, dt, button, config);
+			}
+		} else if (button[0].className.indexOf('buttons-print') >= 0) {
+			$.fn.dataTable.ext.buttons.print.action(e, dt, button, config);
+		}
+	};
+
+	var newExportAction = function (e, dt, button, config) {
+		var self = this;
+		var oldStart = dt.settings()[0]._iDisplayStart;
+
+		dt.one('preXhr', function (e, s, data) {
+			// Just this once, load all data from the server...
+			data.start = 0;
+			data.length = 2147483647;
+
+			dt.one('preDraw', function (e, settings) {
+				// Call the original action function 
+				oldExportAction(self, e, dt, button, config);
+
+				dt.one('preXhr', function (e, s, data) {
+					// DataTables thinks the first item displayed is index 0, but we're not drawing that.
+					// Set the property to what it was before exporting.
+					settings._iDisplayStart = oldStart;
+					data.start = oldStart;
+				});
+
+				// Reload the grid with the original page. Otherwise, API functions like table.cell(this) don't work properly.
+				setTimeout(dt.ajax.reload, 0);
+
+				// Prevent rendering of the full data to the DOM
+				return false;
+			});
+		});
+
+		// Requery the server with the new one-time export settings
+		dt.ajax.reload();
+	};
+
+	var activateOrDeactivate = function (id, isDeleted) {
+		
+		if (id == null || id == "")
+		{
+			toastr["error"]("Problemas ao obter o id do registro para ativação/desativação. Tente mais tarde, caso persista o problema, informe o suporte do sistema.");
+		}
+		
+		var action = isDeleted == "SIM" ? "DEVOLVER": "RETIRAR";
+
+		Swal.fire({
+			title: "Confirmação de ação",
+			text: "Realmente deseja " + action + " o registro?",
+			icon: "warning",
+			showCancelButton: true,
+			confirmButtonColor: "#ffc241",
+			confirmButtonText: "Sim, quero "+ action +" o registro!",
+			cancelButtonText: "Desistir",   
+		}).then(function (result) {
+			if (result.value) {
+				$.ajax({
+					url: "/api/lista-amarela/enable-disable",
+					type: 'POST',
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(id, null, 4),
+					success: function(success) {
+						var dataRet = success.data ? "Ativado" : "Desativado";
+						
+						Swal.fire({
+							title: dataRet + "!",
+							text: "Operação realizada com sucesso!",
+							icon: "success",
+							confirmButtonColor: "#1dc9b7"
+						});
+
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						toastr["error"](error);
+					}
+				});
+			}
+		});
+	};
+
+	var cleanModal = function() {
+		$("#transferenciaLocal").val("");
+		$("#transferenciaTipo").select2().val('NENHUM');
+		$("#transferenciaDataRetornoPrevisto").val("");
+		$("#transferenciaDataSaida").val("");
+	};
+
+	var runDatePicker = function () {
+		// input group layout for modal demo
+		$('.datepicker-datas').datepicker({
+			orientation: "top left",
+			todayHighlight: true,
+			templates: controls,
+			format: 'dd/mm/yy'
+		});
+	};
+
+	var getDetentoByIpen = function (ipen) {
+		var ipen = $("#detentoIpen").val();
+
+		if (ipen.length < 6)
+		{
+			$("#detentoIpen").val(null);
+			$("#detentoNome").select2().val(null);
+			$("#detentoGaleria").val("Automático");
+			$("#detentoCela").val("Automático");
+			$("#detentoIpen").focus();
+
+			$("#detentoNome").select2({
+				placeholder: "Informe um reeducando"
+			});
+
+			toastr["error"]("Ipen inválido!");
+		}
+		else
+		{
+			$.ajax({ 
+				url: "/api/alunos/get-by-detento-ipen", 
+				type: 'POST',
+				contentType: "application/json;charset=utf-8",
+				data: JSON.stringify(ipen, null, 4),
+				success: function(success) {
+					$('#exceptionMultiplesDetentos').remove();
+					
+					$('#detentoIpen').val(success.detentoIpen);
+
+					$('#detentoNome').select2().val(success.detentoNome);
+					$('#detentoNome').select2();
+
+					$('#detentoGaleria').val(success.detentoGaleria);
+					$('#detentoCela').val(success.detentoCela);
+
+					$('#dataIngresso').focus();
+				},
+				error: function (error, jqXHR, textStatus, errorThrown) {
+					$('#exceptionMultiplesDetentos').remove();
+
+					if (error != null &&
+						error.status != null &&
+						error.status == 403)
+					{
+						toastr["error"]("Acesso negado para obtenção de um ALUNO. </br></br>Solicite o acesso 'ALUNOS_LISTA_UM' ao usuário MASTER de sua unidade.");
+					}
+					else
+					{
+						const returnObj = Object.entries(error.responseJSON.errors);
+
+						returnObj.forEach(function(err) {
+							err[1].forEach(function (int) {
+								toastr["error"](err[0], int);
+							})
+						});
+					}
+				}
+			});
+		}
+	};
+
+	var getDetentoByIpenForExceptionMultiplesDetentos = function (ipen) {
+		
+		if (ipen.length < 6)
+		{
+			$("#detentoIpen").val(null);
+			$("#detentoNome").select2().val(null);
+			$("#detentoGaleria").val("Automático");
+			$("#detentoCela").val("Automático");
+			$("#detentoIpen").focus();
+			
+			$("#detentoNome").select2({
+				placeholder: "Informe um reeducando"
+			});
+
+			toastr["error"]("Ipen inválido!");
+		}
+		else
+		{
+			$.ajax({ 
+				url: "/api/alunos/get-by-detento-ipen", 
+				type: 'POST',
+				contentType: "application/json;charset=utf-8",
+				data: JSON.stringify(ipen, null, 4),
+				success: function(success) {
+					$('#exceptionMultiplesDetentos').remove();
+					
+					$('#detentoIpen').val(success.detentoIpen);
+
+					$('#detentoNome').select2().val(success.detentoNome);
+					$('#detentoNome').select2();
+
+					$("#detentoGaleria").val(success.detentoGaleria);
+					$("#detentoCela").val(success.detentoCela);
+
+					$('#dataIngresso').focus();
+				},
+				error: function (error, jqXHR, textStatus, errorThrown) {
+					$('#exceptionMultiplesDetentos').remove();
+
+					const returnObj = Object.entries(error.responseJSON.errors);
+
+					returnObj.forEach(function(err) {
+						err[1].forEach(function (int) {
+							toastr["error"](err[0], int);
+						})
+					});
+				}
+			});
+		}
+	};
+
+	var exceptionMultiplesDetentos = function (detentos) {
+		var divPrincipal = 	'<div id="exceptionMultiplesDetentos">'+
+								'<hr class="mt-4 mb-g">'+
+								'<div class="form-group row">'+ 
+									'<div class="col-xl-3"></div>'+
+									'<div class="col-xl-9">'+
+										'<div class="alert alert-warning p-1 pt-3 mb-0" id="emd-before-table">'+
+											'<p><strong>Encontramos mais de um aluno com o mesmo nome, portanto, escolha uma das opções abaixo.'+
+										'</div>' +
+										'<table class="table table-striped w-100">'+
+											'<thead>'+
+												'<tr>'+
+													'<th>Ipen</th>'+
+													'<th>Nome</th>'+                 
+													'<th>Ação</th>'+
+												'</tr>'+
+											'</thead>'+
+											'<tbody id="tbody-core">'+										
+											'</tbody>'+
+										'</table>'+
+									'</div>'+
+								'</div>'+
+								'<hr class="mt-4 mb-g">'
+							'</div>';
+
+		$("#row_detentoNome").after(divPrincipal);
+
+		detentos.forEach(function(detento) {
+			var detentosInTable = '<tr>'+
+								'<td>'+detento.ipen+'</td>'+
+								'<td>'+detento.nome+'</td></a>'+
+								'<td>'+
+									'<div class="d-flex demo">'+
+										'<a onclick=getDetentoByIpenForExceptionMultiplesDetentos("'+detento.ipen+'") class="text-white btn btn-sm btn-info btn-icon btn-inline-block mr-1" title="Escolher este detento"><i class="fal fa-level-up"></i></a>'+
+									'</div>'+
+								'</td>'+
+							  '</tr>';
+
+			$("#tbody-core").append(detentosInTable);
+		});
+	};
+
+	$(document).ready( function () {
+		//Tecla atalho CTRL + Z
+		$(document).keydown(function(e) {
+			if (e.ctrlKey && e.which === 90) $(".btn-add").click();
+		});
+
+		$(document).on("click", ".btn-actions", function () {
+			$("#row_id").hide();
+			$("#row_isDeleted").hide();
+			$("#row_dataFimBloqueio").hide();
+			$("#row_acoes").hide();
+		});
+
+		//No evento de click do botão add, set focus no campo nome depois abre a select2
+		$(document).on("click", ".btn-add", function () {
+			setTimeout(function() {
+				$('#detentoIpen').focus();
+
+				$("#ocorrenciaDesistencia").prop("disabled", true);
+				$("#dataOcorrenciaDesistencia").prop("disabled", true);
+			}, 500);
+
+			disabledEnabledFieldsForEdit(false);
+		});
+
+		//No evento de click do botão edit, disabilitar alguns campos
+		$(document).on("click", ".btn-edit", function () {
+			var idsFields = ['detentoIpen', 'detentoNome', 'dataFimBloqueio'];
+			disabledEnabledFieldsForEdit(true, idsFields);
+
+			const id = $("#id").val();
+			$.ajax({ 
+				url: "/api/alunos-leitores/get-nome-by-id",
+				type: 'POST',
+				contentType: "application/json;charset=utf-8",
+				data: JSON.stringify(id, 4, null),
+				success: function(success) {
+					$("#detentoNome").append("<option value='"+success.data+"' selected>"+success.data+"</option>");
+					$("#detentoNome").select2().val(success.data);
+				},
+				error: function (error, jqXHR, textStatus, errorThrown) {
+					const returnObj = Object.entries(error.responseJSON.errors);
+
+					returnObj.forEach(function(err) {
+						err[1].forEach(function (int) {
+							toastr["error"](err[0], int);
+						})
+					});
+				}
+			});
+
+			$("#dataIngresso").focus();
+		});
+
+		runDatePicker();
+
+		// Event Lote
+		var events = $("#app-eventlog");
+
+		// Column Definitions
+		var columnSet = [
+			{
+				title: "Id",
+				id: "id",
+				data: "id",
+				placeholderMsg: "Automático",
+				type: "readonly",
+				visible: false,
+				required: false
+			},
+			{
+				title: "Ipen",
+				id: "detentoIpen",
+				data: "detentoIpen",
+				type: "text",
+				placeholderMsg: "Informe o IPEN",
+				required: true,
+				searchable: true,
+				orderable: true,
+				visible: true,
+				name: "Aluno.Detento.Ipen",
+				editorOnChange: function(event, altEditor) {
+					getDetentoByIpen();
+				},
+				render: function(data, type, row, meta) {
+					return data;
+				}
+			},
+			{
+				title: "Nome",
+				id: "detentoNome",
+				data: "detentoNome",
+				type: "select",
+				multiple : false,
+				options: alunos,
+				visible: true,
+				select2 : {
+					placeholder: "Selecione um reeducando",
+					width: "100%",
+					allowClear: true,
+					minimumInputLength: 3,
+					language: {
+						inputTooShort: function() {
+							return 'Digite 3 ou mais caracteres para iniciar a busca';
+						}
+					}
+				},
+				editorOnChange: function(event, altEditor) {
+					var detentoNome = $(event.currentTarget).val();
+					
+					if (detentoNome != null)
+					{
+						$.ajax({
+							url: "api/detentos/get-all-by-nome",
+							type: 'POST',
+							contentType: "application/json;charset=utf-8",
+							data: JSON.stringify(detentoNome, null, 4),
+							success: function(success) {
+								if (success.length == 0)
+								{
+									toastr["error"]("Nenhum detento encontrado com o nome informado.");
+									
+								}
+								else if (success.length == 1)
+								{
+									$('#exceptionMultiplesDetentos').remove();
+
+									$("input[name=Ipen]").val(success[0].ipen);
+									$("input[name=Nome]").val(success[0].nome);
+									$("#detentoGaleria").val(success[0].galeria);
+									$("#detentoCela").val(success[0].cela);
+								}
+								else
+								{
+									exceptionMultiplesDetentos(success);
+								}
+							},
+							error: function (error, jqXHR, textStatus, errorThrown) {
+								const returnObj = Object.entries(error.responseJSON.errors);
+
+								returnObj.forEach(function(err) {
+									err[1].forEach(function (int) {
+										toastr["error"](err[0], int);
+									})
+								});
+							}
+						});	
+					}
+					else
+					{
+						$("input[name=Ipen]").val('');
+						$("#detentoNome").select2(null);
+						$("#detentoNome").select2();
+
+						$("#detentoGaleria").val(null);
+						$("#detentoCela").val(null);
+					}
+				},
+				render : function (data, type, row, meta) {
+					return data;
+				},
+				searchable: true,
+				orderable: true,
+				required: true,
+				name: "Aluno.Detento.Nome"
+			},
+			{
+				title: "Galeria",
+				id: "detentoGaleria",
+				data: "detentoGaleria",
+				placeholderMsg: "Automático",
+				type: "readonly",
+				visible: true,
+				required: false,
+				name: "Aluno.Detento.Galeria"
+			},
+			{
+				title: "Cela",
+				id: "detentoCela",
+				data: "detentoCela",
+				placeholderMsg: "Automático",
+				type: "readonly",
+				visible: true,
+				required: false,
+				name: "Aluno.Detento.Cela"
+			},
+			{
+				title: "Data ingresso",
+				id: "dataIngresso",	
+				data: "dataIngresso",
+				type: "date",
+				required: false,
+				searchable: false,
+				visible: true,
+				render: function (data) {
+					return moment(data).format('DD/MM/YYYY');
+				},
+				name: "DataIngresso"
+			},
+			{
+				title: "Gênero",
+				data: "livroGeneroNome",
+				id: "livroGeneroNome",
+				type: "select",
+				multiple : false,
+				options: livroGeneros,
+				visible: true,
+				select2 : {
+					placeholder: "Selecione um gênero de leitura",
+					width: "100%",
+					allowClear: true,
+					minimumInputLength: 3,
+					language: {
+						inputTooShort: function() {
+							return 'Digite 3 ou mais caracteres para iniciar a busca';
+						}
+					}
+				},
+				searchable: false,
+				orderable: true,
+				required: true,
+				name: "LivroGenero.Nome"
+			},
+			{
+				title: "Professor",
+				data: "professorNome",
+				id: "professorNome",
+				type: "select",
+				multiple : false,
+				options: professores,
+				visible: true,
+				select2 : {
+					placeholder: "Selecione um professor",
+					width: "100%",
+					allowClear: true,
+					minimumInputLength: 3,
+					language: {
+						inputTooShort: function() {
+							return 'Digite 3 ou mais caracteres para iniciar a busca';
+						}
+					}
+				},
+				searchable: false,
+				orderable: true,
+				required: true,
+				name: "Professor.Nome"
+			},
+			{
+				title: "Ocorrência desistência",
+				id: "ocorrenciaDesistencia",
+				data: "ocorrenciaDesistencia",
+				type: "select",
+				multiple : false,
+				options: ocorrenciasDesistencia,
+				visible: true,
+				select2 : {
+					placeholder: "Selecione uma ocorrência de desistência",
+					width: "100%",
+					allowClear: true,
+					minimumInputLength: 3,
+					language: {
+						inputTooShort: function() {
+							return 'Digite 3 ou mais caracteres para iniciar a busca';
+						}
+					}
+				},
+				searchable: false,
+				orderable: true,
+				visible: true,
+				name: "OcorrenciaDesistencia"
+			},
+			{
+				title: "Data ocorrência desistência",
+				id: "dataOcorrenciaDesistencia",	
+				data: "dataOcorrenciaDesistencia",
+				type: "date",
+				required: false,
+				searchable: false,
+				visible: true,
+				render: function (data) {
+					return moment(data).format('DD/MM/YYYY');
+				},
+				name: "DataOcorrenciaDesistencia"
+			},
+			{
+				title: "Data fim bloqueio",
+				id: "dataFimBloqueio",	
+				data: "dataFimBloqueio",
+				type: "date",
+				required: false,
+				searchable: false,
+				visible: true,
+				render: function (data) {
+					return moment(data).format('DD/MM/YYYY');
+				},
+				name: "DataFimBloqueio"
+			}
+		]
+		/* start data table */
+		var myTable = $('#dt-basic-example')
+			.dataTable({
+			/* check datatable buttons page for more info on how this DOM structure works */
+			dom: "<'row mb-3'<'col-sm-12 col-md-6 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-6 d-flex align-items-center justify-content-end'B>>" +
+				"<'row'<'col-sm-12'tr>>" +
+				"<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+			ajax: {
+				url : apiAlunosLeitoresLista,
+				type: 'POST',
+				dataSrc: function (json) {
+					alunosLeitores = transformObjArrayFieldBoolBackToFront(json.data)
+					return alunosLeitores;
+				}
+        	},
+			aaSorting: [ [3,'asc'], [4,'asc'] ],
+			scrollY:        400,
+			scrollX:        true,
+			scrollCollapse: true,
+			serverSide: true,
+			processing: true,
+			altEditor: true,
+			pagingType: "full_numbers",
+			language: {
+            	decimal: ",",
+            	thousands: ".",
+        		searchPlaceholder: "Busque pelo IPEN ou NOME",
+				sProcessing: '<span id=\"loading-image\" "class="fa fa-spinner fa-spin fa-2x spinner-border spinner-border-sm text-primary mr-2""><img class="manImg" src="img/loading_alt_3.gif" width="50" height="50"></img></span>',
+				sZeroRecords: "Nenhum registro encontrado.",
+				oPaginate: {
+                    "sFirst": "Primeiro",
+                    "sPrevious": "Anterior",
+                    "sNext": "Próximo",
+                    "sLast": "Último"
+                },
+				sInfo: "Mostrando _START_ de _END_ de um total de _TOTAL_",
+                sInfoEmpty: "Nenhuma registro encontrado.",
+                sInfoFiltered: " (filtrado a partir de um total de _MAX_ registros)",
+                sInfoPostFix: "",
+				select: {
+					rows: "%d linhas selecionadas"
+				}
+        	},
+			columns: columnSet,
+			select: 'single',
+			fixedColumns: {
+				leftColumns: 3
+			},
+			buttons: [
+			{
+					extend: 'collection',
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-rocket mr-1"></i> Utilidades',
+					className: 'btn-primary btn-sm mr-1 btn-uteis mr-2 mb-2',
+					buttons: [
+						{
+							text: 'Encerrar ano letivo',
+							action: function ( e, dt, node, config ) {
+								Swal.fire({
+									customClass: {
+										container: 'my-swal'
+									},
+									title: 'Encerrar ano letivo?',
+									icon: 'warning',
+									html:
+										'Você tem certeza que deseja <b>ENCERRAR o ano letivo</b>? ' +
+										'<br>Esta ação é <b>IRREVERSÍVEL</b> e irá <b>INATIVAR todos os LEITORES ATIVOS</b> ' +
+										'atualmente no <b>PROJETO de LEITURA</b>.',
+									showDenyButton: true,
+									showCancelButton: true,
+									confirmButtonText: 'Quero encerrar o ano letivo',
+									confirmButtonColor: '#ffcd65',
+									cancelButtonText: 'Desistir',
+								}).then((result) => {
+									if (result.value) {
+										bobcatJS
+											.AlunoLeitorStoreService
+											.encerrarAnoLetivoAsync()
+											.then((data) => {
+												if(data.status === 204)
+												{
+													setTimeout(function() {
+														window.location.reload();
+													}, 3500);
+
+													Swal.fire({
+														customClass: {
+															container: 'my-swal'
+														},
+														text: "Operação realizada com sucesso!",
+														icon: "success",
+														timer: 4000,
+														showCancelButton: false,
+														showConfirmButton: true,
+														confirmButtonColor: "#179c8e",
+														timerProgressBar: true,
+														buttons: false
+													});
+												}
+											}).catch((e) => {
+												debugger
+												if (e.response.status === 400) return toastr['error'](e.response.data)
+												if (e.response.status === 500) return toastr['error'](e.responseText)
+												if (e.response.status === 500) return toastr['error'](e.responseText.title)
+
+												return toastr['error'](e)
+											})
+									} else {
+										Swal.fire({
+											customClass: {
+												container: 'my-swal'
+											},
+											text: "Operação cancelada!",
+											icon: "info",
+											timer: 1000,
+											showCancelButton: false,
+											showConfirmButton: true,
+											confirmButtonColor: "#2196F3",
+											timerProgressBar: true,
+											buttons: false
+										});
+									}
+								})
+							}
+						},
+						{
+							text: 'Visibilidade colunas',
+							popoverTitle: 'Visibilidade colunas',
+							extend: 'colvis',
+							collectionLayout: 'two-column'
+						}
+					]
+				},
+				{
+					extend: 'selected',
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-edit mr-1"></i> Editar',
+					name: 'edit',
+					className: 'btn-warning btn-sm mr-1 btn-actions btn-edit mr-2 mb-2'
+				},
+				{
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-plus mr-1"></i> Novo',
+					name: 'add',
+					className: 'btn-primary btn-sm mr-1 btn-actions btn-add mr-2 mb-2'
+				},
+				{
+					extend: 'excelHtml5',
+					text: 'Excel',
+					exportOptions: {
+						columns: [0, 1, 2, 3, 4, 5, 6, 7]
+                	},
+					className: 'btn-outline-success btn-sm mr-2 mb-2',
+					action: newExportAction
+            	}						
+			],
+			columnDefs: [],
+			onAddRow: function(dt, rowdata, success, error) {
+				$.ajax({ 
+					url: apiAlunosLeitoresNovo, 
+					type: 'POST',
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(transformObjFieldBoolFrontToBack(rowdata), null, 4),
+					success: function (data) {
+						$(".modal").modal('hide');
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						Swal.fire({
+							text: "Registro criado com sucesso!",
+							icon: "success",
+							timer: 2000,
+							showCancelButton: false,
+							showConfirmButton: true,
+							confirmButtonColor: "#179c8e",
+							timerProgressBar: true,
+							buttons: false
+						});
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						debugger;
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+						
+						const returnObj = Object.entries(error.responseJSON.errors);
+
+						returnObj.forEach(function(err) {
+							err[1].forEach(function (int) {
+								toastr["error"](err[0], int);
+							})
+						});
+					}
+				});
+			},
+			onEditRow: function(dt, rowdata, success, error) {
+				debugger;
+				
+				$.ajax({ 
+					url: apiAlunosLeitoresEdicao, 
+					type: 'PUT',
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(transformObjFieldBoolFrontToBack(rowdata), null, 4),
+					success: function (data) {
+						$(".modal").modal('hide');
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						Swal.fire({
+							text: "Registro atualizado com sucesso!",
+							icon: "success",
+							timer: 2000,
+							showCancelButton: false,
+							showConfirmButton: true,
+							confirmButtonColor: "#179c8e",
+							timerProgressBar: true,
+							buttons: false
+						});
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						debugger;
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						const returnObj = Object.entries(error.responseJSON.errors);
+
+						returnObj.forEach(function(err) {
+							err[1].forEach(function (int) {
+								toastr["error"](err[0], int);
+							})
+						});
+					}
+				});
+			}
+		});
+
+		$('#dt-basic-example_filter input').bind('keyup', function(e) {
+			$('#dt-basic-example_filter input').val($('#dt-basic-example_filter input').val().toUpperCase());
+		});
+	});
+</script>
+}

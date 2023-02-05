@@ -1,0 +1,324 @@
+@model Sigesp.Application.ViewModels.Selects.ContaCorrenteRelatorioSelect2ViewModel
+@{
+	ViewData["Title"] = "Relatórios";
+	ViewData["PageName"] = "conta-corrente_relatorios";
+	ViewData["Category0"] = @Settings.App;
+	ViewData["Category1"] = "Pecúlio";
+    ViewData["Category2"] = "Contas Correntes";
+	ViewData["Heading"] = "<i class='notprint subheader-icon fal fa-file-alt'></i>Contas Correntes Relatórios<span class='notprint fw-300'></span> <sup class='notprint badge badge-primary fw-500'>NOVO</sup>";
+	ViewData["PageDescription"] = "";
+}
+
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/page-invoice.css">
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/select2/select2.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/notifications/sweetalert2/sweetalert2.bundle.css">
+}
+
+<div class="row notprint">
+    <div class="col-xl-12">
+		<div id="panel-1" class="panel">
+			<div class="panel-hdr">
+				<h2>
+					Relatório conta corrente <span class="fw-300"><i>Extrato consolidado por colaborador e período</i></span> 
+				</h2>
+				<div class="panel-toolbar">
+					<button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse"></button>
+					<button class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
+					<button class="btn btn-panel" data-action="panel-close" data-toggle="tooltip" data-offset="0,10" data-original-title="Close"></button>
+				</div>
+			</div>
+			<div class="panel-container show">
+				<div class="panel-content">									
+					<div class="panel-tag">
+						Faça suas escolhas, depois clique em "GERAR" para que o relatório seja criado de acordo com suas definições.
+					</div>
+                    <form asp-action="RelatorioPrint" asp-controller="ContaCorrente" id="contaCorrente-relatorio-filtro" method="post">
+                        <div class="form-group">
+							<label class="form-label" for="datepicker-rel1">Período:</label>
+							<div class="input-daterange input-group" id="datepicker-rel1">
+								<input type="text" name="periodoInicioRel1" 
+									class="form-control" id="startRel1">
+								<div class="input-group-append input-group-prepend">
+									<span class="input-group-text fs-xl"><i class="@(Settings.Theme.IconPrefix) fa-ellipsis-h"></i></span>
+								</div>
+								<input type="text" name="periodoFimRel1"
+									 class="form-control" id="endRel1">
+							</div>
+                            <label class="form-label mt-3" for="colaborador-select2">
+                                Colaborador:
+                            </label>
+                            <select name="colaboradorNome" 
+								class="select2-placeholder select2 form-control" 
+								id="colaborador-select2">
+								<option></option>
+                                @foreach (var colaborador in @Model.Colaboradores)
+                                {
+                                    <option value=@colaborador>@colaborador</option>    
+                                }
+                            </select>
+                            @* <label class="mt-3 form-label">
+                                Ativos?:
+                            </label>
+                            <div class="frame-wrap demo">
+                                <div class="demo">
+                                    <div class="custom-control custom-switch">
+                                        <input name="ativo" type="checkbox" class="custom-control-input" id="ativoSwitch" value="true" checked="checked">
+                                        <label id="label-ativo" class="custom-control-label" for="ativoSwitch">Sim</label>
+                                    </div>
+                                </div>
+                            </div> *@
+                        </div>
+						<div class="alert alert-info p-1">
+							<strong>Nota:</strong> Ao omitir os dados de <code>"Período/Colaborador"</code> ou ambos , será <strong>retornado todos os dados ou conforme informações pré-definidas</strong>.
+						</div>
+					    <button id="contaCorrente-relatorio-filtro-btn" type="button" class="btn btn-outline-primary mb-g" >GERAR</button>
+                    </form>
+				</div>
+			</div>
+		</div>		
+	</div>
+	<div class="col-xl-12">
+		<div id="panel-1" class="panel">
+			<div class="panel-hdr">
+				<h2>
+					Relatório conta corrente <span class="fw-300"><i>Saldo consolidado por colaborador (es)</i></span> 
+				</h2>
+				<div class="panel-toolbar">
+					<button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Abrir/Fechar"></button>
+				</div>
+			</div>
+			<div class="panel-container show">
+				<div class="panel-content">									
+					<div class="panel-tag">
+						Faça suas escolhas, depois clique em "GERAR" para que o relatório seja criado de acordo com suas definições.
+					</div>
+                    <form asp-action="RelatorioPrint2" asp-controller="ContaCorrente" id="contaCorrente-relatorio2-filtro" method="post">
+                        <div class="form-group">
+                            <label class="form-label mt-3" 
+								for="colaboradores-select2">
+                                Colaborador (es):
+                            </label>
+                            <select name="colaboradoresNomes" 
+								class="select2-placeholder-multiple 
+									select2 form-control" multiple="multiple" 
+										id="colaboradores-select2">
+                                <option></option>
+								@foreach (var colaborador in @Model.Colaboradores)
+                                {
+                                    <option value=@colaborador>@colaborador</option>    
+                                }
+                            </select>
+                            <label class="mt-3 form-label">
+                                Ativas?:
+                            </label>
+                            <div class="frame-wrap demo">
+                                <div class="demo">
+                                    <div class="custom-control custom-switch">
+                                        <input name="ativa" type="checkbox" class="custom-control-input" id="ativaSwitch" value="true" checked="checked">
+                                        <label id="label-ativo" class="custom-control-label" for="ativaSwitch">Sim</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+						<div class="alert alert-info p-1">
+							<strong>Nota:</strong> Ao omitir os dados de <code>"Colaborador (es)"</code> , será <strong>retornado todos os dados ou conforme informações pré-definidas</strong>.
+						</div>
+					    <button id="contaCorrente-relatorio2-filtro-btn" type="submit" class="btn btn-outline-primary mb-g" >GERAR</button>
+                    </form>
+				</div>
+			</div>
+		</div>		
+	</div>
+</div>
+
+@section ScriptsBlock {
+	<script src="~/js/dependency/moment/moment.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/pt-br.min.js" integrity="sha512-1IpxmBdyZx3okPiZ14mzw6+pOGa690uDmcdjqvT310Kwv3NRcjvL/aOtoSprEyvkDdAb7ZtM2um6KrLqLOY97w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/2.1.30/js/locales/bootstrap-datetimepicker.pt-BR.js"></script>
+	<script src="~/js/formplugins/select2/select2.bundle.js"></script>
+	<script src="~/js/extensions/date-extensions.js"></script>
+	<script src="~/js/notifications/sweetalert2/sweetalert2.bundle.js"></script>
+
+	<script>
+        $("#contaCorrente-relatorio-filtro-btn").click(function (event) {
+            var form = $("#contaCorrente-relatorio-filtro-btn");
+			var form2 = $("#contaCorrente-relatorio2-filtro-btn");
+
+            // Perform ajax submit here...
+        });
+
+		//Datepicker config
+		// Class definition
+		var controls = {
+			leftArrow: '<i class="@(Settings.Theme.IconPrefix) fa-angle-left" style="font-size: 1.25rem"></i>',
+			rightArrow: '<i class="@(Settings.Theme.IconPrefix) fa-angle-right" style="font-size: 1.25rem"></i>'
+		};
+		
+		@* var startDate = new Date();
+		var endDate = new Date();
+
+		startDate.setDate(today.getDate()+1);
+		endDate.setDate(startDate.getDate()+3);
+
+		$("#start").val(startDate.toString('dd/MM/yyyy'));
+		$("#end").val(endDate.toString('dd/MM/yyyy')); *@
+
+		var runDatePicker = function () {
+			// range picker
+			$('#datepicker-rel1').datepicker({
+				todayHighlight: true,
+				templates: controls,
+				format: 'dd/mm/yy'
+			});
+		};
+
+		var ac = anoCorrenteByDate(new Date());
+
+		//set default date range rel 1 e 2
+		$("#startRel1").val("01" + "/" + "01" + "/" + ac);
+		$("#startRel2").val("01" + "/" + "01" + "/" + ac);
+
+		$("#endRel1").val(dateNowToLocaleDateString());
+		$("#endRel2").val(dateNowToLocaleDateString());
+
+		$(document).ready(function () {
+			//submit extrato
+			$("#contaCorrente-relatorio-filtro-btn").click(function (event) {
+				if ($("#colaborador-select2").select2().val() == '')
+				{
+					Swal.fire(
+					{
+						text: "Para gerar um extrato é necessário informar um colaborador.",
+						icon: "error",
+						timer: 3000,
+						showCancelButton: false,
+						showConfirmButton: true,
+						confirmButtonColor: "#fd3995",
+						timerProgressBar: true,
+						buttons: false
+					});
+				}
+				else
+				{
+					$("#contaCorrente-relatorio-filtro").submit();
+				}
+        	});
+
+            //init select2
+            $('.select2').select2();
+            
+            //set placeholder global for multiple
+            $("#colaboradores-select2").select2({
+                placeholder: "Escolha quantos colaboradores quiser",
+				allowClear: true
+            });
+
+			//set placeholder for colaborador
+			$("#colaborador-select2").select2({
+                placeholder: "Escolha um colaborador",
+				allowClear: true
+            });
+
+			$("#ativaSwitch").click(function(e){
+                if (this.checked) {
+                    $(this).attr("value", "true");
+                    $("#label-ativo").html("SIM");
+                } else {
+                    $(this).attr("value", "false");
+                    $("#label-ativo").html("NÃO");
+                }
+            });
+
+			//run datepicker
+			runDatePicker();
+
+			@* $.datepicker.regional['pt-BR'] = {
+                closeText: 'Fechar',
+                prevText: '&#x3c;Anterior',
+                nextText: 'Pr&oacute;ximo&#x3e;',
+                currentText: 'Hoje',
+                monthNames: ['Janeiro','Fevereiro','Mar&ccedil;o','Abril','Maio','Junho',
+                'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+                monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun',
+                'Jul','Ago','Set','Out','Nov','Dez'],
+                dayNames: ['Domingo','Segunda-feira','Ter&ccedil;a-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sabado'],
+                dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sab'],
+                dayNamesMin: ['Dom','Seg','Ter','Qua','Qui','Sex','Sab'],
+                weekHeader: 'Sm',
+                dateFormat: 'dd/mm/yy',
+                firstDay: 0,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: ''
+			};
+
+        	$.datepicker.setDefaults($.datepicker.regional['pt-BR']); *@
+
+			@* $('#datepicker-5').daterangepicker({
+				timePicker: true,
+				startDate: startDate,
+    			endDate: endDate
+			}); *@
+
+			@* $(function() {
+				$(".js-data-example-ajax").select2({
+				  ajax: {
+				    url: "https://api.github.com/search/repositories",
+				    dataType: 'json',
+				    delay: 250,
+				    data: function (params) {
+				      return {
+				        q: params.term, // search term
+				        page: params.page
+				      };
+				    },
+				    processResults: function (data, params) {
+				      // parse the results into the format expected by Select2
+				      // since we are using custom formatting functions we do not need to
+				      // alter the remote JSON data, except to indicate that infinite
+				      // scrolling can be used
+				      params.page = params.page || 1;
+				      return {
+				        results: data.items,
+				        pagination: {
+				          more: (params.page * 30) < data.total_count
+				        }
+				      };
+				    },
+				    cache: true
+				  },
+				  placeholder: 'Search for a repository',
+				  escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+				  minimumInputLength: 1,
+				  templateResult: formatRepo,
+				  templateSelection: formatRepoSelection
+				});
+				function formatRepo (repo) {
+				  if (repo.loading) {
+				    return repo.text;
+				  }
+				  var markup = "<div class='select2-result-repository clearfix d-flex'>" +
+				    "<div class='select2-result-repository__avatar mr-2'><img src='" + repo.owner.avatar_url + "' class='width-2 height-2 mt-1 rounded' /></div>" +
+				    "<div class='select2-result-repository__meta'>" +
+				      "<div class='select2-result-repository__title fs-lg fw-500'>" + repo.full_name + "</div>";
+				  if (repo.description) {
+				    markup += "<div class='select2-result-repository__description fs-xs opacity-80 mb-1'>" + repo.description + "</div>";
+				  }
+				  markup += "<div class='select2-result-repository__statistics d-flex fs-sm'>" +
+				    "<div class='select2-result-repository__forks mr-2'><i class='@(Settings.Theme.IconPrefix) fa-lightbulb'></i> " + repo.forks_count + " Forks</div>" +
+				    "<div class='select2-result-repository__stargazers mr-2'><i class='@(Settings.Theme.IconPrefix) fa-star'></i> " + repo.stargazers_count + " Stars</div>" +
+				    "<div class='select2-result-repository__watchers mr-2'><i class='@(Settings.Theme.IconPrefix) fa-eye'></i> " + repo.watchers_count + " Watchers</div>" +
+				  "</div>" +
+				  "</div></div>";
+				  return markup;
+				}
+				function formatRepoSelection (repo) {
+				  return repo.full_name || repo.text;
+				}
+			}); *@
+		});
+	</script>
+}

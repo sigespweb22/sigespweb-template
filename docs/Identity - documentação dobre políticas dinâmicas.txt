@@ -1,0 +1,9 @@
+role    -> Grupo de usuário;
+claims  -> Permissões que o grupo tem;
+
+https://www.jerriepelser.com/blog/creating-dynamic-authorization-policies-aspnet-core/
+
+https://referbruv.com/blog/getting-started-with-securing-apis-using-jwt-bearer-authentication-hands-on/
+
+// Abordagem ótima para uso de claims
+https://www.wellingtonjhn.com/posts/autoriza%C3%A7%C3%A3o-em-apis-asp.net-core/

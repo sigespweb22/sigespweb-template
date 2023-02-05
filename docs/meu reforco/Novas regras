@@ -1,0 +1,31 @@
+#Novas regras
+
+##Cancelamento de reforço - 1
+  Criar um ranking de 1 até 5 estrelas para asiduidade nos reforços; estes por sua vez
+  deverão ser beneficiados automaticamente de acordo com a sua evolução no ranking
+  com prioridades para marcação de 1 até 3 reforços fora das janelas, em janelas especiais
+  anteriores as 3 janelas que são padrão.
+
+  Outra regra bacana seria, checar quem faz o cancelamento do reforço
+
+##Cancelamento de reforço - 2
+  Criar modelo de cancelamento por solicitação com justificativas (ocorrências)
+  e autorização e aprovação do gestor.
+
+##Apontamento da execução do reforço
+  Criar um sistema de ponto para que os servidores apontar o início e o fim do reforço. 
+  Sendo assim, será a partir de um relatório gerado
+  por esta funcionalidade que o RH irá lançar 
+  os reforços para que sejam remunerados pelo estado.
+
+  Neste caso vai funcionar muito bem, uma vez que
+  o sistema esta rodando somente dentro da unidade,
+  o que inviabiliza a tentativa de fraude no apontamento, e ao efetuar o apontamento fora dos horários previstos para realização do reforço, deverão
+  ser justificados e esta justificativa tem que ser aprovada pelo gestor.
+
+
+## Acesso Servidor Estado apenas para acesso básico do app:
+   #Criar roles baseadas nas roles do usuário: 639397701@gmail.com - PEDRO ALAN LOPES DE OLIVEIRA ARAUJO
+
+## Acesso Superviso Meu Reforço:
+   #Criar roles baseadas nas roles do usuário: 972299801@gmail.com - FABRICIO PACHECO

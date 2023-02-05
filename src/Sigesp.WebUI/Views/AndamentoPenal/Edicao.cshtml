@@ -1,0 +1,660 @@
+<!DOCTYPE html>  
+<html lang="pt-br">
+
+@model Sigesp.Application.ViewModels.AndamentoPenal.AndamentoPenalEdicaoViewModel
+
+@{
+	ViewData["Title"] = "Edição";
+    ViewData["Heading"] = "<i class='notprint subheader-icon fal fa-edit'></i> Andamento penal - " + @Model.AndamentoPenalViewModel.DetentoNome + "<span class='notprint fw-300'></span> <sup class='notprint badge badge-primary fw-500'>EDITANDO</sup>";
+    ViewData["PageDescription"] = "Edição de registro do andamento penal";
+	ViewData["PageName"] = "andamento-penal_edicao";
+	ViewData["Category0"] = @Settings.App;
+    ViewData["Category1"] = "Jurídico";
+    ViewData["Category2"] = "Andamento Penal";
+}
+
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/select2/select2.bundle.css">
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+    <link href="~/css/formplugins/summernote/summernote-extensions.css" rel="stylesheet">
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+    <link rel="stylesheet" media="screen, print" href="~/css/notifications/toastr/toastr.css">
+    <link rel="stylesheet" media="screen, print" href="~/css/notifications/sweetalert2/sweetalert2.bundle.css">
+}
+
+<div id="panel-1" class="panel">
+    <div class="panel-hdr">	
+        <h2>
+            Andamento penal <span class="fw-300"><i>EDIÇÃO</i></span> 
+        </h2>
+        <div class="panel-toolbar">
+            <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Abrir/Fechar"></button>
+        </div>
+    </div>
+    <div class="panel-container show">
+        <div class="panel-content">            
+            <form id="andamentoPenal-form" method="post">
+                <div class="form-group">                    
+                    <div class="row mb-2" style="display: none">
+                        <div class="col-xl-12">
+                            <div class="form-group">
+                                <label class="form-label" for="id">
+                                    Id:
+                                </label>
+                                <input type="text" name="id" id="id" 
+                                    class="form-control" value="" 
+                                    placeholder="Informe o id">
+                            </div>
+                        </div> 
+                    </div>
+                    <div class="row mb-6">
+                        <div class="col-xl-12">
+                            <div class="form-group">
+                                <label class="form-label" for="status">
+                                    Status:
+                                </label>
+                                <select name="status" 
+                                    class="select2 form-control" 
+                                         id="status">
+                                    @foreach (var status in @Model.Statuses)
+                                    {
+                                        <option value=@status>@status</option>    
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-xl-4">
+                            <div class="form-group">
+                                <label class="form-label" for="simpleinput">
+                                    Data evento principal:
+                                </label>
+                                <div class="input-group">
+								    <input type="text" name="dataEventoPrincipal" class="form-control " 
+                                        placeholder="Data evento principal" 
+                                        value="" id="datepicker-4-1" maxlength="10">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text fs-xl">
+                                            <i class="@(Settings.Theme.IconPrefix) fa-calendar-check"></i>
+                                        </span>
+                                    </div>
+							    </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-xl-6">
+                            <div class="form-group">
+                                <label class="form-label" for="detentoIpen">
+                                    IPEN:
+                                </label>
+                                <input type="text" name="detentoIpen" id="detentoIpen" 
+                                    class="form-control" value="" 
+                                    placeholder="Informe o ipen" disabled>
+                            </div>
+                        </div> 
+                        <div class="col-xl-6">
+                            <div class="form-group">
+                                <label class="form-label" for="detentoId">
+                                    Nome:
+                                </label>
+                                <input type="text" name="detentoNome" id="detentoNome" 
+                                    class="form-control" value="" placeholder="Informe o nome"
+                                    disabled>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-6">
+                        <div class="col-xl-6">
+                            <div class="form-group">
+                                <label class="form-label" for="detentoRegime">
+                                        Regime:
+                                    </label>
+                                    <input type="text" name="detentoRegime"
+                                        id="detentoRegime" class="form-control"
+                                        value="" placeholder="Auto"
+                                        disabled>
+                            </div>
+                        </div>
+                        <div class="col-xl-6">
+                            <div class="form-group">
+                                <label class="form-label" for="pec">
+                                    PEC:
+                                </label>
+                                <input type="text" name="pec" id="pec" 
+                                    class="form-control" value="" 
+                                    placeholder="Informe o PEC do detento">
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="mt-4 mb-g">
+                    <div class="row text-right mb-3">
+                        <div class="col-lg-12">
+                            <button type="button" id="ap-voltar-btn-top" 
+                                class="btn btn-outline-primary waves-effect waves-themed">
+                                <span class="fal fa-arrow-circle-left mr-1"></span>Voltar
+                            </button>
+                            <button type="button" 
+                                id="andamentoPenal-save-top" 
+                                class="btn btn-outline-success waves-effect waves-themed">
+                                <span class="fal fa-save mr-1"></span>Salvar
+                            </button>
+                            <button data-toggle-second="tooltip" data-placement="bottom" 
+                                    title="Opções de geração de ofício"
+                                    class="btn btn-secondary dropdown dropdown-toggle"
+                                    type="button" id="dropdownMenuButton"
+                                    data-toggle="dropdown" 
+                                    aria-haspopup="true" aria-expanded="false">
+                                <i class="@(Settings.Theme.IconPrefix) fa-file-plus mr-1"></i>Ofícios
+                            </button>
+                            <div style="left: 1310px !important;" class="dropdown-menu dropdown-menu-left" aria-labelledby="dropdownMenuButton">
+                                <form>
+                                </form>
+                                <form name="oj-progressao-aberto-form" 
+                                    id="oj-progressao-aberto-form" 
+                                    method="post"
+                                    action="/OficioJuridico/ProgressaoAberto">
+                                    <button name="andamentoPenalIdBtn"
+                                        id="andamentoPenalIdBtn-pa"
+                                        data-toggle="tooltip" data-placement="top"
+                                        title="Ofício PROGRESSÃO ABERTO" type="submit"
+                                        style="padding-left: 6px !important;" 
+                                        class="btn" value="@Model.AndamentoPenalViewModel.Id">
+                                        PROGRESSÃO ABERTO
+                                    </button>
+                                </form>
+                                <form name="oj-progressao-sa-plus-st-form" id="oj-progressao-sa-plus-st-form" method="post" action="/OficioJuridico/ProgressaoSAPlusST">
+                                    <button name="andamentoPenalIdBtn"
+                                        id="andamentoPenalIdBtn-sa-plus-st"
+                                        data-toggle="tooltip" data-placement="top"
+                                        title="Ofício PROGRESSÃO SEMIABERTO + SAÍDA TEMPORÁRIA" type="submit"
+                                        style="padding-left: 6px !important;" class="btn" value="@Model.AndamentoPenalViewModel.Id">
+                                        PROGRESSÃO SA + ST
+                                    </button>
+                                </form>
+                                <form name="oj-progressao-saida-temporaria-form" id="oj-progressao-saida-temporaria-form" method="post" action="/OficioJuridico/SaidaTemporaria">
+                                    <button name="andamentoPenalIdBtn" 
+                                        id="andamentoPenalIdBtn-st"
+                                        data-toggle="tooltip" data-placement="top"
+                                        title="Ofício SAÍDA TEMPORÁRIA" type="submit"
+                                        style="padding-left: 6px !important;" class="btn" value="@Model.AndamentoPenalViewModel.Id">
+                                        SAÍDA TEMPORÁRIA
+                                    </button>
+                                </form>
+                                <form name="oj-progressao-livramento-condicional-form" id="oj-progressao-livramento-condicional-form" method="post" action="/OficioJuridico/LivramentoCondicional">
+                                    <button name="andamentoPenalIdBtn" 
+                                        id="andamentoPenalIdBtn-lc"
+                                        data-toggle="tooltip" data-placement="top"
+                                        title="Ofício LIVRAMENTO CONDICIONAL" type="submit"
+                                        style="padding-left: 6px !important;" class="btn" value="@Model.AndamentoPenalViewModel.Id">
+                                        LIV. CONDICIONAL
+                                    </button>
+                                </form>
+                                <form name="oj-info-endereco-telefone-form" id="oj-info-endereco-telefone-form" method="post" action="/OficioJuridico/InfoEnderecoTelefone">
+                                    <button name="andamentoPenalIdBtn" id="andamentoPenalIdBtn-et"
+                                        data-toggle="tooltip" data-placement="top"
+                                        title="Ofício ENDEREÇO/TELEFONE" type="submit"
+                                        style="padding-left: 6px !important;" class="btn" value="@Model.AndamentoPenalViewModel.Id">
+                                        ENDEREÇO/TELEFONE
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="mt-4 mb-g">                    
+                    <div class="row mb-6">
+                        <div class="col-xl-4">
+                            <div class="form-group">
+                                <label class="h2 form-label">Histórico</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div class="panel-container show" style="margin-top: -50px !important;">
+                                <div class="panel-content">
+                                    <div class="js-summernote" id="historico" name="historico"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-container show">
+                    <div class="panel-content">
+                        <div class="text-right mb-2">
+                            <hr class="mt-4 mb-g">
+                            <button type="button" id="ap-voltar-btn-footer" class="mr-1 btn btn-outline-primary waves-effect waves-themed">
+                                <span class="fal fa-arrow-circle-left mr-1"></span>Voltar
+                            </button>
+                            <button type="button" 
+                                id="andamentoPenal-save" 
+                                class="btn btn-outline-success waves-effect waves-themed">
+                                <span class="fal fa-save mr-1"></span>Salvar
+                            </button>
+                            <hr class="mt-4 mb-g">
+                        </div>
+                    </div>
+                    <div class="row mb-6">
+                        <div class="col-xl-4">
+                            <div class="form-group">
+                                <label class="h2 form-label">Observação</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-6">
+                        <div class="col-xl-12">
+                            <div class="panel-container show" style="margin-top: -50px !important;">
+                                <div class="panel-content">
+                                    <div class="js-summernote" id="observacao" name="observacao"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-6">
+                        <div class="col-xl-12">
+                            <div class="form-group">
+                                <label class="form-label" for="enderecoCompleto">
+                                    Endereço Saída Temporária:
+                                </label>
+                                <input type="text" name="enderecoCompleto"
+                                    id="enderecoCompleto" class="form-control"
+                                    value="" placeholder="Auto">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-6">
+                        <div class="col-xl-12">
+                            <div class="form-group">
+                                <label class="form-label" for="telefone">
+                                    Telefone Saída Temporária:
+                                </label>
+                                <input type="text" name="telefone"
+                                    id="telefone" class="form-control"
+                                    value="" placeholder="Auto">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>    
+</div>
+
+@section ScriptsBlock {
+    <script src="~/js/formplugins/select2/select2.bundle.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/lang/summernote-pt-BR.min.js"></script>
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script src="~/js/formplugins/select2/select2.bundle.js"></script>
+    <script src="~/js/notifications/toastr/toastr.js"></script>
+    <script src="~/js/notifications/sweetalert2/sweetalert2.bundle.js"></script>
+    <script src="~/js/extensions/mask-extensions.js"></script>
+    <script src="~/js/extensions/entity-code-extensions.js"></script>
+    <script src="~/js/formplugins/summernote/summernote-extensions.js"></script>
+    
+    <script>
+        //Métodos privados
+        var controls = {
+            leftArrow: '<i class="@(Settings.Theme.IconPrefix) fa-angle-left" style="font-size: 1.25rem"></i>',
+            rightArrow: '<i class="@(Settings.Theme.IconPrefix) fa-angle-right" style="font-size: 1.25rem"></i>'
+        };
+              
+        var runDatePicker = function () {
+            // orientation 
+            $('#datepicker-4-1').datepicker({
+                orientation: "top left",
+                todayHighlight: true,
+                templates: controls,
+                format: 'dd/mm/yy'
+            });
+
+            $('#dataAutorizacao').datepicker({
+                orientation: "top left",
+                todayHighlight: true,
+                templates: controls,
+                format: 'dd/mm/yy'
+            });
+        };
+
+        $("#andamentoPenalIdBtn-pa").click(function (event) {
+            $("#andamentoPenal-save").click();
+            $("#oj-progressao-aberto-form").submit();
+        });
+
+        $("#andamentoPenalIdBtn-sa-plus-st").click(function (event) {
+            $("#andamentoPenal-save").click();
+            $("#oj-progressao-sa-plus-st-form").submit();
+        });
+
+        $("#andamentoPenalIdBtn-st").click(function (event) {
+            $("#andamentoPenal-save").click();
+            $("#oj-progressao-saida-temporaria-form").submit();
+        });
+
+        $("#andamentoPenalIdBtn-lc").click(function (event) {
+            $("#andamentoPenal-save").click();
+            $("#oj-progressao-livramento-condicional-form").submit();
+        });
+
+        $("#andamentoPenalIdBtn-et").click(function (event) {
+            $("#andamentoPenal-save").click();
+
+            setTimeout(function() {
+				$("#oj-info-endereco-telefone-form").submit();
+			}, 1000);
+
+        });
+
+        $("#andamentoPenal-save").click(function (event) {
+            var obj = $("#andamentoPenal-form").serializeJSON();
+            obj.observacao = $('#observacao').summernote("code");
+            obj.historico = $('#historico').summernote("code");
+
+            jsonObj = [];
+            jsonObj = obj
+            
+            $.ajax({ 
+                url: "/api/andamento-penal/edicao", 
+                type: 'PUT',
+                contentType: "application/json;charset=utf-8",
+                data: JSON.stringify(jsonObj, null, 4),
+                success: function(success) {                                       
+
+                    Swal.fire({
+                        text: "Registro atualizado com sucesso!",
+                        icon: "success",
+                        timer: 2000,
+                        showCancelButton: false,
+                        showConfirmButton: true,
+                        confirmButtonColor: "#179c8e",
+                        timerProgressBar: true,
+                        buttons: false
+                    }).then(function (success) {
+                        console.log('ok inside');
+                        window.location.href = '/andamentopenal/todos';
+                    });
+
+                },
+                error: function (error, jqXHR, textStatus, errorThrown) {
+                    const returnObj = Object.entries(error.responseJSON.errors);
+
+                    returnObj.forEach(function(err) {
+                        err[1].forEach(function (int) {
+                            toastr["error"](err[0], int);
+                        })
+                    });
+                }
+            });
+        });
+
+        $("#andamentoPenal-save-top").click(function (event) {
+            var obj = $("#andamentoPenal-form").serializeJSON();
+            obj.observacao = $('#observacao').summernote("code");
+            obj.historico = $('#historico').summernote("code");
+
+            jsonObj = [];
+            jsonObj = obj
+
+            console.log(jsonObj);
+            
+            $.ajax({ 
+                url: "/api/andamento-penal/edicao", 
+                type: 'PUT',
+                contentType: "application/json;charset=utf-8",
+                data: JSON.stringify(jsonObj, null, 4),
+                success: function(success) {                                       
+
+                    Swal.fire({
+                        text: "Registro atualizado com sucesso!",
+                        icon: "success",
+                        timer: 2000,
+                        showCancelButton: false,
+                        showConfirmButton: true,
+                        confirmButtonColor: "#179c8e",
+                        timerProgressBar: true,
+                        buttons: false
+                    }).then(function (success) {
+                        console.log('ok inside');
+                        window.location.href = '/andamentopenal/todos';
+                    });
+
+                },
+                error: function (error, jqXHR, textStatus, errorThrown) {
+                    const returnObj = Object.entries(error.responseJSON.errors);
+
+                    returnObj.forEach(function(err) {
+                        err[1].forEach(function (int) {
+                            toastr["error"](err[0], int);
+                        })
+                    });
+                }
+            });
+        });
+
+		//save
+		var historico = function(){
+			localStorage.setItem('summernoteData', $('#historico').summernote("code"));
+			console.log("saved");
+		}
+
+        var observacao = function(){
+			localStorage.setItem('summernoteData', $('#observacao').summernote("code"));
+			console.log("saved");
+		}
+
+        var getAndamentoPenalById = function(id) {
+            $.ajax({ 
+                url: "/api/andamento-penal/get-by-id", 
+                type: 'POST',
+                contentType: "application/json;charset=utf-8",
+                data: JSON.stringify(id, null, 4),
+                success: function(success) {                                       
+
+                    $('#datepicker-4-1').datepicker('setDate', 
+                                            @Model.AndamentoPenalViewModel.DataEventoPrincipal.Substring(8, 2) + "/" +
+                                            @Model.AndamentoPenalViewModel.DataEventoPrincipal.Substring(5, 2) + "/" +
+                                            @Model.AndamentoPenalViewModel.DataEventoPrincipal.Substring(0, 4));
+
+                    $('#id').val('@Model.AndamentoPenalViewModel.Id');
+                    $('#status').select2().val('@Model.AndamentoPenalViewModel.Status');
+                    $('#status').select2();
+                    $('#detentoIpen').val('@Model.AndamentoPenalViewModel.DetentoIpen');
+                    $('#detentoNome').val('@Model.AndamentoPenalViewModel.DetentoNome');
+                    $('#detentoRegime').val('@Model.AndamentoPenalViewModel.DetentoRegime');
+                    
+                    $('#enderecoCompleto').val(unescapeHTML('@Model.AndamentoPenalViewModel.EnderecoCompleto'));
+                    $('#telefone').val(unescapeHTML('@Model.AndamentoPenalViewModel.Telefone'));
+
+                    $('#pec').val('@Model.AndamentoPenalViewModel.Pec');
+                    $('#observacao').summernote("code", success.data.observacao);
+                    $('#historico').summernote("code", success.data.historico);
+
+                    @* Swal.fire({
+                        text: "Registro criado com sucesso!",
+                        icon: "success",
+                        timer: 2000,
+                        showCancelButton: false,
+                        showConfirmButton: true,
+                        confirmButtonColor: "#179c8e",
+                        timerProgressBar: true,
+                        buttons: false
+                    }).then(function (success) {
+                        console.log('ok inside');
+                        window.location.href = '/andamentopenal/todos';
+                    }); *@
+                },
+                error: function (error, jqXHR, textStatus, errorThrown) {
+                    const returnObj = Object.entries(error.responseJSON.errors);
+
+                    returnObj.forEach(function(err) {
+                        err[1].forEach(function (int) {
+                            toastr["error"](err[0], int);
+                        })
+                    });
+                }
+            });            
+        };
+
+        $(document).ready(function () {               
+
+            $.fn.serializeJSON=function() {
+                var json = {};
+                jQuery.map($(this).serializeArray(), function(n, i){
+                    json[n['name']] = n['value'];
+                });
+                return json;
+            };
+
+            //run datepicker
+            runDatePicker();
+
+            //init select2
+            $('.select2').select2();           
+
+            //init default
+			$('#historico').summernote({
+				height: 400,
+				tabsize: 2,
+				placeholder: "",
+				dialogsFade: true,
+                lang: 'pt-BR',
+                tabDisable: true,
+                fontSizes: ['8', '9', '10', '11', '12', '13', '14', '15', '16', '18', '20', '22' , '24', '28', '32', '36', '40', '48'],
+				toolbar: [
+					['style', ['style']],
+                    ['Misc', ['undo', 'redo']],
+    				['font', ['strikethrough', 'superscript', 'subscript']],
+					['font', ['bold', 'italic', 'underline', 'clear']],
+					['fontsize', ['fontsize']],
+					['fontname', ['fontname']],
+					['color', ['color']],
+					['para', ['ul', 'ol', 'paragraph']],
+					['height', ['height']]
+					['table', ['table']],
+					['insert', ['link', 'picture', 'video']],
+					['view', ['fullscreen', 'codeview', 'help']],
+                    ['upperCase', ['upperCase']]
+				],
+                buttons: {
+                    upperCase: upperCase
+                },	
+				callbacks: {
+					//restore from localStorage
+					onInit: function(e) {                        
+						//$('#historico').summernote("code", '\'' + @Model.AndamentoPenalViewModel.Historico + '\');
+					},
+					onChange: function(contents, $editable) {
+                        //código a partir de mudanças
+					}
+				}
+			});
+
+            $('#observacao').summernote({
+				height: 400,
+				tabsize: 2,
+				placeholder: "",
+				dialogsFade: true,
+                lang: 'pt-BR',
+                tabDisable: true,
+                fontSizes: ['8', '9', '10', '11', '12', '13', '14', '15', '16', '18', '20', '22' , '24', '28', '32', '36', '40', '48'],
+				toolbar: [
+					['style', ['style']],
+                    ['Misc', ['undo', 'redo']],
+    				['font', ['strikethrough', 'superscript', 'subscript']],
+					['font', ['bold', 'italic', 'underline', 'clear']],
+					['fontsize', ['fontsize']],
+					['fontname', ['fontname']],
+					['color', ['color']],
+					['para', ['ul', 'ol', 'paragraph']],
+					['height', ['height']]
+					['table', ['table']],
+					['insert', ['link', 'picture', 'video']],
+					['view', ['fullscreen', 'codeview', 'help']],
+                    ['upperCase', ['upperCase']]
+				],	
+                buttons: {
+                    upperCase: upperCase
+                },	
+				callbacks: {
+					//restore from localStorage
+					onInit: function(e) {
+						//$('#observacao').summernote("code", '@Model.AndamentoPenalViewModel.Observacao');
+					},
+					onChange: function(contents, $editable) {
+                        //código a partir de mudanças
+					}
+				}
+			});       
+
+            $("#ap-voltar-btn-top").click(function (event) {
+                window.location.href = '/andamentopenal/todos';
+            });
+
+            $("#ap-voltar-btn-footer").click(function (event) {
+                window.location.href = '/andamentopenal/todos';
+            });
+
+            //options toastr
+            toastr.options = {
+                "closeButton": false,
+                "debug": false,
+                "newestOnTop": true,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": true,
+                "onclick": null,
+                "showDuration": 500,
+                "hideDuration": 100,
+                "timeOut": 10000,
+                "extendedTimeOut": 1000,
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            };
+
+            //set placeholder for single
+            $("#status").select2({
+                focus: true,
+                placeholder: "Selecione um status",
+				allowClear: true
+            });
+
+            //set placeholder for single
+            setTimeout(function() {
+				$("#status").select2('focus');
+			}, 500);
+
+            setTimeout(function() {
+				$('#pec').keyup(function() {
+                    const $this = $(this);
+
+                    maskPec($(this).val(), "#pec");
+                });
+
+                $('#enderecoCompleto').keyup(function() {
+                    const $this = $(this);
+                    $('#enderecoCompleto').val($(this).val().toUpperCase());
+                });
+
+                $('#telefone').keyup(function() {
+                    const $this = $(this);
+                    $('#telefone').val($(this).val().toUpperCase());
+                });
+
+                $('#datepicker-4-1').keyup(function(e) {
+                    const $this = $(this);
+
+                    maskDatePicker($(this).val(), "#datepicker-4-1", e.which);
+                });
+			}, 500);
+
+            //Tecla atalho CTRL + seta para esquerda para voltar
+            @* $(document).keydown(function(e) {
+                if (e.ctrlKey && e.which === 37) window.location.href = '/andamentopenal/todos';
+            }); *@
+
+            getAndamentoPenalById('@Model.AndamentoPenalViewModel.Id');
+        });
+    </script>
+}

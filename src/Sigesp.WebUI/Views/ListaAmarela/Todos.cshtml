@@ -1,0 +1,1946 @@
+@model Sigesp.Application.ViewModels.Cards.ListaAmarelaCardViewModel
+
+@{
+	ViewData["Title"] = "Lista amarela";
+	ViewData["PageName"] = "lista-amarela_todos";
+	ViewData["Category0"] = @Settings.App;
+	ViewData["Category1"] = "Jurídico";
+	ViewData["Heading"] = "<i class='subheader-icon fal fa-users'></i> Lista amarela<span class='fw-300'></span> <sup class='badge badge-primary fw-500'>NOVO</sup>";
+	ViewData["PageDescription"] = "Listagem de todos os detentos ingressos na lista amarela";
+}
+@section HeadBlock {
+	<link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/formplugins/select2/select2.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/theme-demo.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/notifications/toastr/toastr.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/notifications/sweetalert2/sweetalert2.bundle.css">
+}
+
+<div class="row">
+	<div class="col-sm-6 col-xl-1">
+		<div class="p-3 bg-primary-300 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="display-4 d-block l-h-n m-0 fw-500">
+					@Model.Ativos
+					<small class="m-0 l-h-n">Total</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-users position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>
+	<div class="col-sm-6 col-xl-1">
+		<div class="p-3 bg-danger-400 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="text-center display-4 d-block l-h-n m-0 fw-500">
+				    @Model.Fechados
+					<small class="m-0 l-h-n">Fechados</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-users position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>
+	<div class="col-sm-6 col-xl-1">
+		<div class="p-3 bg-warning-400 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="text-center display-4 d-block l-h-n m-0 fw-500">
+				    @Model.SemiAbertos
+					<small class="m-0 l-h-n">Semiabertos</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-users position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>
+	<div class="col-sm-6 col-xl-1">
+		<div class="p-3 bg-success-400 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="text-center display-4 d-block l-h-n m-0 fw-500">
+				    @Model.Provisorios
+					<small class="m-0 l-h-n">Provisórios</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-users position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>	
+	<div class="col-sm-6 col-xl-1">
+		<div class="p-3 bg-primary-200 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="text-center display-4 d-block l-h-n m-0 fw-500">
+				    @Model.SaidaTemporaria
+					<small class="m-0 l-h-n">ST's</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-users position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>
+	<div class="col-sm-6 col-xl-1">
+		<div class="p-3 bg-fusion-600 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="text-center display-4 d-block l-h-n m-0 fw-500">
+				    @Model.Alimentos
+					<small class="m-0 l-h-n">Alimentos</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-users position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>
+	<div class="col-sm-6 col-xl-1">
+		<div class="p-3 bg-fusion-200 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="text-center display-4 d-block l-h-n m-0 fw-500">
+				    @Model.Temporarias
+					<small class="m-0 l-h-n">Temporárias</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-users position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>
+	<div class="col-sm-6 col-xl-1">
+		<div class="p-3 bg-success-100 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="text-center display-4 d-block l-h-n m-0 fw-500">
+				    @Model.Outros
+					<small class="m-0 l-h-n">Outros</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-users position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>
+	<div class="col-sm-6 col-xl-1">
+		<div class="p-3 bg-info-200 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="text-center display-4 d-block l-h-n m-0 fw-500">
+				    @Model.EmAudiencia
+					<small class="m-0 l-h-n">Audiência</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-users position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>
+	<div class="col-sm-6 col-xl-1">
+		<div class="p-3 bg-info-200 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="text-center display-4 d-block l-h-n m-0 fw-500">
+				    @Model.TransferenciasMD
+					<small class="m-0 l-h-n">MDs-E</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-users position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>
+	<div class="col-sm-6 col-xl-1 card-mdsr" style="cursor: pointer;" >
+		<div class="p-3 bg-danger-200 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="text-center display-4 d-block l-h-n m-0 fw-500">
+				    @Model.MDsRecebidos
+					<small class="m-0 l-h-n">MDs-R</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-users position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>
+	<div class="col-sm-6 col-xl-1">
+		<div class="p-3 bg-success-800 rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="text-center display-4 d-block l-h-n m-0 fw-500">
+				    @Model.InternacaoHospitalar
+					<small class="m-0 l-h-n">Internação</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-users position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xl-12">
+		<div id="panel-1" class="panel">
+			<div class="panel-hdr">	
+				<h2>
+					Gerenciamento dos <span class="fw-300"><i>Detentos da lista amarela</i></span> 
+				</h2>
+				<div class="panel-toolbar">
+					<button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Abrir/Fechar"></button>
+				</div>
+			</div>
+			<div class="panel-container show">
+				<div class="panel-content">									
+					<div class="tab-content pt-4">
+						<div class="tab-pane fade show active" id="tab_default-1" role="tabpanel">
+							<div class="row">
+								<div class="col-xl-12">
+									<table id="dt-basic-example" style="width:100%"
+										class="table table-bordered 
+											table-hover table-striped w-100
+											display nowrap">
+									</table>									
+								</div>
+							</div>	
+						</div>
+					</div>					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="change-detento-modal" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header" id="modal-header-transfer">
+				<h5 class="modal-title" id="modal-titulo"></h5>
+				<button type="button" class="close" onclick="cleanModalTransferencia()" data-dismiss="modal" aria-label="Close">
+				<span aria-hidden="true"><i class="@(Settings.Theme.IconPrefix) fa-times"></i></span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<form id="transferencia-form" method="post">
+					<div class="form-group">						
+						<div class="row mb-2">
+							<div class="col-lg-12">
+								<div class="form-group">
+									<label class="form-label" for="simpleinput">
+										Id:
+									</label>
+									<div class="input-group">
+										<input type="text" name="listaAmarela-id" 
+											id="listaAmarela-id" class="form-control" 
+											placeholder="Auto" disabled value="">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row mb-2">
+							<div class="col-lg-6">
+								<div class="form-group">
+									<label class="form-label" for="modal-detentoIpen">
+										Ipen:
+									</label>
+									<input type="text" name="modal-detentoIpen" 
+											id="modal-detentoIpen" class="form-control" 
+											placeholder="Auto" disabled value="">
+								</div>
+							</div>
+							<div class="col-lg-6">
+								<div class="form-group">
+									<label class="form-label" for="modal-detentoNome">
+										Nome:
+									</label>
+									<input type="text" name="modal-detentoNome" 
+											id="modal-detentoNome" class="form-control" 
+											placeholder="Auto" disabled value="">
+								</div>
+							</div>
+						</div>
+						<div class="row mb-2">
+							<div class="col-lg-5">
+								<div class="form-group">
+									<label class="form-label" for="modal-detentoRegime">
+										Regime atual:
+									</label>
+									<input type="text" name="modal-detentoRegime" 
+											id="modal-detentoRegime" class="form-control" 
+											placeholder="Auto" disabled value="">
+								</div>
+							</div>
+							<div class="col-lg-2 text-center">
+								<div class="form-group" style="position: relative; top: 												27px;">
+									<a class="text-white btn btn-sm btn-dark btn-icon btn-inline-block mr-1" title="Transferência"><i class="fal fa-exchange"></i></a>
+								</div>
+							</div>
+							<div class="col-lg-5">
+								<div class="form-group">
+									<label class="form-label" for="detentoRegimeNovo">
+										Regime novo:
+									</label>
+									<input type="text" name="detentoRegimeNovo" 
+											id="detentoRegimeNovo" class="form-control" 
+											placeholder="Auto" disabled value="TRANSFERIDO">
+								</div>
+							</div>
+						</div>
+						<div class="row mb-2">
+							<div class="col-lg-12">
+								<div class="form-group">
+									<label class="form-label" for="transferenciaLocal">
+										Local transferência:
+									</label>
+									<input type="text" name="transferenciaLocal" 
+											id="transferenciaLocal" class="form-control" 
+											placeholder="Informe o local para onde o detento será transferido" value="">
+								</div>
+							</div>
+						</div>
+						<div class="row mb-2">
+							<div class="col-lg-6">
+								<div class="form-group">
+									<label class="form-label" for="simpleinput">
+										Data saída transferência:
+									</label>
+									<div class="input-group">
+										<div class="input-group-prepend">
+											<span class="input-group-text fs-xl"><i class="@(Settings.Theme.IconPrefix) fa-calendar"></i></span>
+										</div>
+										<input type="text" id="transferenciaDataSaida" class="datepicker-datas form-control" placeholder="Selecione uma data" aria-label="date" aria-describedby="transferenciaDataSaida">
+									</div>
+								</div>
+							</div>
+							<div class="col-lg-6">
+								<div class="form-group">
+									<label class="form-label" for="simpleinput">
+										Data retorno previsto:
+									</label>
+									<div class="input-group">
+										<div class="input-group-prepend">
+											<span class="input-group-text fs-xl"><i class="@(Settings.Theme.IconPrefix) fa-calendar"></i></span>
+										</div>
+										<input type="text" id="transferenciaDataRetornoPrevisto" class="datepicker-datas form-control" placeholder="Selecione uma data" aria-label="date" aria-describedby="transferenciaDataRetornoPrevisto">
+									</div>
+									@* <span class="help-block">Some help content goes here</span> *@
+								</div>
+							</div>
+						</div>						
+						<div class="row mb-2">
+							<div class="col-lg-12">
+								<div class="form-group">
+									<label class="form-label" for="transferenciaTipo">
+										Tipo transferência:
+									</label>
+									<select name="transferenciaTipo" 
+										class="select2 form-control" 
+											id="transferenciaTipo">
+										@foreach (var transferenciaTipo in @Model.TransferenciaTipos)
+										{
+											<option value=@transferenciaTipo>@transferenciaTipo</option>    
+										}
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="cleanModalTransferencia()">Fechar</button>
+						<button type="button" id="transferencia-save" class="btn btn-primary">Transferir</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="show-mdsr" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header" id="modal-header-mdsr">
+				<h3 class="modal-title fw-700" id="modal-titulo-mdsr"></h5>
+				<button type="button" class="close" data-dismiss="modal" onclick="cleanModalMdsr()"></button>
+				<span aria-hidden="true"><i class="@(Settings.Theme.IconPrefix) fa-times"></i></span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<table id="dt-mdsr" style="width:100%"
+					class="table-responsive table-bordered 
+						table-hover table-striped w-100">
+				</table>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="cleanModalMdsr()">Fechar</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section ScriptsBlock {
+<script src="~/js/dependency/moment/moment.js"></script>
+<script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+<script src="~/js/formplugins/select2/select2.bundle.js"></script>
+<script src="~/js/datagrid/datatables/datatables.export.js"></script>
+<script src="~/js/notifications/toastr/toastr.js"></script>
+<script src="~/js/extensions/automapper-extensions.js"></script>
+<script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+<script src="~/js/notifications/sweetalert2/sweetalert2.bundle.js"></script>
+
+<script>
+	toastr.options = {
+		"closeButton": false,
+		"debug": false,
+		"newestOnTop": true,
+		"progressBar": true,
+		"positionClass": "toast-top-right",
+		"preventDuplicates": true,
+		"onclick": null,
+		"showDuration": 300,
+		"hideDuration": 100,
+		"timeOut": 5000,
+		"extendedTimeOut": 1000,
+		"showEasing": "swing",
+		"hideEasing": "linear",
+		"showMethod": "fadeIn",
+		"hideMethod": "fadeOut"
+	};
+
+	const endpointListaAmarela = "/api/lista-amarela";
+	const apiListaAmarelaList = "/api/lista-amarela/list";
+
+	var boolOptions = ["NÃO", "SIM"];
+	var detentos = [];
+	var condenacaoTipos = [];
+	var instrumentosPrisao = [];
+	var regimes = [];
+	var aguardandoTransferenciaTipos = [];
+	var controls = {
+		leftArrow: '<i class="@(Settings.Theme.IconPrefix) fa-angle-left" style="font-size: 1.25rem"></i>',
+		rightArrow: '<i class="@(Settings.Theme.IconPrefix) fa-angle-right" style="font-size: 1.25rem"></i>'
+	}
+
+	@foreach (var detento in @Model.Detentos)
+	{
+		@:detentos.push('@detento');
+	}
+
+	@foreach (var condenacaoTipo in @Model.CondenacaoTipos)
+	{
+		@:condenacaoTipos.push('@condenacaoTipo');
+	}
+
+	@foreach (var instrumentoPrisao in @Model.InstrumentosPrisao)
+	{
+		@:instrumentosPrisao.push('@instrumentoPrisao');
+	}
+
+	@foreach (var regime in @Model.Regimes)
+	{
+		@:regimes.push('@regime');
+	}
+
+	@foreach (var att in @Model.AguardandoTransferenciaTipos)
+	{
+		@:aguardandoTransferenciaTipos.push('@att');
+	}
+
+	var dateMapper = function(dateString) {
+		var dia = dateString.substring(8,13);
+		var mes = dateString.substring(5,7);
+		var ano = dateString.substring(2,4)
+
+		return dia + "/" + mes + "/" + ano;
+	};
+
+	var oldExportAction = function (self, e, dt, button, config) {
+		if (button[0].className.indexOf('buttons-excel') >= 0) {
+			if ($.fn.dataTable.ext.buttons.excelHtml5.available(dt, config)) {
+				$.fn.dataTable.ext.buttons.excelHtml5.action.call(self, e, dt, button, config);
+			}
+			else {
+				$.fn.dataTable.ext.buttons.excelFlash.action.call(self, e, dt, button, config);
+			}
+		} else if (button[0].className.indexOf('buttons-print') >= 0) {
+			$.fn.dataTable.ext.buttons.print.action(e, dt, button, config);
+		}
+	};
+
+	var newExportAction = function (e, dt, button, config) {
+		var self = this;
+		var oldStart = dt.settings()[0]._iDisplayStart;
+
+		dt.one('preXhr', function (e, s, data) {
+			// Just this once, load all data from the server...
+			data.start = 0;
+			data.length = 2147483647;
+
+			dt.one('preDraw', function (e, settings) {
+				// Call the original action function 
+				oldExportAction(self, e, dt, button, config);
+
+				dt.one('preXhr', function (e, s, data) {
+					// DataTables thinks the first item displayed is index 0, but we're not drawing that.
+					// Set the property to what it was before exporting.
+					settings._iDisplayStart = oldStart;
+					data.start = oldStart;
+				});
+
+				// Reload the grid with the original page. Otherwise, API functions like table.cell(this) don't work properly.
+				setTimeout(dt.ajax.reload, 0);
+
+				// Prevent rendering of the full data to the DOM
+				return false;
+			});
+		});
+
+		// Requery the server with the new one-time export settings
+		dt.ajax.reload();
+	};
+
+	var eventFired = function (param) {
+        console.log(param);
+    };
+
+	var activateOrDeactivate = function (id, isDeleted) {
+		
+		if (id == null || id == "")
+		{
+			toastr["error"]("Problemas ao obter o id do registro para ativação/desativação. Tente mais tarde, caso persista o problema, informe o suporte do sistema.");
+		}
+		
+		var action = isDeleted == "SIM" ? "DEVOLVER": "RETIRAR";
+
+		Swal.fire({
+			title: "Confirmação de ação",
+			text: "Realmente deseja " + action + " o registro?",
+			icon: "warning",
+			showCancelButton: true,
+			confirmButtonColor: "#ffc241",
+			confirmButtonText: "Sim, quero "+ action +" o registro!",
+			cancelButtonText: "Desistir",   
+		}).then(function (result) {
+			if (result.value) {
+				$.ajax({
+					url: "/api/lista-amarela/enable-disable",
+					type: 'POST',
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(id, null, 4),
+					success: function(success) {
+						var dataRet = success.data ? "Ativado" : "Desativado";
+						
+						Swal.fire({
+							title: dataRet + "!",
+							text: "Operação realizada com sucesso!",
+							icon: "success",
+							confirmButtonColor: "#1dc9b7"
+						});
+
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						toastr["error"](error);
+					}
+				});
+			}
+		});
+	};
+
+	var changeDetentoRegime = function (id, obj) {
+		
+		if (id == null || id == "")
+		{
+			toastr["error"]("Problemas ao obter o id do registro para ativação/desativação. Tente mais tarde, caso persista o problema, informe o suporte do sistema.");
+		}
+		
+		Swal.fire({
+			title: "Confirmação de ação",
+			text: "Realmente deseja " + action + " o registro?",
+			icon: "warning",
+			showCancelButton: true,
+			confirmButtonColor: "#ffc241",
+			confirmButtonText: "Sim, quero "+ action +" o registro!",
+			cancelButtonText: "Desistir",   
+		}).then(function (result) {
+			if (result.value) {
+				$.ajax({
+					url: "/api/lista-amarela/enable-disable",
+					type: 'POST',
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(id, null, 4),
+					success: function(success) {
+						var dataRet = success.data ? "Ativado" : "Desativado";
+						
+						Swal.fire({
+							title: dataRet + "!",
+							text: "Operação realizada com sucesso!",
+							icon: "success",
+							confirmButtonColor: "#1dc9b7"
+						});
+
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						toastr["error"](error);
+					}
+				});
+			}
+		});
+	};
+
+	var cleanModalTransferencia = function() {
+		$("#transferenciaLocal").val("");
+		$("#transferenciaTipo").select2().val('NENHUM');
+		$("#transferenciaTipo").select2()
+		$("#transferenciaDataRetornoPrevisto").val("");
+		$("#transferenciaDataSaida").val("");
+	};
+
+	var cleanModalMdsr = function() {
+		$("#dt-mdsr").DataTable().destroy();
+	};
+
+	var runDatePicker = function () {
+		// input group layout for modal demo
+		$('.datepicker-datas').datepicker({
+			orientation: "top left",
+			todayHighlight: true,
+			templates: controls,
+			format: 'dd/mm/yy'
+		});
+	};
+
+	var getDetentoForModalTransferencia = function (ipen) {
+
+		if (ipen == null || ipen == "")
+		{
+			toastr["error"]("Problemas ao obter o IPEN do registro para efetuar a transferência. Tente mais tarde, caso persista o problema, informe o suporte do sistema.");
+		};
+
+		$.ajax({ 
+			url: "/api/detentos/getByIpen-forModalTransferencia", 
+			type: 'POST',
+			contentType: "application/json;charset=utf-8",
+			data: JSON.stringify(ipen, null, 4),
+			success: function(success) {
+				$("#modal-header-transfer").text("Transferindo detento " + success.data.nome);
+
+				$("input[name=modal-detentoIpen]").val(success.data.ipen);
+				
+				$("input[name=modal-detentoNome]").val(success.data.nome);
+
+				$("input[name=modal-detentoRegime]").val(success.data.regime);
+			},
+			error: function (error, jqXHR, textStatus, errorThrown) {
+				const returnObj = Object.entries(error.responseJSON.errors);
+
+				returnObj.forEach(function(err) {
+					err[1].forEach(function (int) {
+						toastr["error"](err[0], int);
+					})
+				});
+			}
+		});	
+	};
+
+	$("#transferencia-save").click(function (event) {
+		@* var id = $("#listaAmarela-id").val(); *@
+		
+		var detentoViewModel = {
+			ipen: $("#modal-detentoIpen").val(),
+			nome: $("#modal-detentoNome").val(),
+			regime: $("#detentoRegimeNovo").val(),
+			transferenciaLocal: $("#transferenciaLocal").val(),
+			transferenciaTipo: $("#transferenciaTipo").val(),
+			transferenciaDataRetornoPrevisto: $("#transferenciaDataRetornoPrevisto").val(),
+			transferenciaDataSaida: $("#transferenciaDataSaida").val()
+		};
+		
+		$.ajax({ 
+			url: "/api/detentos/transfer",
+			type: 'POST',
+			contentType: "application/json;charset=utf-8",
+			data: JSON.stringify(detentoViewModel, null, 4),
+			success: function (success) {
+				$('#change-detento-modal').modal('toggle');
+
+				Swal.fire({
+					text: "Detento transferido com sucesso!",
+					icon: "success",
+					timer: 2000,
+					showCancelButton: false,
+					showConfirmButton: true,
+					confirmButtonColor: "#179c8e",
+					timerProgressBar: true,
+					buttons: false
+				});
+			},
+			error: function (error, jqXHR, textStatus, errorThrown) {
+				const returnObj = Object.entries(error.responseJSON.errors);
+
+				returnObj.forEach(function(err) {
+					err[1].forEach(function (int) {
+						toastr["error"](err[0], int);
+					})
+				});
+			}
+		});
+	});
+
+	var toUpperCaseFormFields = function () {
+		$('#artigos').val($('#artigos').val().toUpperCase());
+		$('#comarca').val($('#comarca').val().toUpperCase());
+		$('#penaAno').val($('#penaAno').val().toUpperCase());
+		$('#penaMes').val($('#penaMes').val().toUpperCase());
+		$('#penaDia').val($('#penaDia').val().toUpperCase());
+		$('#diasMedidaDisciplinar').val($('#diasMedidaDisciplinar').val().toUpperCase());
+		$('#acaoPenal').val($('#acaoPenal').val().toUpperCase());
+		$('#previsaoBeneficioObservacao').val($('#previsaoBeneficioObservacao').val().toUpperCase());
+	};
+
+	var clearDataRescueInactiveByIpen = function () {
+		$("#id").val("");
+		$("#detentoIpen").val("");
+		$("#detentoNome").val("");
+		
+		$("#detentoRegime").select2().val("");
+		$("#detentoRegime").select2();
+
+		$("#revisaoIpenData").val("");
+		$("#dataPrisao").val("");
+		$("#artigos").val("");
+		$("#comarca").val("");
+		$("#penaAno").val("");
+		$("#penaMes").val("");
+		$("#penaDia").val("");
+
+		$("#instrumentosPrisao").select2().val(null);
+		$("#instrumentosPrisao").select2();
+
+		$("#dataSaidaPrevista").val("");
+
+		$("#aguardandoTransferencia").select2().val(null);
+		$("#aguardandoTransferencia").select2();
+
+		$("#condenacaoTipo").select2().val(null);
+		$("#condenacaoTipo").select2();
+
+		$("#diasMedidaDisciplinar").val("");
+		$("#acaoPenal").val("");
+		$("#dataPrevisaoBeneficio").val("");
+		$("#previsaoBeneficioObservacao").val("");
+		$("#dataProgressao").val("");
+	};
+
+	var rescueInactiveByIpen = function (ipen) {
+		var ipenForGet = ipen;
+
+		if (ipen.length < 6)
+		{
+			$('#exception-registro-antigo').remove();
+			$('#exceptionMultiplesDetentos').remove();
+			toastr["error"]("Ipen inválido!");			
+		}
+		else
+		{
+			$.ajax({ 
+				url: "/api/lista-amarela/resgatar-inativo-by-ipen", 
+				type: 'POST',
+				contentType: "application/json;charset=utf-8",
+				data: JSON.stringify(ipen, null, 4),
+				success: function(success) {
+					if (success.data != null)
+					{
+						var divPrincipal = 	'<div id="exception-registro-antigo">'+
+												'<hr class="mt-4 mb-g">'+
+												'<div class="form-group row">'+
+													'<div class="col-xl-12">'+
+														'<div class="alert alert-info p-1 pt-3 mb-0" '+
+																'id="emd-before-table">'+
+															'<p class="text-center">'+
+																'Encontramos um registro inativo'+
+																	' com o IPEN informado, sendo assim,'+
+																	' iremos recuperar os dados antigos.'+
+															'</p>'+
+															'<p class="mt-3 fw-900 text-center">FAVOR ATUALIZAR OS'+
+																	' DADOS!'+
+															'</p>'+
+														'</div>'+
+													'</div>'+
+												'</div>'+
+												'<hr class="mt-4 mb-g">'+
+											'</div>';
+
+						$("#row_detentoIpen").before(divPrincipal);
+
+						setTimeout(function() {
+							$("#id").val(success.data.id);
+							$("#detentoIpen").val(success.data.detentoIpen);
+							$("#detentoNome").val(success.data.detentoNome);
+							
+							$("#detentoRegime").select2().val(success.data.detentoRegime);
+							$("#detentoRegime").select2();
+
+							$("#revisaoIpenData").val(success.data.revisaoIpenData);
+							$("#dataPrisao").val(success.data.dataPrisao);
+							$("#artigos").val(success.data.artigos);
+							$("#comarca").val(success.data.comarca);
+							$("#penaAno").val(success.data.penaAno);
+							$("#penaMes").val(success.data.penaMes);
+							$("#penaDia").val(success.data.penaDia);
+
+							$("#instrumentosPrisao").select2().val(success.data.instrumentosPrisao);
+							$("#instrumentosPrisao").select2();
+
+							$("#dataSaidaPrevista").val(success.data.dataSaidaPrevista);
+
+							if (success.data.aguardandoTransferencia)
+							{
+								$("#aguardandoTransferencia").select2().val("SIM");
+								$("#aguardandoTransferencia").select2();
+							}
+							else
+							{
+								$("#aguardandoTransferencia").select2().val("NÃO");
+								$("#aguardandoTransferencia").select2();
+							}
+
+							$("#condenacaoTipo").select2().val(success.data.condenacaoTipo);
+							$("#condenacaoTipo").select2();
+
+							$("#diasMedidaDisciplinar").val(success.data.diasMedidaDisciplinar);
+							$("#acaoPenal").val(success.data.acaoPenal);
+							$("#dataPrevisaoBeneficio").val(success.data.dataPrevisaoBeneficio);
+							$("#previsaoBeneficioObservacao").val(success.data.previsaoBeneficioObservacao);
+							$("#dataProgressao").val(success.data.dataProgressao);
+
+							//Após popular todos os dados, set focus no primeiro campo editável
+							$("#detentoRegime").select2('focus');
+							
+						}, 500);
+					}
+					else
+					{
+						$.ajax({ 
+							url: "/api/detentos/get-by-ipen", 
+							type: 'POST',
+							contentType: "application/json;charset=utf-8",
+							data: JSON.stringify(ipenForGet, null, 4),
+							success: function(success) {
+								$('#exceptionMultiplesDetentos').remove();
+								$('#exception-registro-antigo').remove();
+								
+								$('#detentoIpen').val(success.ipen);
+
+								$('#detentoNome').select2().val(success.nome);
+								$('#detentoNome').select2();
+
+								$('#detentoRegime').select2().val(success.regime);
+								$('#detentoRegime').select2();
+
+								$('#aguardandoTransferencia').select2().val("NÃO");
+								$('#aguardandoTransferencia').select2();
+
+								$('#detentoRegime').select2('focus');
+							},
+							error: function (error, jqXHR, textStatus, errorThrown) {
+								$('#exceptionMultiplesDetentos').remove();
+								$('#exception-registro-antigo').remove();
+
+								const returnObj = Object.entries(error.responseJSON.errors);
+
+								returnObj.forEach(function(err) {
+									err[1].forEach(function (int) {
+										toastr["error"](err[0], int);
+									})
+								});
+							}
+						});
+					}
+				},
+				error: function (error, jqXHR, textStatus, errorThrown) {
+					const returnObj = Object.entries(error.responseJSON.errors);
+
+					returnObj.forEach(function(err) {
+						err[1].forEach(function (int) {
+							toastr["error"](err[0], int);
+						})
+					});
+				}
+			});
+		}
+	};
+
+	var getDetentoByIpen = function (ipen) {
+		if (ipen == "" || ipen === undefined)
+		{
+			var ipen = $("#detentoIpen").val();
+		}
+
+		if (ipen.length < 6)
+		{
+			clearDataRescueInactiveByIpen();
+			$('#exceptionMultiplesDetentos').remove();
+			$('#exception-registro-antigo').remove();
+
+			toastr["error"]("Ipen inválido!");
+		}
+		else
+		{
+			$.ajax({ 
+				url: "/api/detentos/get-by-ipen", 
+				type: 'POST',
+				contentType: "application/json;charset=utf-8",
+				data: JSON.stringify(ipen, null, 4),
+				success: function(success) {
+					clearDataRescueInactiveByIpen();
+					$('#exceptionMultiplesDetentos').remove();
+					$('#exception-registro-antigo').remove();
+					
+					$('#detentoIpen').val(success.ipen);
+
+					$('#detentoNome').select2().val(success.nome);
+					$('#detentoNome').select2();
+
+					$('#detentoRegime').select2().val(success.regime);
+					$('#detentoRegime').select2();
+
+					$('#aguardandoTransferencia').select2().val("NÃO");
+					$('#aguardandoTransferencia').select2();
+
+					$('#detentoRegime').select2('focus');
+
+					rescueInactiveByIpen(success.ipen);
+				},
+				error: function (error, jqXHR, textStatus, errorThrown) {
+					clearDataRescueInactiveByIpen();
+					$('#exceptionMultiplesDetentos').remove();
+					$('#exception-registro-antigo').remove();
+
+					const returnObj = Object.entries(error.responseJSON.errors);
+
+					returnObj.forEach(function(err) {
+						err[1].forEach(function (int) {
+							toastr["error"](err[0], int);
+						})
+					});
+				}
+			});
+		}
+	};
+
+	var getDetentoByNome = function (nome) {
+		var nome = $("#detentoNome").select2().val();
+
+		if ($("#detentoNome").val() == null ||
+			$("#detentoNome").val() == "")
+		{
+			$('#exceptionMultiplesDetentos').remove();
+			$('#exception-registro-antigo').remove();
+
+			toastr["error"]("Nome inválido!");
+		}
+		else
+		{
+			$.ajax({
+				url: "api/detentos/get-all-by-nome",
+				type: 'POST',
+				contentType: "application/json;charset=utf-8",
+				data: JSON.stringify(nome, null, 4),
+				success: function(success) {
+
+					if (success.length == 0)
+					{
+						$('#exceptionMultiplesDetentos').remove();
+						$('#exception-registro-antigo').remove();
+
+						toastr["error"]("Nenhum detento encontrado com o nome informado.");
+					}
+					else if (success.length == 1)
+					{
+						$('#exceptionMultiplesDetentos').remove();
+						$('#exception-registro-antigo').remove();
+
+						var ipen = success[0].ipen
+
+						rescueInactiveByIpen(ipen);
+					}
+					else
+					{
+						exceptionMultiplesDetentos(success);
+					}					
+
+				},
+				error: function (error, jqXHR, textStatus, errorThrown) {
+					const returnObj = Object.entries(error.responseJSON.errors);
+
+					returnObj.forEach(function(err) {
+						err[1].forEach(function (int) {
+							toastr["error"](err[0], int);
+						})
+					});
+				}
+			});
+		}
+	};
+
+	var getDetentoByIpenForExceptionMultiplesDetentos = function (ipen) {
+		
+		if (ipen.length < 6)
+		{
+			$('#exceptionMultiplesDetentos').remove();
+			toastr["error"]("Ipen inválido!");
+		}
+		else
+		{
+			$.ajax({ 
+				url: "/api/detentos/get-by-ipen", 
+				type: 'POST',
+				contentType: "application/json;charset=utf-8",
+				data: JSON.stringify(ipen, null, 4),
+				success: function(success) {
+					$('#exceptionMultiplesDetentos').remove();
+					
+					$('#detentoIpen').val(success.ipen);
+
+					$('#detentoNome').select2().val(success.nome);
+					$('#detentoNome').select2();
+
+					$('#detentoRegime').select2().val(success.regime);
+					$('#detentoRegime').select2();					
+				},
+				error: function (error, jqXHR, textStatus, errorThrown) {
+					const returnObj = Object.entries(error.responseJSON.errors);
+
+					returnObj.forEach(function(err) {
+						err[1].forEach(function (int) {
+							toastr["error"](err[0], int);
+						})
+					});
+				}
+			});
+		}
+	};
+
+	var exceptionMultiplesDetentos = function (detentos) {
+		$('#exceptionMultiplesDetentos').remove();
+		$('#exception-registro-antigo').remove();
+
+		var divPrincipal = 	'<div id="exceptionMultiplesDetentos">'+
+						'<hr class="mt-4 mb-g">'+
+						'<div class="form-group row">'+ 
+							'<div class="col-xl-3"></div>'+
+							'<div class="col-xl-9">'+
+								'<div class="alert alert-warning p-1 pt-3 mb-0" id="emd-before-table">'+
+									'<p><strong>Encontramos mais de um detento para o mesmo nome, portanto, escolha uma das opções abaixo.'+
+								'</div>' +
+								'<table class="table table-striped w-100">'+
+									'<thead>'+
+										'<tr>'+
+											'<th>Ipen</th>'+
+											'<th>Nome</th>'+                 
+											'<th>Ação</th>'+
+										'</tr>'+
+									'</thead>'+
+									'<tbody id="tbody-core">'+										
+									'</tbody>'+
+								'</table>'+
+							'</div>'+
+						'</div>'+
+						'<hr class="mt-4 mb-g">'
+					'</div>';
+
+		$("#row_detentoNome").after(divPrincipal);
+
+		detentos.forEach(function(detento) {
+			var detentosInTable = '<tr>'+
+									'<td>'+detento.ipen+'</td>'+
+									'<td>'+detento.nome+'</td></a>'+
+									'<td>'+
+										'<div class="d-flex demo">'+
+											'<a onclick=getDetentoByIpen("'+detento.ipen+'") class="text-white btn btn-sm btn-info btn-icon btn-inline-block mr-1" title="Escolher este detento"><i class="fal fa-level-up"></i></a>'+
+										'</div>'+
+									'</td>'+
+								  '</tr>';
+
+			$("#tbody-core").append(detentosInTable);
+		});
+	};
+
+	$(".card-mdsr").on("click", function() {		
+		const apiMeuReforcoLista = "/api/lista-amarela/get-all-by-instrumento-prisao";
+
+		$('#show-mdsr').modal('toggle');
+		$("#modal-titulo-mdsr")
+			.text("Lista dos detentos RECEBIDOS em MEDIDA DISCIPLINAR");
+
+		var columnSet = [
+			{
+				title: "Ipen",
+				id: "detentoIpen",
+				data: "detentoIpen",
+				type: "text",
+				placeholderMsg: "Informe o IPEN",
+				required: true,
+				searchable: true,
+				orderable: true,
+				visible: true,
+				name: "Detento.Ipen",
+				editorOnChange : function(event, altEditor) {
+					getDetentoByIpen();
+				},
+				render: function(data, type, row, meta) {
+					return data;
+				}
+			},
+			{
+				title: "Nome",
+				id: "detentoNome",
+				data: "detentoNome",
+				type: "select",
+				multiple : false,
+				options: detentos,
+				visible: true,
+				select2 : {
+					placeholder: "Selecione um reeducando",
+					width: "100%",
+					allowClear: true,
+					minimumInputLength: 3,
+					language: {
+						inputTooShort: function() {
+							return 'Digite 3 ou mais caracteres para iniciar a busca';
+						}
+					}
+				},
+				editorOnChange : function(event, altEditor) {
+					getDetentoByNome();
+				},
+				render : function (data, type, row, meta) {
+					return data;
+				},
+				searchable: true,
+				orderable: true,
+				required: true,
+				name: "Detento.Nome"
+			},
+			{
+				title: "Regime",
+				id: "detentoRegime",
+				data: "detentoRegime",
+				type: "select",
+				placeholderMsg: "Regime",
+				multiple : false,
+				options: regimes,
+				visible: false,
+				select2 : {
+					placeholder: "Selecione um regime",
+					width: "100%",
+					allowClear: true,
+					minimumInputLength: 3,
+					language: {
+						inputTooShort: function() {
+							return 'Digite 3 ou mais caracteres para iniciar a busca';
+						}
+					}
+				},
+				searchable: false,
+				orderable: true,
+				visible: true,
+				name: "Detento.Regime"
+			},
+			{
+				title: "Data ingresso",
+				id: "dataPrisao",	
+				data: "dataPrisao",
+				type: "date",
+				required: false,
+				searchable: false,
+				visible: true,
+				render: function (data) {
+					return moment(data).format('DD/MM/YYYY');
+				},
+				name: "DataPrisao"
+			},
+			{
+				title: "Comarca",
+				id: "comarca",	
+				data: "comarca",
+				type: "text",
+				required: false,
+				searchable: false,
+				orderable: false,
+				placeholderMsg: "Informe a comarca",
+				visible: true,
+				name: "Comarca"
+			},
+			{
+				title: "Instrumentos prisão",
+				id: "instrumentosPrisao",
+				data: "instrumentosPrisao",
+				type: "select",
+				multiple : true,
+				options: instrumentosPrisao,
+				visible: true,
+				select2 : {
+					placeholder: "Selecione quantos instrumentos de prisão quiser",
+					width: "100%",
+					allowClear: true,
+					minimumInputLength: 3,
+					language: {
+						inputTooShort: function() {
+							return 'Digite 3 ou mais caracteres para iniciar a busca';
+						}
+					}
+				},
+				searchable: false,
+				orderable: true,
+				visible: true,
+				name: "InstrumentosPrisao"
+			},
+			{
+				title: "Data saída prevista",
+				id: "dataSaidaPrevista",
+				data: "dataSaidaPrevista",
+				type: "date",
+				required: false,
+				searchable: false,
+				orderable: true,
+				visible: true,
+				render: function (data) {
+					return moment(data).format('DD/MM/YYYY');
+				},
+				name: "DataSaidaPrevista"
+			},
+			{
+				title: "Dias medida disciplinar",
+				id: "diasMedidaDisciplinar",
+				data: "diasMedidaDisciplinar",
+				type: "text",
+				searchable: false,
+				orderable: true,
+				visible: true,
+				name: "DiasMedidaDisciplinar"
+			},
+			{
+				title: "Ação penal/PEC",
+				id: "acaoPenal",
+				data: "acaoPenal",
+				type: "text",
+				searchable: false,
+				orderable: false,
+				visible: true,
+				name: "AcaoPenal"
+			},
+			{
+				title: "Data previsão benefício",
+				id: "dataPrevisaoBeneficio",	
+				data: "dataPrevisaoBeneficio",
+				type: "date",
+				required: false,
+				searchable: false,
+				orderable: true,
+				visible: true,
+				render: function (data) {
+					return moment(data).format('DD/MM/YYYY');
+				},
+				name: "DataPrevisaoBeneficio"
+			},
+			{
+				title: "Previsão benefício observação",
+				id: "previsaoBeneficioObservacao",
+				data: "previsaoBeneficioObservacao",
+				type: "text",
+				searchable: false,
+				orderable: true,
+				visible: true,
+				name: "PrevisaoBeneficioObservacao"
+			}
+		];
+
+		var tableMdsr = $('#dt-mdsr').DataTable({
+			lengthChange: false,
+			ajax: {
+				url : apiMeuReforcoLista,
+				type: 'POST'
+			},
+			serverSide: false,
+			processing: true,
+			aaSorting: [ [6,'desc']],
+			altEditor: true,
+			pagingType: "full_numbers",
+			language: {
+				decimal: ",",
+				thousands: ".",
+				searchPlaceholder: "Busque pelo IPEN ou NOME",
+				sProcessing: '<span id=\"loading-image\" "class="fa fa-spinner fa-spin fa-2x spinner-border spinner-border-sm text-primary mr-2""><img class="manImg" src="img/loading_alt_3.gif" width="50" height="50"></img></span>',
+				sZeroRecords: "Nenhum registro encontrado.",
+				oPaginate: {
+					"sFirst": "Primeiro",
+					"sPrevious": "Anterior",
+					"sNext": "Próximo",
+					"sLast": "Último"
+				},
+				sInfo: "Mostrando _START_ de _END_ de um total de _TOTAL_ | ",
+				sInfoEmpty: "Nenhuma registro encontrado.",
+				sInfoFiltered: " (filtrado a partir de um total de _MAX_ registros)",
+				sInfoPostFix: "",
+				select: {
+					rows: " %d linhas selecionadas"
+				}
+			},
+			select: 'single',
+			columns: columnSet,
+			columnDefs: [
+				{
+					targets: 1,
+					width: "8%"
+				},
+				{
+					targets: 5,
+						render: function(data, type, full, meta) {
+						var badge = {
+							'MEDIDA_DISCIPLINAR': {'title': 'MEDIDA DISCIPLINAR', 'class': 'badge-danger'}
+						};
+						if (typeof badge[data] === 'undefined') {
+							return data;
+						}
+						return '<span class="badge ' + badge[data].class + ' badge-pill">' + badge[data].title + '</span>';
+					}
+				}
+			]
+		});
+	});
+
+	$(document).ready( function () {
+		$(document).on("click", ".open-detento-modal", function () {
+			var id = $(this).data('id');
+			var detentoIpen = $(this).data('id');
+
+			$(".modal-body #id").val(detentoIpen);
+
+			//obtém os dados do detento e os popula nas inputs
+			getDetentoForModalTransferencia(detentoIpen);
+		});
+
+		//Tecla atalho CTRL + Z
+		$(document).keydown(function(e) {
+			if (e.ctrlKey && e.which === 90) $(".btn-add").click();
+			
+			toUpperCaseFormFields();
+		});
+
+		$(document).on("click", ".btn-actions", function () {
+			$("#row_id").hide();
+			$("#row_isDeleted").hide();
+			$("#row_acoes").hide();
+		});
+
+		//No evento de click do botão add, set focus no campo nome depois abre a select2
+		$(document).on("click", ".btn-add", function () {
+			setTimeout(function() {
+				$('#detentoIpen').focus();
+			}, 500);
+		});
+
+		$(document).on("click", ".btn-edit", function () {
+			setTimeout(function() {
+				$("#detentoIpen").attr('disabled', true);
+				$("#detentoNome").attr('disabled', true);
+
+				$('#detentoRegime').select2('focus');
+			}, 500);
+		});
+
+		$('#transferenciaTipo').select2({
+			dropdownParent: $('#change-detento-modal')
+		});
+
+		runDatePicker();
+
+		// Event Lot
+		var events = $("#app-eventlog");
+		// Column Definitions
+		var columnSet = [
+			{
+				title: "Id",
+				id: "id",
+				data: "id",
+				placeholderMsg: "Automático",
+				type: "readonly",
+				visible: false,
+				required: false
+			},
+			{
+				title: "Ipen",
+				id: "detentoIpen",
+				data: "detentoIpen",
+				type: "text",
+				placeholderMsg: "Informe o IPEN",
+				required: true,
+				searchable: true,
+				orderable: true,
+				visible: true,
+				name: "Detento.Ipen",
+				editorOnChange : function(event, altEditor) {
+					getDetentoByIpen();
+				},
+				render: function(data, type, row, meta) {
+					return data;
+				}
+			},
+			{
+				title: "Nome",
+				id: "detentoNome",
+				data: "detentoNome",
+				type: "select",
+				multiple : false,
+				options: detentos,
+				visible: true,
+				select2 : {
+					placeholder: "Selecione um reeducando",
+					width: "100%",
+					allowClear: true,
+					minimumInputLength: 3,
+					language: {
+						inputTooShort: function() {
+							return 'Digite 3 ou mais caracteres para iniciar a busca';
+						}
+					}
+				},
+				editorOnChange : function(event, altEditor) {
+					getDetentoByNome();
+				},
+				render : function (data, type, row, meta) {
+					return data;
+				},
+				searchable: true,
+				orderable: true,
+				required: true,
+				name: "Detento.Nome"
+			},
+			{
+				title: "Regime",
+				id: "detentoRegime",
+				data: "detentoRegime",
+				type: "select",
+				placeholderMsg: "Regime",
+				multiple : false,
+				options: regimes,
+				visible: false,
+				select2 : {
+					placeholder: "Selecione um regime",
+					width: "100%",
+					allowClear: true,
+					minimumInputLength: 3,
+					language: {
+						inputTooShort: function() {
+							return 'Digite 3 ou mais caracteres para iniciar a busca';
+						}
+					}
+				},
+				searchable: false,
+				orderable: true,
+				visible: true,
+				name: "Detento.Regime"
+			},
+			//Campos lista amarela
+			{
+				title: "Revisão ipen",
+				id: "revisaoIpenData",	
+				data: "revisaoIpenData",
+				type: "date",
+				required: false,
+				searchable: false,
+				visible: true,
+				render: function (data) {
+					return moment(data).format('DD/MM/YYYY');
+				},
+				name: "RevisaoIpenData"
+			},
+			{
+				title: "Data ingresso",
+				id: "dataPrisao",	
+				data: "dataPrisao",
+				type: "date",
+				required: false,
+				searchable: false,
+				visible: true,
+				render: function (data) {
+					return moment(data).format('DD/MM/YYYY');
+				},
+				name: "DataPrisao"
+			},
+			{
+				title: "Artigos",
+				id: "artigos",	
+				data: "artigos",
+				type: "text",
+				required: false,
+				searchable: false,
+				placeholderMsg: "Informe o artigo e pressione 'ENTER' para adicionar ;",
+				name: "Artigos",
+				visible: true,
+				orderable: false,
+				editorOnChange : function(event, altEditor) {
+					//adiciona ; após cada artigo ao pressionar enter
+					$("#artigos").val($("#artigos").val() + ";");
+				}
+			},
+			{
+				title: "Comarca",
+				id: "comarca",	
+				data: "comarca",
+				type: "text",
+				required: false,
+				searchable: false,
+				orderable: false,
+				placeholderMsg: "Informe a comarca",
+				visible: true,
+				name: "Comarca"
+			},
+			{
+				title: "Pena ano",
+				id: "penaAno",	
+				data: "penaAno",
+				type: "text",
+				required: false,
+				searchable: false,
+				orderable: true,
+				placeholderMsg: "Informe a pena (Ano)",
+				visible: true,
+				name: "PenaAno"
+			},
+			{
+				title: "Pena mês",
+				id: "penaMes",	
+				data: "penaMes",
+				type: "text",
+				required: false,
+				searchable: false,
+				orderable: false,
+				placeholderMsg: "Informe a pena (Mês)",
+				visible: true,
+				name: "PenaMes"
+			},
+			{
+				title: "Pena dia",
+				id: "penaDia",	
+				data: "penaDia",
+				type: "text",
+				required: false,
+				searchable: false,
+				orderable: false,
+				placeholderMsg: "Informe a pena (Dia)",
+				visible: true,
+				name: "PenaDia"
+			},
+			{
+				title: "Instrumentos prisão",
+				id: "instrumentosPrisao",
+				data: "instrumentosPrisao",
+				type: "select",
+				multiple : true,
+				options: instrumentosPrisao,
+				visible: true,
+				select2 : {
+					placeholder: "Selecione quantos instrumentos de prisão quiser",
+					width: "100%",
+					allowClear: true,
+					minimumInputLength: 3,
+					language: {
+						inputTooShort: function() {
+							return 'Digite 3 ou mais caracteres para iniciar a busca';
+						}
+					}
+				},
+				searchable: false,
+				orderable: true,
+				visible: true,
+				name: "InstrumentosPrisao"
+			},
+			{
+				title: "Data saída prevista",
+				id: "dataSaidaPrevista",
+				data: "dataSaidaPrevista",
+				type: "date",
+				required: false,
+				searchable: false,
+				orderable: true,
+				visible: true,
+				render: function (data) {
+					return moment(data).format('DD/MM/YYYY');
+				},
+				name: "DataSaidaPrevista"
+			},
+			{
+				title: "Aguardando transferência",
+				id: "aguardandoTransferencia",
+				data: "aguardandoTransferencia",
+				type: "select",
+				options: boolOptions,
+				searchable: false,
+				orderable: false,
+				multiple : false,
+				visible: true,
+				select2 : { width: "100%"}
+			},
+			{
+				title: "Aguardando transferência tipo",
+				id: "aguardandoTransferenciaTipo",
+				data: "aguardandoTransferenciaTipo",
+				type: "select",
+				multiple : false,
+				options: aguardandoTransferenciaTipos,
+				visible: false,
+				select2 : {
+					placeholder: "Selecione um tipo de aguardando transferência",
+					width: "100%",
+					allowClear: true,
+					minimumInputLength: 3,
+					language: {
+						inputTooShort: function() {
+							return 'Digite 3 ou mais caracteres para iniciar a busca';
+						}
+					}
+				},
+				searchable: false,
+				orderable: true,
+				visible: true,
+				name: "AguardandoTransferenciaTipo"
+			},
+			{
+				title: "Condenação tipo",
+				id: "condenacaoTipo",
+				data: "condenacaoTipo",
+				type: "select",
+				multiple : false,
+				options: condenacaoTipos,
+				visible: false,
+				select2 : {
+					placeholder: "Selecione um tipo de condenação",
+					width: "100%",
+					allowClear: true,
+					minimumInputLength: 3,
+					language: {
+						inputTooShort: function() {
+							return 'Digite 3 ou mais caracteres para iniciar a busca';
+						}
+					}
+				},
+				searchable: false,
+				orderable: true,
+				visible: true,
+				name: "CondenacaoTipo"
+			},
+			{
+				title: "Dias medida disciplinar",
+				id: "diasMedidaDisciplinar",
+				data: "diasMedidaDisciplinar",
+				type: "text",
+				searchable: false,
+				orderable: true,
+				visible: true,
+				name: "DiasMedidaDisciplinar"
+			},
+			{
+				title: "Ação penal/PEC",
+				id: "acaoPenal",
+				data: "acaoPenal",
+				type: "text",
+				searchable: false,
+				orderable: false,
+				visible: true,
+				name: "AcaoPenal"
+			},
+			{
+				title: "Data previsão benefício",
+				id: "dataPrevisaoBeneficio",	
+				data: "dataPrevisaoBeneficio",
+				type: "date",
+				required: false,
+				searchable: false,
+				orderable: true,
+				visible: true,
+				render: function (data) {
+					return moment(data).format('DD/MM/YYYY');
+				},
+				name: "DataPrevisaoBeneficio"
+			},
+			{
+				title: "Previsão benefício observação",
+				id: "previsaoBeneficioObservacao",
+				data: "previsaoBeneficioObservacao",
+				type: "text",
+				searchable: false,
+				orderable: true,
+				visible: true,
+				name: "PrevisaoBeneficioObservacao"
+			},
+			{
+				title: "Data última progressão",
+				id: "dataProgressao",	
+				data: "dataProgressao",
+				type: "date",
+				required: false,
+				searchable: false,
+				visible: true,
+				render: function (data) {
+					return moment(data).format('DD/MM/YYYY');
+				},
+				name: "DataProgressao"
+			},
+			{
+				title: "Ativo?",
+				id: "isDeleted",	
+				data: "isDeleted",
+				type: "readonly",
+				orderable: true,
+				visible: true,
+				name: "IsDeleted",
+				render: function(data) {
+					data = data ? "SIM" : "NÃO";
+					return data;
+				}
+			},
+			{
+				title: "Ações",
+				id: "acoes",
+				data: "acoes",
+				visible: true,
+				type: "readonly"
+			}
+		]
+		/* start data table */
+		var myTable = $('#dt-basic-example')
+			.dataTable({
+			/* check datatable buttons page for more info on how this DOM structure works */
+			dom: "<'row mb-3'<'col-sm-12 col-md-6 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-6 d-flex align-items-center justify-content-end'B>>" +
+				"<'row'<'col-sm-12'tr>>" +
+				"<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+			ajax: {
+				url : apiListaAmarelaList,
+				type: 'POST',
+				dataSrc: function (json) {
+					@* return transformObjArrayFieldBoolBackToFront(json.data.data); *@
+					return transformObjArrayFieldBoolBackToFront(json.data.data);
+				}
+        	},
+			scrollY:        400,
+			scrollX:        true,
+			scrollCollapse: true,
+			serverSide: true,
+			processing: true,
+			altEditor: true,
+			pagingType: "full_numbers",
+			language: {
+            	decimal: ",",
+            	thousands: ".",
+        		searchPlaceholder: "Busque pelo IPEN ou NOME",
+				sProcessing: '<span id=\"loading-image\" "class="fa fa-spinner fa-spin fa-2x spinner-border spinner-border-sm text-primary mr-2""><img class="manImg" src="img/loading_alt_3.gif" width="50" height="50"></img></span>',
+				sZeroRecords: "Nenhum registro encontrado.",
+				oPaginate: {
+                    "sFirst": "Primeiro",
+                    "sPrevious": "Anterior",
+                    "sNext": "Próximo",
+                    "sLast": "Último"
+                },
+				sInfo: "Mostrando _START_ de _END_ de um total de _TOTAL_",
+                sInfoEmpty: "Nenhuma registro encontrado.",
+                sInfoFiltered: " (filtrado a partir de um total de _MAX_ registros)",
+                sInfoPostFix: "",
+				select: {
+					rows: "%d linhas selecionadas"
+				}
+        	},
+			columns: columnSet,
+			select: 'single',
+			fixedColumns: {
+				leftColumns: 3
+			},
+			buttons: [
+				{	
+					extend: 'selected',
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-times mr-1"></i> Delete',
+					name: 'delete',
+					className: 'btn-danger btn-sm mr-1'
+				},
+				{
+					extend: 'selected',
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-edit mr-1"></i> Editar',
+					name: 'edit',
+					className: 'btn-warning btn-sm mr-1 btn-actions btn-edit'
+				},
+				{
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-plus mr-1"></i> Novo',
+					name: 'add',
+					className: 'btn-primary btn-sm mr-1 btn-actions btn-add'
+				},
+				{
+					extend: 'excelHtml5',
+					text: 'Excel',
+					exportOptions: {
+						columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
+                	},
+					className: 'btn-outline-success btn-sm',
+					action: newExportAction
+            	}						
+			],
+			columnDefs: [
+				{
+					targets: -1,
+					orderable: false,
+					render: function(data, type, full, meta) {
+						var colorButton = full.isDeleted ? "danger" : "success";
+						var iconButton = full.isDeleted ? "level-down" : "level-up";
+						var titleNew = full.isDeleted ? "Retirar registro da lista amarela" : "Devolver registro para lista amarela";
+
+						return "\n\t\t\t\t\t\t<div class='d-flex demo'>\n\t\t\t\t\t\t\t<a data-toggle='modal' data-id='"+full.detentoIpen+"' data-target='#change-detento-modal' class='open-detento-modal text-white btn btn-sm btn-primary btn-icon btn-inline-block mr-1' title='Transferir detento'><i class=\"@(Settings.Theme.IconPrefix) fa-exchange-alt\"></i></a>\n\t\t\t\t\t\t\t<a onClick=activateOrDeactivate('"+full.id+"','"+full.isDeleted+"') class='text-white btn btn-sm btn-"+colorButton+" btn-icon btn-inline-block mr-1' title='"+titleNew+"'><i class=\"@(Settings.Theme.IconPrefix) fa-"+iconButton+"\"></i></a>\n\t\t\t\t\t\t\t</div>";
+					}
+				},
+				{
+					targets: 4,
+					render: function(data, type, full, meta) {
+
+						var badge = {
+							'NENHUM': {'title': 'NENHUM', 'class': 'bg-primary'},
+							'RECOLHIDO_SEMIABERTO': {'title': 'RECOLHIDO SEMIABERTO', 'class': 'bg-info-200'},
+							'REGIME_ABERTO': {'title': 'REGIME ABERTO', 'class': 'bg-success-400'},
+							'LIBERDADE_CONDICIONAL': {'title': 'LIBERDADE CONDICIONAL', 'class': 'bg-success-400'},
+							'LIBERDADE_PROVISORIA': {'title': 'LIBERDADE PROVISORIA', 'class': 'bg-success-400'},
+							'TRANSFERIDO': {'title': 'TRANSFERIDO', 'class': 'bg-success-400'},
+							'SAIDA_TEMPORARIA': {'title': 'SAÍDA TEMPORÁRIA', 'class': 'bg-fusion-200'},
+							'PROVISORIO': {'title': 'PROVISÓRIO', 'class': 'bg-warning'},
+							'ALIMENTOS': {'title': 'ALIMENTOS', 'class': 'bg-primary'},
+							'EGRESSO_EDI': {'title': 'EGRESSO EDI', 'class': 'bg-success-400'},
+							'RECOLHIDO_IMPORTACAO': {'title': 'RECOLHIDO IMPORTACAO', 'class': 'bg-info-200'},
+							'PRISAO_TEMPORARIA': {'title': 'PRISÃO TEMPORÁRIA', 'class': 'badge-danger'},
+						};
+
+						if (typeof badge[data] === 'undefined') {
+							return data;
+						}
+						
+						return '<span class="badge ' + badge[data].class + ' badge-pill">' + badge[data].title + '</span>';
+					}
+				},
+				{
+					targets: 11,
+					render: function(data, type, full, meta) {
+
+						var badge = {
+							'NOTA_CULPA': {'title': 'NOTA CULPA', 'class': 'badge-info'},
+							'MANDADO_PRISAO': {'title': 'MANDADO PRISÃO', 'class': 'badge-success'},
+							'TRANSFERENCIA': {'title': 'TRANSFERÊNCIA', 'class': 'badge-warning'},
+							'RECAPTURA': {'title': 'RECAPTURA', 'class': 'badge-danger'},
+							'MEDIDA_DISCIPLINAR': {'title': 'MEDIDA DISCIPLINAR', 'class': 'bg-success-800'}
+						};
+						if (typeof badge[data] === 'undefined') {
+							return data;
+						}
+						return '<span class="badge ' + badge[data].class + ' badge-pill">' + badge[data].title + '</span>';
+					}
+				},
+				{
+					targets: 14,
+					render: function(data, type, full, meta) {
+						var badge = {
+							'NENHUM': {'title': 'NENHUM', 'class': 'bg-primary'},
+							'PRIMARIO_COM_ANTECEDENTE': {'title': 'PRIMÁRIO COM ANTECEDENTE', 'class': 'bg-success-400'},
+							'PRIMARIO_SEM_ANTECEDENTES': {'title': 'PRIMÁRIO SEM ANTECEDENTE', 'class': 'bg-success-400'},
+							'PROVISORIO': {'title': 'PROVISÓRIO', 'class': 'bg-success-400'},
+							'ALIMENTOS': {'title': 'ALIMENTOS', 'class': 'bg-fusion-200'},
+							'PRIMARIO': {'title': 'PRIMÁRIO', 'class': 'badge-info'},
+							'REINCIDENTE': {'title': 'REINCIDENTE', 'class': 'badge-danger'},
+							'REINCIDENTE_ESPECIFICO': {'title': 'REINCIDENTE ESPECÍFICO', 'class': 'bg-success-800'},
+							'PRISAO_TEMPORARIA': {'title': 'PRISÃO TEMPORÁRIA', 'class': 'bg-info-200'},
+						};
+						if (typeof badge[data] === 'undefined') {
+							return data;
+						}
+						return '<span class="badge ' + badge[data].class + ' badge-pill">' + badge[data].title + '</span>';
+					}
+				}
+			],
+			onAddRow: function(dt, rowdata, success, error) {
+				$.ajax({ 
+					url: endpointListaAmarela, 
+					type: 'POST',
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(transformObjFieldBoolFrontToBack(rowdata), null, 4),
+					success: function (data) {
+						$(".modal").modal('hide');
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						Swal.fire({
+							text: "Registro criado com sucesso!",
+							icon: "success",
+							timer: 2000,
+							showCancelButton: false,
+							showConfirmButton: true,
+							confirmButtonColor: "#179c8e",
+							timerProgressBar: true,
+							buttons: false
+						});
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+						
+						const returnObj = Object.entries(error.responseJSON.errors);
+
+						returnObj.forEach(function(err) {
+							err[1].forEach(function (int) {
+								toastr["error"](err[0], int);
+							})
+						});
+					}
+				});
+			},
+			onEditRow: function(dt, rowdata, success, error) {
+				$.ajax({ 
+					url: endpointListaAmarela, 
+					type: 'PUT',
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(transformObjFieldBoolFrontToBack(rowdata), null, 4),
+					success: function (data) {
+						$(".modal").modal('hide');
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						Swal.fire({
+							text: "Registro atualizado com sucesso!",
+							icon: "success",
+							timer: 2000,
+							showCancelButton: false,
+							showConfirmButton: true,
+							confirmButtonColor: "#179c8e",
+							timerProgressBar: true,
+							buttons: false
+						});
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						const returnObj = Object.entries(error.responseJSON.errors);
+
+						returnObj.forEach(function(err) {
+							err[1].forEach(function (int) {
+								toastr["error"](err[0], int);
+							})
+						});
+					}
+				});
+			},
+			onDeleteRow: function(dt, rowdata, success, error) {
+				$.ajax({ 
+					url: endpointListaAmarela, 
+					type: 'DELETE', 
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(transformObjFieldBoolFrontToBack(rowdata), null, 4),
+					success: function (data) {
+						$(".modal").modal('hide');
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						Swal.fire({
+							text: "Registro deletado com sucesso!",
+							icon: "success",
+							timer: 2000,
+							showCancelButton: false,
+							showConfirmButton: true,
+							confirmButtonColor: "#179c8e",
+							timerProgressBar: true,
+							buttons: false
+						});
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						const returnObj = Object.entries(error.responseJSON.errors);
+
+						returnObj.forEach(function(err) {
+							err[1].forEach(function (int) {
+								toastr["error"](err[0], int);
+							})
+						});
+					}
+				});
+			},		
+		});
+
+		$('#dt-basic-example_filter input').bind('keyup', function(e) {
+			$('#dt-basic-example_filter input').val($('#dt-basic-example_filter input').val().toUpperCase());
+		});
+	});
+</script>
+}

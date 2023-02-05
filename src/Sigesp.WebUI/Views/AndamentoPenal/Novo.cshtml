@@ -1,0 +1,648 @@
+@model Sigesp.Application.ViewModels.Selects.AndamentoPenalNovoSelect2ViewModel
+
+@{
+	ViewData["Title"] = "Novo";
+    ViewData["Heading"] = "<i class='notprint subheader-icon fal fa-edit'></i> Andamento penal<span class='notprint fw-300'></span> <sup class='notprint badge badge-primary fw-500'>NOVO</sup>";
+    ViewData["PageDescription"] = "Adicionar um novo detento ao andamento penal";
+	ViewData["PageName"] = "andamento-penal_novo";
+    ViewData["Category0"] = @Settings.App;
+	ViewData["Category1"] = "Jurídico";
+    ViewData["Category2"] = "Andamento Penal";
+}
+
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/select2/select2.bundle.css">
+    @* <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.css" rel="stylesheet"> *@
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+    <link href="~/css/formplugins/summernote/summernote-extensions.css" rel="stylesheet">
+    <link href="~/css/formplugins/summernote/summernote-extensions.css" rel="stylesheet">
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+    <link rel="stylesheet" media="screen, print" href="~/css/notifications/toastr/toastr.css">
+    <link rel="stylesheet" media="screen, print" href="~/css/notifications/sweetalert2/sweetalert2.bundle.css">
+}
+
+<div id="panel-1" class="panel">
+    <div class="panel-hdr">	
+        <h2>
+            Andamento penal <span class="fw-300"><i>NOVO</i></span> 
+        </h2>
+        <div class="panel-toolbar">
+            <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Abrir/Fechar"></button>
+        </div>
+    </div>
+    <div class="panel-container show">
+        <div class="panel-content">
+            <form asp-action="Add" asp-controller="AndamentoPenal" 
+                    id="andamentoPenal-form" method="post">
+                <div class="form-group">                    
+                    <div class="row mb-6">
+                        <div class="col-xl-12">
+                            <div class="form-group">
+                                <label class="form-label" for="status">
+                                    Status:
+                                </label>
+                                <select name="status" 
+                                    class="select2 form-control" 
+                                         id="status">
+                                    @foreach (var status in @Model.Statuses)
+                                    {
+                                        <option value=@status>@status</option>    
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-xl-4">
+                            <div class="form-group">
+                                <label class="form-label" for="simpleinput">
+                                    Data evento principal:
+                                </label>
+                                <div class="input-group">
+								    <input type="text" name="dataEventoPrincipal" class="form-control " 
+                                        placeholder="Data evento principal" 
+                                        value="" id="datepicker-4-1" maxlength="10">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text fs-xl">
+                                            <i class="@(Settings.Theme.IconPrefix) fa-calendar-check"></i>
+                                        </span>
+                                    </div>
+							    </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-xl-6">
+                            <div class="form-group">
+                                <label class="form-label" for="detentoIpen">
+                                    IPEN:
+                                </label>
+                                <input type="text" name="detentoIpen" id="detentoIpen" 
+                                    class="form-control" value="" placeholder="Informe o ipen">
+                            </div>
+                        </div> 
+                        <div class="col-xl-6">
+                            <div class="form-group">
+                                <label class="form-label" for="detentoId">
+                                    Nome:
+                                </label>
+                                <select name="detentoId" 
+                                    class="select2 form-control" 
+                                        id="detentoId">
+                                    @foreach (var detento in @Model.Detentos)
+                                    {
+                                        <option value=@detento.Id>@detento.Nome</option>    
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-6">
+                        <div class="col-xl-6">
+                            <div class="form-group">
+                                <label class="form-label" for="detentoRegime">
+                                        Regime:
+                                    </label>
+                                    <input type="text" name="detentoRegime"
+                                        id="detentoRegime" class="form-control"
+                                        value="" placeholder="Auto"
+                                        disabled>
+                            </div>
+                        </div>
+                        <div class="col-xl-6">
+                            <div class="form-group">
+                                <label class="form-label" for="pec">
+                                    PEC:
+                                </label>
+                                <input type="text" name="pec" id="pec" 
+                                    class="form-control" value="" placeholder="Informe o PEC do detento">
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="mt-4 mb-g">
+                    <div class="row text-right mb-3">
+                        <div class="col-lg-12">
+                            <button type="button" id="ap-voltar-btn-top" 
+                                class="btn btn-outline-primary waves-effect waves-themed">
+                                <span class="fal fa-arrow-circle-left mr-1"></span>Voltar
+                            </button>
+                            <button type="button" 
+                                id="andamentoPenal-save-top" 
+                                class="btn btn-outline-success waves-effect waves-themed">
+                                <span class="fal fa-save mr-1"></span>Salvar
+                            </button>
+                        </div>
+                    </div>
+                    <hr class="mt-4 mb-g">                    
+                    <div class="row mb-6">
+                        <div class="col-xl-4">
+                            <div class="form-group">
+                                <label class="h2 form-label">Histórico</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div class="panel-container show" style="margin-top: -50px !important;">
+                                <div class="panel-content">
+                                    <div class="js-summernote" id="historico" name="historico"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-container show">
+                        <div class="panel-content">
+                            <div class="text-right mb-2">
+                                <hr class="mt-4 mb-g">
+                                <button type="button" id="ap-voltar-btn-footer" class="mr-1 btn btn-outline-primary waves-effect waves-themed">
+                                    <span class="fal fa-arrow-circle-left mr-1"></span>Voltar
+                                </button>
+                                <button type="button" 
+                                    id="andamentoPenal-save" 
+                                    class="btn btn-outline-success waves-effect waves-themed">
+                                    <span class="fal fa-save mr-1"></span>Salvar
+                                </button>
+                                <hr class="mt-4 mb-g">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-6">
+                        <div class="col-xl-4">
+                            <div class="form-group">
+                                <label class="h2 form-label">Observação</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-6">
+                        <div class="col-xl-12">
+                            <div class="panel-container show" style="margin-top: -50px !important;">
+                                <div class="panel-content">
+                                    <div class="js-summernote" id="observacao" name="observacao"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-6">
+                        <div class="col-xl-12">
+                            <div class="form-group">
+                                <label class="form-label" for="enderecoCompleto">
+                                    Endereço Saída Temporária:
+                                </label>
+                                <input type="text" name="enderecoCompleto"
+                                    id="enderecoCompleto" class="form-control"
+                                    value="" placeholder="Auto">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-6">
+                        <div class="col-xl-12">
+                            <div class="form-group">
+                                <label class="form-label" for="telefone">
+                                    Telefone Saída Temporária:
+                                </label>
+                                <input type="text" name="telefone"
+                                    id="telefone" class="form-control"
+                                    value="" placeholder="Auto">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>    
+</div>
+
+@section ScriptsBlock {
+    <script src="~/js/formplugins/select2/select2.bundle.js"></script>
+    @* <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.js"></script> *@
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/lang/summernote-pt-BR.min.js"></script>    
+    <script src="~/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+    <script src="~/js/notifications/toastr/toastr.js"></script>
+    <script src="~/js/notifications/sweetalert2/sweetalert2.bundle.js"></script>
+    <script src="~/js/extensions/mask-extensions.js"></script>
+    <script src="~/js/formplugins/summernote/summernote-extensions.js"></script>
+    
+    <script>
+        //constantes de api
+
+        //Métodos privados
+        var controls = {
+            leftArrow: '<i class="@(Settings.Theme.IconPrefix) fa-angle-left" style="font-size: 1.25rem"></i>',
+            rightArrow: '<i class="@(Settings.Theme.IconPrefix) fa-angle-right" style="font-size: 1.25rem"></i>'
+        }
+        
+        var runDatePicker = function () {
+            // orientation 
+            $('#datepicker-4-1').datepicker({
+                orientation: "top left",
+                todayHighlight: true,
+                templates: controls,
+                format: 'dd/mm/yy'
+            });
+        };
+
+        var detentoAutoPopulations = function (data) {
+            $("#detentoIpen").val(data.ipen);
+            $("#detentoRegime").val(data.regime);
+
+            $('#pec').focus();
+
+            rescueInactiveByIpen(data.ipen);
+        };
+
+        var getDetentoDataById = function (id) {
+            $.ajax({ 
+                url: "/api/detentos/get-by-id", 
+                type: 'POST',
+                contentType: "application/json;charset=utf-8",
+                data: JSON.stringify(id, null, 4),
+                success: function(success) {
+                    detentoAutoPopulations(success);
+                },
+                error: function (error, jqXHR, textStatus, errorThrown) {
+                    const returnObj = Object.entries(error.responseJSON.errors);
+
+                    returnObj.forEach(function(err) {
+                        err[1].forEach(function (int) {
+                            toastr["error"](err[0], int);
+                        })
+                    });
+                }
+            });
+        };
+
+        var rescueInactiveByIpen = function (ipen) 
+        {
+            if (ipen.length < 6)
+            {
+                toastr["error"]("Ipen inválido!");
+            }
+            else
+            {
+                $.ajax({ 
+                    url: "/api/andamento-penal/rescue-inactive-by-ipen", 
+                    type: 'POST',
+                    contentType: "application/json;charset=utf-8",
+                    data: JSON.stringify(ipen, null, 4),
+                    success: function(success) {
+                        if (success.data != null)
+                        {
+                            Swal.fire({
+                                html: 'Encontramos um registro inativo com o IPEN informado, sendo assim, iremos recuperar os dados antigos.<p class="mt-3 fw-900">FAVOR ATUALIZAR OS DADOS PENAIS!</p>',
+                                icon: "warning",
+                                @* timer: 2000, *@
+                                showCancelButton: false,
+                                showConfirmButton: true,
+                                confirmButtonColor: "#ffcd65",
+                                @* timerProgressBar: true, *@
+                                buttons: false
+                                }).then(function (data) {
+                                    $('#pec').val(success.data.pec);
+                                    $('#observacao').summernote("code", success.data.observacao);
+                                    $('#historico').summernote("code", success.data.historico);
+                                });
+                        }
+                        else
+                        {
+                            $('#pec').val("");
+                            $('#observacao').summernote('reset');
+                            $('#historico').summernote('reset');
+                        }
+
+                    },  
+                    error: function (error, jqXHR, textStatus, errorThrown) {
+                        const returnObj = Object.entries(error.responseJSON.errors);
+
+                        returnObj.forEach(function(err) {
+                            err[1].forEach(function (int) {
+                                toastr["error"](err[0], int);
+                            })
+                        });
+                    }
+                });
+            }
+        };
+
+        var getDetentoByIpen = function (ipen) {
+            var ipen = $("#detentoIpen").val();
+
+            if (ipen.length < 6)
+            {
+                $('#detentoId').select2().val(null);
+                $('#detentoId').select2();
+
+                $('#detentoRegime').val("Auto");
+                
+                $('#pec').focus();
+
+                toastr["error"]("Ipen inválido!");
+            }
+            else
+            {
+                $.ajax({ 
+                    url: "/api/detentos/get-by-ipen", 
+                    type: 'POST',
+                    contentType: "application/json;charset=utf-8",
+                    data: JSON.stringify(ipen, null, 4),
+                    success: function(success) {
+                        $('#detentoIpen').val(success.ipen);
+
+                        $('#detentoId').select2().val(success.id);
+                        $('#detentoId').select2();
+
+                        $('#detentoRegime').val(success.regime);
+
+                        $('#pec').focus();
+
+                        rescueInactiveByIpen(success.ipen);
+                    },
+                    error: function (error, jqXHR, textStatus, errorThrown) {
+                        $('#detentoId').select2().val(null);
+                        $('#detentoId').select2();
+
+                        $('#detentoRegime').val("Auto");
+
+                        $('#pec').focus();
+
+                        const returnObj = Object.entries(error.responseJSON.errors);
+
+                        returnObj.forEach(function(err) {
+                            err[1].forEach(function (int) {
+                                toastr["error"](err[0], int);
+                            })
+                        });
+                    }
+                });
+            }
+	    };
+
+        $("#andamentoPenal-save").click(function (event) {
+            var obj = $("#andamentoPenal-form").serializeJSON();
+            obj.observacao = $('#observacao').summernote("code");
+            obj.historico = $('#historico').summernote("code");
+
+            jsonObj = [];
+            jsonObj = obj
+            
+            $.ajax({ 
+                url: "/api/andamento-penal/novo", 
+                type: 'POST',
+                contentType: "application/json;charset=utf-8",
+                data: JSON.stringify(jsonObj, null, 4),
+                success: function(success) {                                       
+
+                    Swal.fire({
+                        text: "Registro criado com sucesso!",
+                        icon: "success",
+                        timer: 2000,
+                        showCancelButton: false,
+                        showConfirmButton: true,
+                        confirmButtonColor: "#179c8e",
+                        timerProgressBar: true,
+                        buttons: false
+                    }).then(function (success) {
+                        console.log('ok inside');
+                        window.location.href = '/andamentopenal/todos';
+                    });
+                },
+                error: function (error, jqXHR, textStatus, errorThrown) {
+                    const returnObj = Object.entries(error.responseJSON.errors);
+
+                    returnObj.forEach(function(err) {
+                        err[1].forEach(function (int) {
+                            toastr["error"](err[0], int);
+                        })
+                    });
+                }
+            });
+        });
+
+        $("#andamentoPenal-save-top").click(function (event) {
+            var obj = $("#andamentoPenal-form").serializeJSON();
+            obj.observacao = $('#observacao').summernote("code");
+            obj.historico = $('#historico').summernote("code");
+
+            jsonObj = [];
+            jsonObj = obj
+            
+            $.ajax({ 
+                url: "/api/andamento-penal/novo", 
+                type: 'POST',
+                contentType: "application/json;charset=utf-8",
+                data: JSON.stringify(jsonObj, null, 4),
+                success: function(success) {                                       
+
+                    Swal.fire({
+                        text: "Registro criado com sucesso!",
+                        icon: "success",
+                        timer: 2000,
+                        showCancelButton: false,
+                        showConfirmButton: true,
+                        confirmButtonColor: "#179c8e",
+                        timerProgressBar: true,
+                        buttons: false
+                    }).then(function (success) {
+                        console.log('ok inside');
+                        window.location.href = '/andamentopenal/todos';
+                    });
+                },
+                error: function (error, jqXHR, textStatus, errorThrown) {
+                    const returnObj = Object.entries(error.responseJSON.errors);
+
+                    returnObj.forEach(function(err) {
+                        err[1].forEach(function (int) {
+                            toastr["error"](err[0], int);
+                        })
+                    });
+                }
+            });
+        });
+
+		//save
+		var historico = function(){
+			localStorage.setItem('summernoteData', $('#historico').summernote("code"));
+			console.log("saved");
+		};
+
+        var observacao = function(){
+			localStorage.setItem('summernoteData', $('#observacao').summernote("code"));
+			console.log("saved");
+		};                
+         
+        $(document).ready(function () {
+
+            $.fn.serializeJSON=function() {
+                var json = {};
+                jQuery.map($(this).serializeArray(), function(n, i){
+                    json[n['name']] = n['value'];
+                });
+                return json;
+            };
+
+            $(document).on("change", "#detentoIpen", function () {
+				getDetentoByIpen();                
+			});
+
+            //run datepicker
+            runDatePicker();
+
+            //init select2
+            $('.select2').select2();           
+
+            //init default
+			$('#historico').summernote({
+				height: 400,
+				tabsize: 2,
+				placeholder: "",
+				dialogsFade: true,
+                lang: 'pt-BR',
+                tabDisable: true,
+                fontSizes: ['8', '9', '10', '11', '12', '13', '14', '15', '16', '18', '20', '22' , '24', '28', '32', '36', '40', '48'],
+				toolbar: [
+					['style', ['style']],
+                    ['Misc', ['undo', 'redo']],
+    				['font', ['strikethrough', 'superscript', 'subscript']],
+					['font', ['bold', 'italic', 'underline', 'clear']],
+					['fontsize', ['fontsize']],
+					['fontname', ['fontname']],
+					['color', ['color']],
+					['para', ['ul', 'ol', 'paragraph']],
+					['height', ['height']]
+					['table', ['table']],
+					['insert', ['link', 'picture', 'video']],
+					['view', ['fullscreen', 'codeview', 'help']],
+                    ['upperCase', ['upperCase']]
+				],
+                buttons: {
+                    upperCase: upperCase
+                },	
+				callbacks: {
+					//restore from localStorage
+					onInit: function(e) {
+						$('#historico').summernote("code", localStorage.getItem("summernoteData"));
+					},
+					onChange: function(contents, $editable) {
+                        //código a partir de mudanças
+					}
+				}
+			});
+
+            $('#observacao').summernote({
+				height: 400,
+				tabsize: 2,
+				placeholder: "",
+				dialogsFade: true,
+                lang: 'pt-BR',
+                tabDisable: true,
+                fontSizes: ['8', '9', '10', '11', '12', '13', '14', '15', '16', '18', '20', '22' , '24', '28', '32', '36', '40', '48'],
+				toolbar: [
+					['style', ['style']],
+                    ['Misc', ['undo', 'redo']],
+    				['font', ['strikethrough', 'superscript', 'subscript']],
+					['font', ['bold', 'italic', 'underline', 'clear']],
+					['fontsize', ['fontsize']],
+					['fontname', ['fontname']],
+					['color', ['color']],
+					['para', ['ul', 'ol', 'paragraph']],
+					['height', ['height']]
+					['table', ['table']],
+					['insert', ['link', 'picture', 'video']],
+					['view', ['fullscreen', 'codeview', 'help']],
+                    ['upperCase', ['upperCase']]
+				],
+                buttons: {
+                    upperCase: upperCase
+                },		
+				callbacks: {
+					//restore from localStorage
+					onInit: function(e) {
+						$('#observacao').summernote("code", localStorage.getItem("summernoteData"));
+					},
+					onChange: function(contents, $editable) {
+                        //código a partir de mudanças
+					}
+				}
+			});       
+
+            $("#ap-voltar-btn-top").click(function (event) {
+                window.location.href = '/andamentopenal/todos';
+            });
+
+            $("#ap-voltar-btn-footer").click(function (event) {
+                window.location.href = '/andamentopenal/todos';
+            });
+
+            //options toastr
+            toastr.options = {
+                "closeButton": false,
+                "debug": false,
+                "newestOnTop": true,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": true,
+                "onclick": null,
+                "showDuration": 500,
+                "hideDuration": 100,
+                "timeOut": 10000,
+                "extendedTimeOut": 1000,
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            };
+
+            $('#detentoId').on('change', function() {
+                const $this = $(this);
+
+                getDetentoDataById($(this).val());
+            });        
+
+            setTimeout(function() {
+				$('#pec').keyup(function(e) {
+                    const $this = $(this);
+
+                    maskPec($(this).val(), "#pec", e.which);
+                });
+
+                $('#enderecoCompleto').keyup(function() {
+                    const $this = $(this);
+                    $('#enderecoCompleto').val($(this).val().toUpperCase());
+                });
+
+                $('#telefone').keyup(function() {
+                    const $this = $(this);
+                    $('#telefone').val($(this).val().toUpperCase());
+                });
+
+                $('#datepicker-4-1').keyup(function(e) {
+                    const $this = $(this);
+
+                    maskDatePicker($(this).val(), "#datepicker-4-1", e.which);
+                });                
+			}, 500);
+            
+            //set placeholder for single
+            $("#status").select2({
+                focus: true,
+                placeholder: "Selecione um status",
+				allowClear: true
+            });
+
+            //set placeholder for single
+            $("#detentoId").select2({
+                placeholder: "Selecione um detento",
+				allowClear: true
+            });
+
+            setTimeout(function() {
+				$("#status").select2('focus');
+			}, 500);
+
+            //Tecla atalho CTRL + seta para esquerda para voltar
+            @* $(document).keydown(function(e) {
+                if (e.ctrlKey && e.which === 37) window.location.href = '/andamentopenal/todos';
+            }); *@
+        });
+    </script>
+}

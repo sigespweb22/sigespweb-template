@@ -1,0 +1,73 @@
+Rebase Gedai
+https://dev.to/wnqueiroz/drops-02-como-alterar-o-autor-do-commit-depois-do-push-2mgg#:~:text=Selecionando%20os%20commits%20para%20altera%C3%A7%C3%A3o&text=Caso%20queira%20alterar%20apenas%20os,de%20commits%20que%20deseja%20alterar.&text=Podemos%20ent%C3%A3o%2C%20salvar%20a%20edi%C3%A7%C3%A3o,arquivo%2C%20e%20fech%C3%A1%2Dlo.
+
+https://natanaelfonseca.com.br/2013/06/06/git-revertendo-para-um-commit-especifico/
+
+
+
+Isso faz o branch atual resetar para a mudança anterior, ou seja, se a última foi o merge ele será desfeito
+git reset --hard HEAD~1
+
+As palavras chave são:
+
+1
+fix, fixes, fixed, close, closes, closed, resolve, resolves, resolved
+Então você pode escrever sua mensagem de commit mais ou menos assim:
+
+1
+git commit -m "Fix error on issue #32"
+
+
+git checkout -b ＜new-branch＞
+
+
+O exemplo acima cria e verifica o  ao mesmo tempo. A opção -b é uma marcação de conveniência que diz ao Git para rodar o git branch antes de rodar o git checkout.
+git checkout -b ＜new-branch＞ ＜existing-branch＞
+
+git checkout ＜branchname＞
+
+1)  Volta o fonte para o commit especifico !
+
+git reset --hard "nome da tag ou Hash do Commit !"
+2)  Realiza o push da alteração !
+
+git push origin HEAD --force
+
+Git checkout em um branch remoto
+git fetch --all
+
+Em versões mais recentes do Git, você pode então verificar o branch remoto como um branch local.
+git checkout ＜remotebranch＞
+
+
+Versões mais antigas do Git exigem a criação de uma nova ramificação baseada na remota.
+git checkout -b ＜remotebranch＞ origin/＜remotebranch＞
+
+Além disso, você pode verificar um novo branch local e fazer a redefinição para o último commit de branches remotos.
+git checkout -b ＜branchname＞
+git reset --hard origin/＜branchname＞
+
+
+HEADS desvinculados
+Agora que a gente viu os três principais usos do git checkout em ramificações, é importante discutir o estado “detached HEAD”. Não se esqueça de que o HEAD é a maneira do Git de se referir à captura de tela atual. Por dentro, o comando git checkout apenas atualiza o HEAD para apontar para a ramificação ou commit especificado. Quando aponta para uma ramificação, o Git não se queixa, mas quando você verifica um commit, ele muda para um estado “detached HEAD”.
+
+Este é um aviso dizendo que tudo o que você está fazendo está “separado” do resto do desenvolvimento do projeto. Se você começasse a desenvolver um recurso enquanto em um estado de HEAD desvinculado, não haveria ramificação que permitisse que você voltasse a ele. Quando você fosse verificar outra ramificação (por exemplo, para fazer a mesclagem do seu recurso), não haveria como fazer referência ao seu recurso:
+
+O primeiro exemplo demonstra uma mesclagem de avanço rápido. 
+O código abaixo cria um branch, adiciona dois commits a ele e, 
+então, a integra à linha principal com uma mesclagem de avanço rápido.
+
+# Start a new feature
+git checkout -b new-feature main
+# Edit some files
+git add <file>
+git commit -m "Start a feature"
+# Edit some files
+git add <file>
+git commit -m "Finish a feature"
+# Merge in the new-feature branch
+git checkout main
+git merge new-feature
+git branch -d new-feature
+
+Font: https://www.atlassian.com/br/git/tutorials/using-branches/git-checkout

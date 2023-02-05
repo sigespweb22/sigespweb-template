@@ -1,0 +1,706 @@
+@model Sigesp.Application.ViewModels.Cards.LivroCardViewModel
+
+@{
+	ViewData["Title"] = "Livros";
+	ViewData["PageName"] = "livro_todos";
+	ViewData["Category0"] = @Settings.App;
+	ViewData["Category1"] = "Educação";
+	ViewData["Heading"] = "<i class='subheader-icon fal fa-books'></i> Livros<span class='fw-300'></span> <sup class='badge badge-primary fw-500'>NOVO</sup>";
+	ViewData["PageDescription"] = "Listagem do acervo de livros";
+}
+@section HeadBlock {
+	<link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/formplugins/select2/select2.bundle.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/theme-demo.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/notifications/toastr/toastr.css">
+	<link rel="stylesheet" media="screen, print" href="~/css/notifications/sweetalert2/sweetalert2.bundle.css">
+}
+
+<div class="row">
+	<div class="col-sm-6 col-xl-3">
+		<div class="p-3 bg-info rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="display-4 d-block l-h-n m-0 fw-500">
+					@Model.Ativos
+					<small class="m-0 l-h-n">Ativos</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-book-open position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
+		</div>
+	</div>
+	<div class="col-sm-6 col-xl-3">
+		<div class="p-3 bg-danger rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="display-4 d-block l-h-n m-0 fw-500">
+				    @Model.Inativos
+					<small class="m-0 l-h-n">Inativos</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-book position-absolute pos-right pos-bottom opacity-15  mb-n1 mr-n1" style="font-size: 6rem;"></i>
+		</div>
+	</div>
+	<div class="col-sm-6 col-xl-3">
+		<div class="p-3 bg-success rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="display-4 d-block l-h-n m-0 fw-500">
+					@Model.Disponiveis
+					<small class="m-0 l-h-n">Disponíveis</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-book-spells position-absolute pos-right pos-bottom opacity-15  mb-n1 mr-n1" style="font-size: 6rem;"></i>
+		</div>
+	</div>
+	<div class="col-sm-6 col-xl-3">
+		<div class="p-3 bg-danger rounded overflow-hidden position-relative text-white mb-g">
+			<div class="">
+				<h3 class="display-4 d-block l-h-n m-0 fw-500">
+					@Model.Indisponiveis
+					<small class="m-0 l-h-n">Indisponíveis</small>
+				</h3>
+			</div>
+			<i class="@(Settings.Theme.IconPrefix) fa-book position-absolute pos-right pos-bottom opacity-15  mb-n1 mr-n1" style="font-size: 6rem;"></i>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xl-12">
+		<div id="panel-1" class="panel">
+			<div class="panel-hdr">	
+				<h2>
+					Gerenciamento do <span class="fw-300"><i>Acervo de livros</i></span> 
+				</h2>
+				<div class="panel-toolbar">
+					<button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Abrir/Fechar"></button>
+				</div>
+			</div>
+			<div class="panel-container show">
+				<div class="panel-content">									
+					<div class="tab-content pt-4">
+						<div class="tab-pane fade show active" id="tab_default-1" role="tabpanel">
+							<div class="row">
+								<div class="col-xl-12">
+									<table id="dt-basic-example" class="table table-bordered table-hover table-striped w-100"></table>
+								</div>
+							</div>	
+						</div>
+					</div>					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section ScriptsBlock {
+<script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+<script src="~/js/dependency/moment/moment.js"></script>
+<script src="~/js/formplugins/select2/select2.bundle.js"></script>
+<script src="~/js/datagrid/datatables/datatables.export.js"></script>
+<script src="~/js/notifications/toastr/toastr.js"></script>
+<script src="~/js/extensions/automapper-extensions.js"></script>
+<script src="~/js/notifications/sweetalert2/sweetalert2.bundle.js"></script>
+
+<script type="text/javascript">
+	const endpointLivros = "/api/livros";
+	const endpointLivrosNovo = "/api/livros/novo";
+	const endpointLivrosEdicao = "/api/livros/edicao";
+	const endpointLivrosDelete = "/api/livros/delete";
+	const endpointLivrosLista = "/api/livros/lista";
+
+	var autores = [];
+	var generos = [];
+	var boolOptions = ["SIM", "NÃO"];
+
+	toastr.options = {
+		"closeButton": false,
+		"debug": false,
+		"newestOnTop": true,
+		"progressBar": true,
+		"positionClass": "toast-top-right",
+		"preventDuplicates": true,
+		"onclick": null,
+		"showDuration": 500,
+		"hideDuration": 100,
+		"timeOut": 10000,
+		"extendedTimeOut": 1000,
+		"showEasing": "swing",
+		"hideEasing": "linear",
+		"showMethod": "fadeIn",
+		"hideMethod": "fadeOut"
+	}
+
+	var oldExportAction = function (self, e, dt, button, config) {
+		if (button[0].className.indexOf('buttons-excel') >= 0) {
+			if ($.fn.dataTable.ext.buttons.excelHtml5.available(dt, config)) {
+				$.fn.dataTable.ext.buttons.excelHtml5.action.call(self, e, dt, button, config);
+			}
+			else {
+				$.fn.dataTable.ext.buttons.excelFlash.action.call(self, e, dt, button, config);
+			}
+		} else if (button[0].className.indexOf('buttons-print') >= 0) {
+			$.fn.dataTable.ext.buttons.print.action(e, dt, button, config);
+		}
+	};
+
+	var newExportAction = function (e, dt, button, config) {
+		var self = this;
+		var oldStart = dt.settings()[0]._iDisplayStart;
+
+		dt.one('preXhr', function (e, s, data) {
+			// Just this once, load all data from the server...
+			data.start = 0;
+			data.length = 2147483647;
+
+			dt.one('preDraw', function (e, settings) {
+				// Call the original action function 
+				oldExportAction(self, e, dt, button, config);
+
+				dt.one('preXhr', function (e, s, data) {
+					// DataTables thinks the first item displayed is index 0, but we're not drawing that.
+					// Set the property to what it was before exporting.
+					settings._iDisplayStart = oldStart;
+					data.start = oldStart;
+				});
+
+				// Reload the grid with the original page. Otherwise, API functions like table.cell(this) don't work properly.
+				setTimeout(dt.ajax.reload, 0);
+
+				// Prevent rendering of the full data to the DOM
+				return false;
+			});
+		});
+
+		// Requery the server with the new one-time export settings
+		dt.ajax.reload();
+	};
+
+	@foreach (var autor in @Model.Autores)
+	{
+		@:autores.push('@autor');
+	}
+
+	@foreach (var genero in @Model.Generos)
+	{
+		@:generos.push('@genero');
+	}
+
+	var getLocalizacaoLivro = function (isEdit) {
+		$.ajax({
+			url: "api/livros/get-next-localizacao",
+			type: 'GET',
+			success: function(success) {
+				if (isEdit)
+				{
+					$("#ultimaLocalizacao").val(success.data);	
+				}
+				else
+				{
+					$("#ultimaLocalizacao").val(success.data);
+					$("#localizacao").val(parseFloat(success.data) + 1);
+				}
+			},
+			error: function (error, jqXHR, textStatus, errorThrown) {
+				const returnObj = Object.entries(error.responseJSON.errors);
+
+				returnObj.forEach(function(err) {
+					err[1].forEach(function (int) {
+						toastr["error"](err[0], int);
+					})
+				});
+			}
+		});
+	};
+
+	var toUpperCaseFormFields = function () {
+		$('#titulo').val($('#titulo').val().toUpperCase());
+		$('#localizacao').val($('#localizacao').val().toUpperCase());
+		$('#propriedade').val($('#propriedade').val().toUpperCase());
+	};
+
+	$(document).ready( function () {
+		//Tecla de atalho para criar um novo registro (CTRL + Z)			
+		$(document).keydown(function(e) {
+			if (e.ctrlKey && e.which === 90) $(".btn-add").click();
+
+			setTimeout(function() {
+				toUpperCaseFormFields();
+			}, 500);
+		});
+
+		//No evento de click do botão add, set focus no campo nome depois abre a select2
+		$(document).on("click", ".btn-add", function () {
+			setTimeout(function() {
+				$('#titulo').focus();
+			}, 500);
+
+			getLocalizacaoLivro(false);
+
+		});
+
+		$(document).on("click", ".btn-edit", function () {
+			getLocalizacaoLivro(true);
+		});
+
+		$(document).on("click", ".btn-delete", function () {
+			$.each($('input'), function(i, val) {
+				if($(this).attr("id") == "Ativo?") 
+				{
+					if ($(this).val() == "NÃO")
+					{
+						setTimeout(function() {
+							$(".modal").trigger('click');
+						}, 500);
+
+						setTimeout(function() {
+							Swal.fire({
+								text: "Livro já está inativo!",
+								icon: "error",
+								timer: 3000,
+								showCancelButton: false,
+								showConfirmButton: true,
+								confirmButtonColor: "#fd3995",
+								timerProgressBar: true,
+								buttons: false
+							});
+						}, 1000);
+					}
+				}
+			});
+		});
+
+		$(document).on("click", ".btn-actions", function () {
+			$("#row_id").hide();
+		});
+
+		// Event Lot
+		var events = $("#app-eventlog");
+
+		// Column Definitions
+		var columnSet = [
+			{
+				title: "Id",
+				id: "id",
+				data: "id",
+				placeholderMsg: "Automático",
+				visible: false,
+				type: "readonly",
+				required: false
+			},
+			{
+				title: "Título",
+				id: "titulo",
+				data: "titulo",
+				type: "text",
+				visible: true,
+				searchable: true,
+				orderable: true,
+				required: false,
+				name: "Titulo"
+			},
+			{
+				id: "ultimaLocalizacao",
+				title: "Última localização",
+				data: "ultimaLocalizacao",
+				visible: false,
+				type: "readonly",
+				required: false,
+				searchable: false,					
+				name: "UltimaLocalizacao"
+			},
+			{
+				title: "Localização",
+				id: "localizacao",
+				data: "localizacao",
+				type: "number",
+				visible: true,
+				searchable: true,
+				orderable: true,
+				required: true,
+				name: "Localizacao"
+			},			
+			{
+				title: "Propriedade",
+				id: "propriedade",
+				data: "propriedade",
+				type: "text",
+				visible: true,
+				searchable: false,
+				orderable: true,
+				required: true,
+				name: "Propriedade"
+			},
+			{
+				title: "Autor",
+				data: "livroAutorNome",
+				id: "livroAutorNome",
+				type: "select",
+				multiple : false,
+				options: autores,
+				visible: true,
+				select2 : {
+					placeholder: "Selecione um autor",
+					width: "100%",
+					allowClear: true,
+					minimumInputLength: 3,
+					language: {
+						inputTooShort: function() {
+							return 'Digite 3 ou mais caracteres para iniciar a busca';
+						}
+					}
+				},
+				searchable: false,
+				orderable: true,
+				required: true,
+				name: "LivroAutor.Nome"
+			},
+			{
+				title: "Gênero",
+				data: "livroGeneroNome",
+				id: "livroGeneroNome",
+				type: "select",
+				multiple : false,
+				options: generos,
+				visible: true,
+				select2 : {
+					placeholder: "Selecione um gênero",
+					width: "100%",
+					allowClear: true,
+					minimumInputLength: 3,
+					language: {
+						inputTooShort: function() {
+							return 'Digite 3 ou mais caracteres para iniciar a busca';
+						}
+					}
+				},
+				searchable: false,
+				orderable: true,
+				required: true,
+				name: "LivroGenero.Nome"
+			},
+			{
+				data: "isDisponivel",
+				title: "Disponível?",
+				type: "select",
+				options: boolOptions,
+				searchable: false,
+				multiple : false,
+				visible: true,
+				select2 : { width: "100%" },
+				orderable: true,
+				required: true,
+				name: "IsDiponivel"
+			},
+			{
+				data: "isDeleted",
+				title: "Ativo?",
+				type: "select",
+				options: boolOptions,
+				searchable: false,
+				multiple : false,
+				visible: true,
+				select2 : { width: "100%" },
+				orderable: true,
+				required: true,
+				name: "IsDeleted"
+			},
+		];
+
+		/* start data table */
+		var myTable = $('#dt-basic-example').dataTable({
+			/* check datatable buttons page for more info on how this DOM structure works */
+			dom: "<'row mb-3'<'col-sm-12 col-md-6 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-6 d-flex align-items-center justify-content-end'B>>" +
+				"<'row'<'col-sm-12'tr>>" +
+				"<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",			
+			ajax: {
+				url : endpointLivrosLista,
+				type: 'POST',
+				dataSrc: function (json) {
+					return transformObjArrayFieldBoolBackToFront(json.data.data);
+				}
+        	},
+			aaSorting: [ [3,'asc'] ],
+			columns: columnSet,
+			/* selecting multiple rows will not work */
+			select: 'single',
+			/* altEditor at work */
+			altEditor: true,
+			responsive: true,
+			/* buttons uses classes from bootstrap, see buttons page for more details */
+			buttons: [
+				{
+					extend: 'selected',
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-times mr-1"></i> Inativar',
+					name: 'delete',
+					className: 'btn-danger btn-sm mr-1 btn-actions btn-delete'
+				},
+				{
+					extend: 'selected',
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-edit mr-1"></i> Editar',
+					name: 'edit',
+					className: 'btn-warning btn-sm mr-1 btn-actions btn-edit'
+				},
+				{
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-plus mr-1"></i> Novo',
+					name: 'add',
+					className: 'btn-primary btn-sm mr-1 btn-actions btn-add'
+				},
+				{
+					
+					text: '<i class="@(Settings.Theme.IconPrefix) fa-house-return mr-1"></i> Colocar na estante',
+					name: '',
+					className: 'btn-success btn-sm mr-1 btn-colocar-estante',
+					action: function (e, dt, node, config) {
+						Swal.fire({
+							title: "Colocar livro na estante",
+							text: "Realmente deseja o registro?",
+							icon: "info",
+							showCancelButton: true,
+							confirmButtonColor: "#2196F3",
+							confirmButtonText: "Colocar na estante",
+							cancelButtonText: "Desistir",
+							html: '<div class="form-group row">' +
+								  	'<div class="col-xl-12">' +
+										'<input type="number" id="swal-localizacao" name="swal-localizacao"' +
+									  		'placeholder="Informe a localização do livro que deseja colocar na estante" class="form-control">' +
+								  	'</div>' +
+								  '</div>' +	  
+								  '<div style="clear:both;"></div>' +
+								  '<p/>' +
+								  '<div class="form-group row mt-3">' +
+								  	'<div class="col-xl-12 text-right">' +
+										'<input type="checkbox" name="swal-localizacao-todos"' +
+											'id="swal-localizacao-todos" />' +
+										'<span class="ml-1 mr-1">Todos</span>' +
+									'</div>' +
+								  '</div>',
+							confirmButtonText: 'Colocar na estante',
+							preConfirm: () => {
+								var localizacao = Swal.getPopup().querySelector('#swal-localizacao').value 
+								var todos = Swal.getPopup().querySelector('#swal-localizacao-todos').checked
+
+								if (localizacao != "" && todos)
+								{
+									Swal.fire({
+										title: "Problemas com os dados informados",
+										text: "Ao informar uma localização não deverá marcar a opção todos.",
+										icon: "warning",
+										confirmButtonColor: "#ffcd65",
+										confirmButtonText: "Tentar novamente"
+									}).then((result) => {
+										$('.btn-colocar-estante').click();
+									});
+								}
+
+								return {
+									localizacao: localizacao,
+									todos: todos
+								};
+							}
+						}).then((result) => {
+							console.log(result.dismiss);
+
+							if (result.dismiss == null)
+							{
+								$.ajax({
+									url: "/api/livros/colocar-estante",
+									type: 'POST',
+									contentType: "application/json;charset=utf-8",
+									data: JSON.stringify(result.value, null, 4),
+									success: function(success) {
+										Swal.fire({
+											title: "Sucesso",
+											text: "Operação realizada com sucesso!",
+											timer: 2000,
+											timerProgressBar: true,
+											icon: "success",
+											confirmButtonColor: "#1dc9b7"
+										});
+
+										$('#dt-basic-example').dataTable().api().ajax.reload();
+									},
+									error: function (error, jqXHR, textStatus, errorThrown) {
+
+										$('#dt-basic-example').dataTable().api().ajax.reload();
+
+										const returnObj = Object.entries(error.responseJSON.errors);
+
+										returnObj.forEach(function(err) {
+											err[1].forEach(function (int) {
+												toastr["error"](err[0], int);
+											})
+										});
+									}
+								});
+							}					
+							
+							@* Swal.fire("localizacao: "+`${result.value.localizacao}`+" and todos: "+`${result.value.todos}`); *@
+						})                    	
+                	}
+				},
+				{
+					extend: 'excelHtml5',
+					text: 'Excel',
+					exportOptions: {
+						columns: [0,1, 3, 4, 5, 6]
+					},
+					className: 'btn-outline-success btn-sm',
+					action: newExportAction
+				}							
+			],
+			serverSide: true,
+			processing: true,
+			pagingType: "full_numbers",
+			language: {
+				select: {
+					rows: "%d linhas selecionadas"
+				},
+            	decimal: ",",
+            	thousands: ".",
+        		searchPlaceholder: "Busque pelo TÍTULO ou LOCALIZAÇÃO",
+				sProcessing: '<span id=\"loading-image\" "class="fa fa-spinner fa-spin fa-2x spinner-border spinner-border-sm text-primary mr-2""><img class="manImg" src="img/loading_alt_3.gif" width="50" height="50"></img></span>',
+				sZeroRecords: "Nenhum registro encontrado.",
+				oPaginate: {
+                    "sFirst": "Primeiro",
+                    "sPrevious": "Anteri or",
+                    "sNext": "Próximo",
+                    "sLast": "Último"
+                },
+				sInfo: "Mostrando _START_ de _END_ de um total de _TOTAL_",
+                sInfoEmpty: "Nenhuma registro encontrado.",
+                sInfoFiltered: " (filtrado a partir de um total de _MAX_ registros)",
+                sInfoPostFix: ""
+        	},
+			columnDefs: [],
+			/* default callback for insertion: mock webservice, always success */
+			onAddRow: function(dt, rowdata, success, error) {
+				$.ajax({ 
+					url: endpointLivrosNovo, 
+					type: 'POST',
+					contentType: "application/json;charset=utf-8",
+					@* headers:{
+            			"Authorization": "Basic " + ""
+        			}, *@
+					data: JSON.stringify(transformObjFieldBoolFrontToBack(rowdata), null, 4),
+					beforeSend: function (xhr, settings) {
+    				},
+					success: function (data) {
+						$(".modal").modal('hide');
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						Swal.fire({
+							text: "Registro criado com sucesso!",
+							icon: "success",
+							timer: 2000,
+							showCancelButton: false,
+							showConfirmButton: true,
+							confirmButtonColor: "#179c8e",
+							timerProgressBar: true,
+							buttons: false
+						});
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						const returnObj = Object.entries(error.responseJSON.errors);
+
+						returnObj.forEach(function(err) {
+							err[1].forEach(function (int) {
+								toastr["error"](err[0], int);
+							})
+						});
+					}
+				});
+			},
+			onEditRow: function(dt, rowdata, success, error) {
+				$.ajax({
+					url: endpointLivrosEdicao, 
+					type: 'PUT',
+					contentType: "application/json;charset=utf-8",
+					data: JSON.stringify(transformObjFieldBoolFrontToBack(rowdata), null, 4),
+					success: function (data) {
+						$(".modal").modal('hide');
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						Swal.fire({
+							text: "Registro atualizado com sucesso!",
+							icon: "success",
+							timer: 2000,
+							showCancelButton: false,
+							showConfirmButton: true,
+							confirmButtonColor: "#179c8e",
+							timerProgressBar: true,
+							buttons: false
+						});
+					},
+					error: function (error, jqXHR, textStatus, errorThrown) {
+						$('#dt-basic-example').dataTable().api().ajax.reload();
+
+						const returnObj = Object.entries(error.responseJSON.errors);
+
+						returnObj.forEach(function(err) {
+							err[1].forEach(function (int) {
+								toastr["error"](err[0], int);
+							})
+						});
+					}
+				});
+			},
+			onDeleteRow: function(dt, rowdata, success, error) {
+				debugger;
+				if (rowdata.isDeleted == "NÃO")
+				{
+					Swal.fire({
+						text: "Livro já está inativo!",
+						icon: "error",
+						timer: 3000,
+						showCancelButton: false,
+						showConfirmButton: true,
+						confirmButtonColor: "#fd3995",
+						timerProgressBar: true,
+						buttons: false
+					});
+				}
+				else
+				{
+					$.ajax({ 
+						url: endpointLivrosDelete, 
+						type: 'DELETE', 
+						contentType: "application/json;charset=utf-8",
+						data: JSON.stringify(transformObjFieldBoolFrontToBack(rowdata), null, 4), 
+						success: function (data) {
+							$(".modal").modal('hide');
+							$('#dt-basic-example').dataTable().api().ajax.reload();
+
+							Swal.fire({
+								text: "Registro inativado com sucesso!",
+								icon: "success",
+								timer: 2000,
+								showCancelButton: false,
+								showConfirmButton: true,
+								confirmButtonColor: "#179c8e",
+								timerProgressBar: true,
+								buttons: false
+							});
+						},
+						error: function (error, jqXHR, textStatus, errorThrown) {
+							$('#dt-basic-example').dataTable().api().ajax.reload();
+
+							const returnObj = Object.entries(error.responseJSON.errors);
+
+							returnObj.forEach(function(err) {
+								err[1].forEach(function (int) {
+									toastr["error"](err[0], int);
+								})
+							});
+						}
+					});
+				}				
+			}		
+		});
+
+		$('#dt-basic-example_filter input').bind('keyup', function(e) {
+			$('#dt-basic-example_filter input').val($('#dt-basic-example_filter input').val().toUpperCase());
+		});
+	});
+</script>
+}

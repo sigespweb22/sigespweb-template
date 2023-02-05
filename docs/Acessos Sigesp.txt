@@ -1,0 +1,18 @@
+git clone https://AspeNetCore@bitbucket.org/AspeNetCore/inspinacore.git
+
+git clone https://AspeNetCore@bitbucket.org/AspeNetCore/sigespweb.git
+
+
+Acesso repositório sigesp
+Gmail:
+Usuário: AspeNetCore@gmail.com
+Senha: alr20207413*
+
+BitBucket:
+Site: git clone https://AspeNetCore@bitbucket.org/AspeNetCore/sigespweb.git
+Usuário: AspeNetCore@gmail.com
+Senha: Alr20207413*
+
+https://luca-vercelli.github.io/DataTable-AltEditor/example/06_select_datepicker/example6.html
+https://stackoverflow.com/questions/63892750/datatable-alteditor-and-select2
+https://luca-vercelli.github.io/DataTable-AltEditor/example/03_ajax_objects/example3.html

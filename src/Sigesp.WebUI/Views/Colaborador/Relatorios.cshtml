@@ -1,0 +1,239 @@
+@model Sigesp.Application.ViewModels.Selects.ColaboradorSelectViewModel
+@{
+	ViewData["Title"] = "Relatórios";
+	ViewData["PageName"] = "colaborador_relatorios";
+	ViewData["Category0"] = @Settings.App;
+	ViewData["Category1"] = "Laboral";
+    ViewData["Category2"] = "Colaboradores";
+	ViewData["Heading"] = "<i class='notprint subheader-icon fal fa-file-alt'></i>Colaboradores Relatórios<span class='notprint fw-300'></span> <sup class='notprint badge badge-primary fw-500'>NOVO</sup>";
+	ViewData["PageDescription"] = "";
+}
+
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/page-invoice.css">
+    <link rel="stylesheet" media="screen, print" href="~/css/formplugins/select2/select2.bundle.css">
+}
+
+<div class="row notprint">
+    <div class="col-xl-12">
+		<div id="panel-1" class="panel">
+			<div class="panel-hdr">
+				<h2>
+					Relatório colaborador <span class="fw-300"><i> Consolidado por galeria (s) e situação (ões)</i></span> 
+				</h2>
+				<div class="panel-toolbar">
+					<button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Abrir/Fechar"></button>
+				</div>
+			</div>
+			<div class="panel-container show">
+				<div class="panel-content">									
+					<div class="panel-tag">
+						Faça suas escolhas, depois clique em "GERAR" para que o relatório seja criado de acordo com suas definições.
+					</div>
+                    <form asp-action="RelatorioPrint" asp-controller="Colaborador" id="colaborador-relatorio-filtro" method="post">
+                        <div class="form-group">
+                            <label class="form-label" for="select2-galeria">
+                                Galeria:
+                            </label>
+                            <select name="galeria" class="select2 form-control" 
+										id="select2-galeria">
+                                <option></option>
+								@foreach (var galeria in @Model.Galerias)
+                                {
+                                    <option value=@galeria>@galeria</option>    
+                                }
+                            </select>
+                            <label class="mt-3 form-label" for="select2-situacoes">
+                                Situações:
+                            </label>
+                            <select name="situacoes" class="select2-placeholder-multiple select2 form-control" multiple="multiple" id="select2-situacoes">
+                                @foreach (var situacao in @Model.Situacoes)
+                                {
+                                    <option value=@situacao>@situacao</option>    
+                                }
+                            </select>
+                        </div>
+						<div class="alert alert-info p-1">
+							<strong>Nota:</strong> Ao omitir os dados de <code>"Galeria/Situações"</code> ou ambos, será <strong>retornado todos os dados</strong>.
+						</div>
+					    <button id="colaborador-relatorio-filtro-btn" type="submit" class="btn btn-outline-primary mb-g" >GERAR</button>
+                    </form>
+				</div>
+			</div>
+		</div>		
+	</div>
+</div>
+
+<div class="row notprint">
+    <div class="col-xl-12">
+		<div id="panel-1" class="panel">
+			<div class="panel-hdr">
+				<h2>
+					Relatório colaborador <span class="fw-300"><i> Consolidado por convênio (s) e galeria </i></span>
+				</h2>
+				<div class="panel-toolbar">
+					<button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Abrir/Fechar"></button>
+				</div>
+			</div>
+			<div class="panel-container show">
+				<div class="panel-content">									
+					<div class="panel-tag">
+						Faça suas escolhas, depois clique em "GERAR" para que o relatório seja criado de acordo com suas definições.
+					</div>
+                    <form asp-action="RelatorioPrint2" asp-controller="Colaborador" id="colaborador-relatorio2-filtro" method="post">
+                        <div class="form-group">
+							<label class="form-label" for="select2-convenio">
+                                Convênio:
+                            </label>
+                            <select name="empresaConvenio" class="select2 form-control" 
+										id="select2-convenio">
+                                <option></option>
+								@foreach (var empresaConvenio in @Model.EmpresasConvenios)
+                                {
+                                    <option value=@empresaConvenio>@empresaConvenio</option>    
+                                }
+                            </select>
+                            <label class="mt-3 form-label" for="select2-galeriaRel2">
+                                Galeria:
+                            </label>
+                            <select name="galeria" class="select2 form-control" 
+										id="select2-galeriaRel2">
+                                <option></option>
+								@foreach (var galeria in @Model.Galerias)
+                                {
+                                    <option value=@galeria>@galeria</option>    
+                                }
+                            </select>
+                            <label class="mt-3 form-label" for="select2-situacoesRel2">
+                                Situações:
+                            </label>
+                            <select name="situacoes" 
+									class="select2-placeholder-multiple select2 form-control"
+									 multiple="multiple" id="select2-situacoesRel2">
+                                @foreach (var situacao in @Model.Situacoes)
+                                {
+                                    <option value=@situacao>@situacao</option>    
+                                }
+                            </select>							
+                        </div>
+						<div class="alert alert-info p-1">
+						</div>
+					    <button id="colaborador-relatorio-filtro-btn" type="submit" class="btn btn-outline-primary mb-g" >GERAR</button>
+                    </form>
+				</div>
+			</div>
+		</div>		
+	</div>
+</div>
+
+@section ScriptsBlock {
+	<script src="~/js/formplugins/select2/select2.bundle.js"></script>
+
+	<script>
+        $("#colaborador-relatorio-filtro-btn").click(function (event) {
+            var form = $("#colaborador-relatorio-filtro-btn");
+
+            // Perform ajax submit here...
+        });
+
+		$(document).ready(function () {
+            //init select2
+            $('.select2').select2();
+            
+            //set placeholder for single
+            $("#select2-galeria").select2({
+                placeholder: "Selecione uma galeria",
+				allowClear: true
+            });
+
+			//set placeholder for single
+            $("#select2-galeriaRel2").select2({
+                placeholder: "Selecione uma galeria",
+				allowClear: true
+            });
+
+			//set placeholder for single
+            $("#select2-convenio").select2({
+                placeholder: "Selecione um convênio",
+				allowClear: true
+            });
+
+			//set placeholder for multiple
+            $("#select2-situacoes").select2({
+                placeholder: "Escolha quantas situações quiser"
+            });
+
+			//set placeholder for multiple
+            $("#select2-situacoesRel2").select2({
+                placeholder: "Escolha quantas situações quiser"
+            });
+
+            $("#ativoSwitch").click(function(e){
+                if (this.checked) {
+                    $(this).attr("value", "true");
+                    $("#label-ativo").html("SIM");
+                } else {
+                    $(this).attr("value", "false");
+                    $("#label-ativo").html("NÃO");
+                }
+            });
+
+			@* $(function() {
+				$(".js-data-example-ajax").select2({
+				  ajax: {
+				    url: "https://api.github.com/search/repositories",
+				    dataType: 'json',
+				    delay: 250,
+				    data: function (params) {
+				      return {
+				        q: params.term, // search term
+				        page: params.page
+				      };
+				    },
+				    processResults: function (data, params) {
+				      // parse the results into the format expected by Select2
+				      // since we are using custom formatting functions we do not need to
+				      // alter the remote JSON data, except to indicate that infinite
+				      // scrolling can be used
+				      params.page = params.page || 1;
+				      return {
+				        results: data.items,
+				        pagination: {
+				          more: (params.page * 30) < data.total_count
+				        }
+				      };
+				    },
+				    cache: true
+				  },
+				  placeholder: 'Search for a repository',
+				  escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+				  minimumInputLength: 1,
+				  templateResult: formatRepo,
+				  templateSelection: formatRepoSelection
+				});
+				function formatRepo (repo) {
+				  if (repo.loading) {
+				    return repo.text;
+				  }
+				  var markup = "<div class='select2-result-repository clearfix d-flex'>" +
+				    "<div class='select2-result-repository__avatar mr-2'><img src='" + repo.owner.avatar_url + "' class='width-2 height-2 mt-1 rounded' /></div>" +
+				    "<div class='select2-result-repository__meta'>" +
+				      "<div class='select2-result-repository__title fs-lg fw-500'>" + repo.full_name + "</div>";
+				  if (repo.description) {
+				    markup += "<div class='select2-result-repository__description fs-xs opacity-80 mb-1'>" + repo.description + "</div>";
+				  }
+				  markup += "<div class='select2-result-repository__statistics d-flex fs-sm'>" +
+				    "<div class='select2-result-repository__forks mr-2'><i class='@(Settings.Theme.IconPrefix) fa-lightbulb'></i> " + repo.forks_count + " Forks</div>" +
+				    "<div class='select2-result-repository__stargazers mr-2'><i class='@(Settings.Theme.IconPrefix) fa-star'></i> " + repo.stargazers_count + " Stars</div>" +
+				    "<div class='select2-result-repository__watchers mr-2'><i class='@(Settings.Theme.IconPrefix) fa-eye'></i> " + repo.watchers_count + " Watchers</div>" +
+				  "</div>" +
+				  "</div></div>";
+				  return markup;
+				}
+				function formatRepoSelection (repo) {
+				  return repo.full_name || repo.text;
+				}
+			}); *@
+		});
+	</script>
+}

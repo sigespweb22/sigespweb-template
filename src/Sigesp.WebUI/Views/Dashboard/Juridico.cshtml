@@ -1,0 +1,41 @@
+@* @{ 
+	ViewData["Title"] = "Jurídico";
+	ViewData["PageName"] = "dashboard_juridico";
+	ViewData["Category1"] = "Inteligência negócios";
+	ViewData["Category2"] = "Dashboard Principal";
+	ViewData["Heading"] = "<i class='subheader-icon fal fa-chart-area'></i> Dashboard <span class='fw-300'>Jurídico</span>";
+}
+@section HeadBlock {
+
+}
+@section SubheaderBlock {  
+<div class="subheader-block d-lg-flex align-items-center">
+	<div class="d-inline-flex flex-column justify-content-center mr-3">
+		<span class="fw-300 fs-xs d-block opacity-50">
+			<small>RECORD REEDUCANDOS</small> 
+		</span>
+		<span class="fw-500 fs-xl d-block color-primary-500">
+			1035
+		</span>
+	</div>
+	<span class="sparklines hidden-lg-down" sparkType="bar" sparkBarColor="#886ab5" sparkHeight="32px" sparkBarWidth="5px" values="3,4,3,6,7,3,3,6,2,6,4"></span>
+</div>
+<div class="subheader-block d-lg-flex align-items-center border-faded border-right-0 border-top-0 border-bottom-0 ml-3 pl-3">
+	<div class="d-inline-flex flex-column justify-content-center mr-3">
+		<span class="fw-300 fs-xs d-block opacity-50">
+			<small>RECORD COMARCAS</small> 
+		</span>
+		<span class="fw-500 fs-xl d-block color-danger-500">
+			800
+		</span>
+	</div>
+	<span class="sparklines hidden-lg-down" sparkType="bar" sparkBarColor="#fe6bb0" sparkHeight="32px" sparkBarWidth="5px" values="1,4,3,6,5,3,9,6,5,9,7"></span>
+</div>
+}
+
+@section ScriptsBlock {
+	<script src="~/js/statistics/sparkline/sparkline.bundle.js"></script>
+	<script>
+		
+	</script>
+} *@

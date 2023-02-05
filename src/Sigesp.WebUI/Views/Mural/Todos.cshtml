@@ -1,0 +1,144 @@
+@{
+	ViewData["Title"] = "Mural";
+	ViewData["PageName"] = "mural_todos";
+	ViewData["Category0"] = @Settings.App;
+	ViewData["Category1"] = "Home";
+}
+@section HeadBlock {
+<link rel="stylesheet" media="screen, print" href="~/css/miscellaneous/reactions/reactions.css">
+<link rel="stylesheet" media="screen, print" href="~/css/miscellaneous/fullcalendar/fullcalendar.bundle.css">
+<link rel="stylesheet" media="screen, print" href="~/css/miscellaneous/jqvmap/jqvmap.bundle.css">
+<link rel="stylesheet" media="screen, print" href="~/css/statistics/chartjs/chartjs.css">
+<link rel="stylesheet" media="screen, print" href="~/css/statistics/c3/c3.css">
+<link rel="stylesheet" media="screen, print" href="~/css/extensions/generals-extensions.css">
+}
+
+<div class="row mt-3">
+    <div class="col-xl-12">
+        <div class="d-flex mb-3 text-center">
+            <span class="icon-stack icon-stack-lg">
+                <i class="base-7 icon-stack-3x color-warning-400"></i>
+                <i class="base-7 icon-stack-2x color-warning-600 opacity-70"></i>
+                <i class="@(Settings.Theme.IconPrefix) fa-solar-system icon-stack-1x text-white opacity-90"></i>
+            </span>
+            <div class="flex-fill ml-2">
+                <span class="h1 text-center">Seja bem vindo ao <span class='fw-700 text-warning'><i>SigespWeb</i></span> App</span>
+                <br>Sistema de Gestão para o <strong>Sistema de Segurança Pública - Prisional</strong></a>
+            </div>
+            <span class="icon-stack icon-stack-lg">
+                <i class="base-7 icon-stack-3x color-warning-400"></i>
+                <i class="base-7 icon-stack-2x color-warning-600 opacity-70"></i>
+                <i class="@(Settings.Theme.IconPrefix) fa-solar-system icon-stack-1x text-white opacity-90"></i>
+            </span>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-g">
+	<div class="card-body">
+		<div class="alert alert-primary">
+			<div class="d-flex flex-start w-100">
+				<div class="d-flex align-center mr-2 hidden-sm-down">
+					<span class="icon-stack icon-stack-lg">
+						<i class="base-7 icon-stack-3x color-primary-400"></i>
+						<i class="base-7 icon-stack-2x color-primary-600 opacity-70"></i>
+						<i class="@(Settings.Theme.IconPrefix) fa-newspaper icon-stack-1x text-white opacity-90"></i>
+					</span>
+				</div>
+				<div class="d-flex flex-fill">
+					<div class="flex-fill">
+						<span class="h5">Quer ficar por dentro das novidades do <span class='fw-700 text-warning'><i>SigespWeb</i></span>?</span>
+						<br> Melhorias, correção de bugs, funcionalidades futuras, informações sobre documentação, novos vídeos de treinamentos, acompanhe tudo por aqui.</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<h4 class="mb-g">
+			Mural
+			<small>
+				Funcionalidades futuras, melhorias, correção de bugs, vídeos, informação de documentação, informações gerais
+			</small>
+		</h4>
+		<ul class="nav d-block fs-md pl-3">
+			<li>
+                <span class="badge badge-info fw-n mr-1 width-50">MELHORIA - <strong>EDUCAÇÃO > ALUNOS > LEITORES > TODOS</strong></span> - Já está disponível a nova funcionalidade para <b>ENCERRAR o ANO LETIVO</b> do <b>PROJETO DE LEITURA</b>. Basicamente ao acionar este recurso você estará <b>INATIVANDO</b> todos os <b>LEITORES</b> atualmente ativos em sua unidade e lançando automaticamente a ocorrência de desistência <code>"FIM_ANO_LETIVO"</code>. Desta forma, o ano letivo poderá ser encerrado corretamente, afim de que no ano seguinte, o ingresso de novos leitores possa ocorrer naturalmente de acordo com as novas matrículas no <code>PROJETO DE LEITURA</code>.<a href="" target="_blank"><strong class="text-warning fw-900"><br></strong></a>
+                <p><small>Lançamento <strong><i class="text-warning fw-900 container-animation">15/11/2022</strong></i></small></p>
+			</li>
+			<hr class="mt-4 mb-g">
+			<li>
+                <span class="badge badge-info fw-n mr-1 width-50">MELHORIA - <strong>EDUCAÇÃO > ALUNOS > LEITURAS > TODAS</strong></span> - Criamos na tela das leituras um novo botão chamado <code>"Utilidades"</code>. Neste botão iremos adicionar diversas funcionalidades úteis. A primeira delas já está disponível: <strong>| Visibilidade colunas |</strong>. Esta funcionalidade permite selecionar quais colunas da tabela de leitura você quer tornar visível. <br/>Obs.: Lembrando que, ao atualizar a tela a tabela será recarregada com as colunas do padrão SigespWeb, contudo, você poderá novamente e sempre que necessário escolher quais colunas deseja tornar visível ou invisível.<a href="" target="_blank"><strong class="text-warning fw-900"><br></strong></a>
+                <p><small>Lançamento <strong><i class="text-warning fw-900 container-animation">15/11/2022</strong></i></small></p>
+			</li>
+			<hr class="mt-4 mb-g">
+			<li>
+                <span class="badge badge-info fw-n mr-1 width-50">MELHORIA - <strong>ANDAMENTO PENAL > NOVA FUNÇÃO PARA ADICIONAR/ALTERAR PEC DE EGRESSO</strong></span> - A partir de agora será possível alterar o PEC de um DETENTO EGRESSO da unidade. Esta opção é muito útil para os setores que na saída do DETENTO possuiam ofícios de remissão pendentes para serem confeccionados, visto que até aquele instante o recluso em questão era provisório, não possuindo um PEC. Contudo, com o passar do tempo caso este mesmo ex-recluso venha a receber uma condenação, ainda que não esteja recolhido na UNIDADE PRISIONAL para o cumprimento da pena, será possível adicionar o seu PEC ao seu registro de Andamento Penal sem causar qualquer efeito aos registros ativos dos recolhidos e seguir com a confecção dos ofícios pendentes bem como o seus envios para a Vara de Excecução Penal da sua UNIDADE.<a href="" target="_blank"><strong class="text-warning fw-900"><br></strong></a>
+                <p><small>Lançamento <strong><i class="text-warning fw-900 container-animation">13/11/2022</strong></i></small></p>
+			</li>
+			<hr class="mt-4 mb-g">
+			<li>
+                <span class="badge badge-info fw-n mr-1 width-50">MELHORIA - <strong>ANDAMENTO PENAL > BUSCA</strong></span> - Já está disponível a possibilidade de efetuar busca no andamento penal por informações de histórico do apenado. Basta optar por este tipo de busca, e digitar algum dado comum de histórico para retornar todos os registros que possui o dado informado.<a href="" target="_blank"><strong class="text-warning fw-900"><br></strong></a>
+                <p><small>Lançamento <strong><i class="text-warning fw-900">05/11/2022</strong></i></small></p>
+			</li>
+			<hr class="mt-4 mb-g">
+			<li>
+                <span class="badge badge-info fw-n mr-1 width-50">MELHORIA - <strong>ALUNOS > LEITURAS > DICAS ESCRITA</strong></span> - Já está disponível a criação de GRUPO DE DICA e DICAS DE ESCRITA para os FORMULÁRIOS DE LEITURA. <a href="" target="_blank"><strong class="text-warning fw-900"><br></strong></a> Em breve iremos disponibilizar um vídeo expresso ensinando como criar grupos e dicas.</a>
+                <p><small>Lançamento <strong><i class="text-warning fw-900">22/10/2022</strong></i></small></p>
+			</li>
+			<hr class="mt-4 mb-g">
+			<li>
+                <span class="badge badge-info fw-n mr-1 width-50">MELHORIA - <strong>LISTA AMARELA > RELATÓRIOS > Relatório Data Ingresso</strong></span> - Já está disponível a geração de RELATÓRIO consolidado por DATA INGRESSO do DETENTO. <a href="/listaamarela/relatorios" target="_blank"><strong class="text-warning fw-900"><br>Clique aqui</strong></a> e tente você mesmo e veja como é fácil gerar este NOVO RELATÓRIO.</a>
+                <p><small>Lançamento <strong><i class="text-warning fw-900">10/10/2022</strong></i></small></p>
+			</li>
+			<hr class="mt-4 mb-g">
+			<li>
+                <span class="badge badge-info fw-n mr-1 width-50">MELHORIA - <strong>CANCELAMENTO OFÍCIOS</strong></span> - Já está disponível a opção de cancelamento de ofício. <a href="https://youtu.be/A9pX_BuBNbo" target="_blank"><strong class="text-warning fw-900"><br>Clique aqui</strong></a> e confira o vídeo com as instruções.</a>
+                <p><small>Lançamento <strong><i class="text-warning fw-900">03/10/2022</strong></i></small></p>
+			</li>
+			<hr class="mt-4 mb-g">
+			<li>
+                <span class="badge badge-info fw-n mr-1 width-50">MELHORIA - <strong>REIMPRESSÃO OFÍCIO</strong></span> - Já está disponível a reimpressão de ofícios. <a href="https://youtu.be/bCoycfej8CI" target="_blank"><strong class="text-warning fw-900"><br>Clique aqui</strong></a> e confira o vídeo com as instruções.</a>
+                <p><small>Lançamento <strong><i class="text-warning fw-900">03/10/2022</strong></i></small></p>
+			</li>
+			<hr class="mt-4 mb-g">
+			<li>
+                <span class="badge badge-warning fw-n mr-1 width-50">MELHORIA - <strong>MEU REFORÇO</strong></span> - Já está disponível e em fase de implantação na unidade <strong><i class="text-warning fw-900">PRESÍDIO REGIONAL DE CRICIÚMA</i></strong> o novo <code>APP MEU REFORÇO</code>. Esta nova funcionalidade altamente responsiva (se adapta a qualquer dispositivo móvel - celular, tablet, smartTV), atenderá de forma dinâmica todo processo de <code>MARCAÇÃO de REFORÇOS dos SERVIDORES da UNIDADE</code>. <br>Dentre as principais funcionalidades, destacamos a flexibilidade da gestão de disponibilidade das vagas de refoço, ao qual atende um modelo de disponibilização máxima de vagas por dia. Bem como, a possibilidade de permitir prioridades de marcação por prioridade informada no cadastro do servidor, ou em caso de Licença prêmio ou Férias do servidor no mês de marcação do reforço.</p>
+                <small>Lançamento <strong><i class="text-warning fw-900">26/09/2022</strong></i></small>
+			</li>
+			<hr class="mt-4 mb-g">
+			<li>
+                <span class="badge badge-warning fw-n mr-1 width-50">MELHORIA - <strong>ESCOLHA DE TEMA</strong></span> - Gostaria de mudar a cor do seu sistema? Agora é possível! Acesse as configurações de sua conta em <code>Usuarios perfil > Meu perfil</code>, ou pegue um atalho pelo ícone de engrenagem ao lado do ícone sino, e escolha um tema que melhor combina com você entre as 3 opções disponíveis: <strong><i class="text-warning fw-900">Modo escuro, Modo claro e Modo clássico</i></strong></p>
+                <small>Lançamento <strong><i class="text-warning fw-900">26/09/2022</strong></i></small>
+			</li>
+			<hr class="mt-4 mb-g">
+			<li>
+                <span class="badge badge-info fw-n mr-1 width-50">MELHORIA - <strong>AUTOMATIZAÇÃO BLOQUEIO LEITOR</strong></span> - Agora sempre que você avaliar uma leitura como <strong>NÃO CUMPRIMENTO</strong>, o sistema irá verificar se o aluno possui <strong>3 NÃO CUMPRIMENTOS consecutivos</strong> (A contar do NÃO CUMPRIMENTO que está sendo lançado). Nesta condição, <code>automaticamente o aluno é bloqueado por 3 meses</code>, não podendo ser ativado novamente neste período para participação do projeto. <p>Para <strong>consultar a data fim do bloqueio</strong>, consulte o aluno em <code>Alunos > Leitores</code>.</p>
+                <small>Lançamento em 02/09/2022.</small>
+			</li>
+			<hr class="mt-4 mb-g">
+			<li>
+				<span class="badge badge-info fw-n mr-1 width-50">MELHORIA - <strong>RELATÓRIO AVALIAÇÃO</strong></span> - Adicionamos mais um filtro no <code>Relatório Avaliação.</code><br/>Agora é possível obter o relatório com base em um PERÍODO de DATA e HORA em que você <strong>PROFESSOR</strong> avaliou as leituras!<br/>Para mais detalhes assista o <strong>VÍDEO TREINAMENTO</strong> na sessão de vídeos na tela <code>Alunos > Leituras > Todas</code>.
+                <br><small>Lançamento em 15/08/2022.</small>
+			</li>
+            <hr class="mt-4 mb-g">
+			<li>
+				<span class="badge badge-success fw-n mr-1 width-50">EM 12/09/2022 - <strong>MEU REFORÇO</strong></span> - Lançamento em breve da funcionalidade que irá permitir a marcação dos reforço dos servidores do estado atuantes na UNIDADE PRISIONAL.</p>
+                <small>Previsão lançamento em 12/09/2022.</small>
+			</li>
+            <hr class="mt-4 mb-g">
+			<li>
+                <span class="badge badge-warning fw-n mr-1 width-50">EM BREVE - <strong>MINHA ESCOLTA</strong></span> - Lançamento em breve do controle de frota dos <code>VEÍCULOS DE ESCOLTA da UNIDADE</code>. O <span class='fw-700 text-warning'><i>SigespWeb</i></span> fará o controler das manutenções em tempo real, informando quais planos de manutenção estão próximos de vencer. Bem como, todo controle de documentação, desde o <code>controle de tráfego, passando pelo licenciamento dos veículos, até a gestão de histórico e recursos de multas</code>.</p>
+                <small>Previsão lançamento em 15/09/2022.</small>				
+			</li>
+            <hr class="mt-4 mb-g">
+			<li>
+				<span class="badge badge-danger fw-n mr-1 width-50">EM BREVE - <strong>MEU CTC</strong></span> - Lançamento em breve da gestão integral de todo processo de realização do <code>Exame Criminológico</code>. Será possível a realização integrada de todas as etapas do CTC, desde a decisão judicial como gatilho para início do processo, passando pela confecção dos pareceres e laudos, até a geração automatizada do ofício para a VARA DE EXECUÇÕES PENAIS.</p>
+                <small>Previsão lançamento em 05/10/2022.</small>
+			</li>
+            <hr class="mt-4 mb-g">
+			<li>
+                <span class="badge badge-danger fw-n mr-1 width-50">EM BREVE - <strong>MEU PAD</strong></span> - Lançamento em breve de todo controle dos <code>PROCESSOS ADMINISTRATIVOS DISCIPLINARES</code>. Haverá instauração automática de um PROCESSO, a partir da geração em sistema de um comunicado de PAD via ofício. A partir dai, toda gestão do processo, desde a instauração do inquérito, fase de apuração, bem como toda análise, acompanhamento de prazo, até a geração automatizada do ofício para a VARA DE EXECUÇÕES PENAIS. Bem como, após o envio do ofício, o acompanhamento em tempo real do andamento do processo, via <span class='fw-700 text-warning'><i>SigespWeb</i></span>.</p>
+                <small>Previsão lançamento em 20/11/2022.</small>
+			</li>
+		</ul>
+	</div>
+</div>

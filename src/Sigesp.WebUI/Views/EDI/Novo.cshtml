@@ -1,0 +1,189 @@
+@{
+	ViewData["Title"] = "Detento Entrada/Saída/Atualização";
+    ViewData["Heading"] = "<i class='notprint subheader-icon fal fa-edit'></i> EDI - Entrada/Saída/Atualização Detento (s)<span class='notprint fw-300'></span> <sup class='notprint badge badge-primary fw-500'>NOVO</sup>";
+    ViewData["PageDescription"] = "Efetuar entrada (s)/saída (s) ou atualização (ões) de dados do (s) detento (s)";
+	ViewData["PageName"] = "edi_novo";
+	ViewData["Category0"] = @Settings.App;
+	ViewData["Category1"] = "Sistema";
+    ViewData["Category2"] = "EDI";
+}
+
+@section HeadBlock {
+    <link rel="stylesheet" media="screen, print" href="~/css/datagrid/datatables/datatables.bundle.css">
+    <link rel="stylesheet" media="screen, print" href="~/css/notifications/toastr/toastr.css">
+}
+
+<div>
+	<div class="row">
+        <div class="col-xl-12">
+            <div id="panel-1" class="panel">
+                <div class="panel-hdr">	
+                    <h2>
+                        Entrada/Saída/Atualização em lote de<span class="fw-300"><i>Detento (s)</i></span>
+                    </h2>
+                    <div class="panel-toolbar">
+                        <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Abrir/Fechar"></button>
+                    </div>
+                </div>
+                <div class="panel-container show">
+                    <div class="panel-content">
+						<form id="my_form">
+							<div class="form-group">
+								<div class="row text-right mb-3">
+									<div class="col-lg-12">
+										<button type="button" id="btn-voltar" 
+											class="btn btn-outline-primary waves-effect waves-themed">
+											<span class="fal fa-arrow-circle-left mr-1"></span>Voltar
+										</button>
+									</div>
+								</div>
+								<hr class="mt-4 mb-g">
+								<div class="row">
+									<div class="col-lg-12">
+										<div class="alert alert-info p-1">
+											<strong>Como criar o arquivo para importação?</strong> </br></br>Gerar no sistema IPEN o relatório 1.8. Após, copie e cole este relatório em um arquivo excel, separe a coluna ipen e nome, depois exclua a primeira linha do arquivo contendo o título, mantendo por fim um total de 8 colunas somente com os dados para importação. </br></br><strong>PRONTO!</strong> </br>Agora prossiga com o processo de importação abaixo. 
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-lg-12">
+										<label class="form-label" for="inputGroupFile01">Localize o arquivo em seu computador:</label>
+										<div class="input-group">
+											<div class="input-group-prepend">
+												<span class="input-group-text" id="inputGroupFileAddon01">Upload</span>
+											</div>
+											<div class="custom-file">
+												<input type="file" class="custom-file-input" aria-describedby="inputGroupFileAddon01" name="multi_img_file[]" id="multi_img_file" accept=".xls,.xlsx,.csv" />
+												<label class="custom-file-label" for="multi_img_file">Clique aqui ou no botão "Browse" ao lado e escolha o arquivo para importação</label>
+											</div>
+										</div>
+									</div>
+								</div>
+								@* <span class="help-block">Some help content goes here</span> *@
+							</div>
+							<button type="button" name="submit_1" id="submit_1"
+								class="btn btn-md btn-primary waves-effect waves-themed">
+								<span class="fal fa-file-download mr-2"></span>Importar o arquivo selecionado
+							</button>
+						</form>
+                        @* <form asp-action="Novo" name="edi-novo" asp-controller="Edi" id="edi-novo" method="post">
+                            <div class="form-group">
+                                <div class="row text-left mb-3 mr-5">
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form> *@
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section ScriptsBlock {
+	<script src="~/js/datagrid/datatables/datatables.bundle.js"></script>
+	<script src="~/js/datagrid/datatables/datatables.export.js"></script>
+	<script src="~/js/notifications/toastr/toastr.js"></script>
+	<script src="~/js/extensions/automapper-extensions.js"></script>
+
+	<script type="text/javascript">
+		const endpointImportacaoDetentos = "api/edis/import-detentos-xls";
+		const boolOptions = ["SIM", "NÃO"];
+
+		toastr.options = {
+			"closeButton": false,
+			"debug": false,
+			"newestOnTop": true,
+			"progressBar": true,
+			"positionClass": "toast-top-right",
+			"preventDuplicates": true,
+			"onclick": null,
+			"showDuration": 500,
+			"hideDuration": 100,
+			"timeOut": 10000,
+			"extendedTimeOut": 1000,
+			"showEasing": "swing",
+			"hideEasing": "linear",
+			"showMethod": "fadeIn",
+			"hideMethod": "fadeOut"
+		};
+
+		$(document).ready( function () {
+			$('#submit_1').on('click', function() {
+				let data = new FormData($("#my_form")[0]);
+
+				if ($("#multi_img_file").val() == '')
+				{
+					toastr["error"]("Favor selecionar um arquivo antes de efetuar a importação.");
+				}
+				else
+				{
+					@* $.post({
+						url: endpointImportacaoDetentos,
+						type: 'POST',
+						data: data,
+						processData: false,
+						contentType: false,
+						beforeSend : function() {
+							//$("#resultado").html("ENVIANDO..."); 
+						},
+						success: function(success) {
+							toastr.success('</br>Você será redirecionado para tela inicial de importações, onde poderá acompanhar o processamento do arquivo a partir de seu STATUS.', 'Arquivo enviado com sucesso para processamento!', {
+								timeOut: 20000,
+								preventDuplicates: true,
+								positionClass: 'toast-top-center',
+								// Redirect 
+								onHidden: function() {
+									window.location.href = '/edi/todos';
+								}
+							});
+						},
+						error: function(error) {
+							toastr["error"](error.responseJSON.message);
+						}
+					}); *@
+
+					$.ajax({
+						url: endpointImportacaoDetentos,
+						type: 'POST',
+						data: data,
+						processData: false,
+						contentType: false,
+						beforeSend : function() {
+							toastr.success('</br>Você será redirecionado para tela inicial de importações, onde poderá acompanhar o processamento do arquivo a partir de seu STATUS.', 'Enviando arquivo para processamento...', {
+								timeOut: 20000,
+								preventDuplicates: true,
+								positionClass: 'toast-top-center',
+								// Redirect 
+								onHidden: function() {
+									window.location.href = '/edi/todos';
+								}
+							});
+						},
+						success: function(success) {
+							
+						},
+						error: function(error) {
+							if (error.responseJSON != null)
+							{
+								if (error.responseJSON.title != null)
+								{
+									toastr["error"](error.responseJSON.title);
+								}
+							}
+						}
+					});
+				}
+			});
+
+			$("#btn-voltar").click(function (event) {
+				window.location.href = '/edi/todos';
+			});
+		});
+
+	</script>
+}
