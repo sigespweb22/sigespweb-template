@@ -1,0 +1,3 @@
+https://learn.microsoft.com/pt-br/aspnet/core/host-and-deploy/linux-nginx?view=aspnetcore-7.0&tabs=linux-sles
+
+https://learn.microsoft.com/pt-br/aspnet/core/host-and-deploy/?view=aspnetcore-7.0
